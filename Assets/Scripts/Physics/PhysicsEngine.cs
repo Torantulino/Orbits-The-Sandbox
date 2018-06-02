@@ -2,15 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PhysicsEngine : MonoBehaviour {
+public class PhysicsEngine : MonoBehaviour
+{
+    private List<PhysicsObject> physicsObjects;
 
-	// Use this for initialization
+	// Initialize
 	void Start () {
 		
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
+	// Simulate
+	void FixedUpdate () {
+        //Simulate every Physics Object
+	    for (int i = 0; i < physicsObjects.Count; i++)
+	    {
+	        
+	    }
 	}
+
+    void AddObject(PhysicsObject pObject)
+    {
+        physicsObjects.Add(pObject);
+    }
+
 }

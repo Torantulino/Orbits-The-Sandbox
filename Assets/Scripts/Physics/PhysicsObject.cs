@@ -1,69 +1,117 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 
 public class PhysicsObject : MonoBehaviour
-{
+{ 
     public Vector3 position;
-    public Vector3 velocity;
-    public float mass;
+    //public float mass;
     public float density;
     public float radius;
     public bool massLocked;
     public bool densityLocked;
     public bool radiusLocked;
     public float volume;
+    public UIManager UiManager;
+    public bool massChanged;
+    public bool densityChanged;
+    public bool radiusChanged;
+    public Rigidbody rb;
 
-    private bool massChanged;
-    private bool densityChanged;
-    private bool radiusChanged;
     private bool volumeChanged;
     private float oldRadius;
     private float oldMass;
     private float oldDensity;
+    private float G = 66.7f;
+
+    public Vector3 velocity = Vector3.zero;
+    private Vector3 a = Vector3.zero;
+    private Vector3 F = Vector3.zero;
+
+    public static List<PhysicsObject> physicsObjects;
+
+    private float forceMultiplier;
+    private float dragtime;
+    private Vector3 dragStart;
+    private Vector3 dragCurrent;
+    private Vector3 dragStop;
+
+    public int manipMode; //0 = Launch Mode, 1 = Move mode
+
 
 	// Use this for initialization
 	void Start ()
 	{
-	    position = gameObject.transform.position;
+	    forceMultiplier = 10;
+        manipMode = 0;
 	    radius = gameObject.transform.localScale.x;
+	    density = 0.0001f;
+	    densityLocked = true;
+	    massLocked = false;
+	    radiusLocked = false;
 	}
+
+    void OnEnable ()
+    {
+     if (physicsObjects == null)
+            physicsObjects = new List<PhysicsObject>();
+
+     physicsObjects.Add(this);
+    }
+
+    void OnDisable ()
+    {
+        physicsObjects.Remove(this);
+    }
 
     void Update()
     {
-        gameObject.transform.localScale = new Vector3(radius, radius, radius);
-
-        //Check for Property Changes
-        if (radius != oldRadius)
-        {
-            radiusChanged = true;
-        }
-        else
-        {
-            radiusChanged = false;
-        }
-
+        //gameObject.transform.localScale = new Vector3(radius, radius, radius);
 
         if (massChanged || densityChanged || radiusChanged || volumeChanged)
         {
             UpdateProperties();
         }
-        oldRadius = radius;
-        oldMass = mass;
-        oldDensity = density;
+
+
     }
 
     // Simulate
     void FixedUpdate ()
-	{
-        Integrate(Time.deltaTime);
+    {
+        //Gravitate all Physics objects other than this one
+        foreach (PhysicsObject physicsObject in physicsObjects)
+        {
+            if (physicsObject != this)
+                Gravitate(physicsObject);
+        }
+
+        /*
+        //Calculate Acceleration from Force and Mass
+        a = F / mass;
+        //Calculate Velocity from acceleration and time
+        velocity += a * Time.deltaTime;
+        //Calculate New position from velocity and time
+	    position += velocity * Time.deltaTime;
+        //Move Object
 	    gameObject.transform.position = position;
+        */
 	}
 
-    void Integrate(float deltaT)
+    void Gravitate(PhysicsObject subjectObj)
     {
-        position += velocity * deltaT;
+        //Obtain Direction Vector
+        Vector3 dir = rb.position - subjectObj.rb.position;
+        //Obtain Distance, return if 0
+        float dist = dir.magnitude;
+        if(dist == 0)
+            return;
+        //Calculate Magnitude of force
+        float magnitude = G * (rb.mass * subjectObj.rb.mass) / Mathf.Pow(dist, 2);
+        //Calculate force
+        Vector3 force = dir.normalized * magnitude;
+        //Excert force on subject object
+        //subjectObj.ExcertForce(force);
+        subjectObj.rb.AddForce(force);
     }
 
     void UpdateProperties()
@@ -72,25 +120,109 @@ public class PhysicsObject : MonoBehaviour
         {
             if (massLocked)
             {
-                mass = oldMass;
             }
-            //Update Radius
-            radius = Mathf.Pow((3 * (volume / 4 * Mathf.PI)),  1 / 3);
-            //Update Volume
-            volume = (4 / 3) * Mathf.PI * Mathf.Pow(radius, 3);
+            else if (!radiusLocked)
+            {
+                //Update Volume
+                volume = rb.mass / density;
+                //Update Radius
+                radius = Mathf.Pow((3 * (volume / (4 * Mathf.PI))), 1/3f);
+            }
+            else if (!densityLocked)
+            {
+                density = rb.mass / volume;
+            }
+            massChanged = false;
         }
         if (densityChanged)
         {
             if (densityLocked)
+                density = oldDensity;
+            else if (!massLocked)
+                rb.mass = density * volume;
+            else if (!radiusLocked)
             {
-                
+                //Update Volume
+                volume = rb.mass / density;
+                //Update Radius
+                radius = Mathf.Pow((3 * (volume / 4 * Mathf.PI)), 1/3f);
             }
-            mass = density * volume;
+            densityChanged = false;
         }
         if (radiusChanged)
         {
-            volume = (4 / 3) * Mathf.PI * Mathf.Pow(radius, 3);
-            mass = density * volume;
+            if (radiusLocked)
+            {
+                radius = oldRadius;
+            }
+            else if (!massLocked)
+            {
+                //Update Volume
+                volume = (4/3f) * Mathf.PI * Mathf.Pow(radius, 3f);
+                //Update Mass
+                rb.mass = density * volume;
+            }
+            else if (!densityLocked)
+            {
+                //Update Volume
+                volume = (4/3f) * Mathf.PI * Mathf.Pow(radius, 3f);
+                //Update Density
+                density = rb.mass / volume;
+            }
+            radiusChanged = false;
+        }
+    }
+
+    void OnMouseDown()
+    {
+        Debug.Log("Click");
+        UiManager.SetSelectedObject(this);
+
+        dragtime = 0.0f;
+
+        //Get mouse position on screen
+        Vector3 screenPosition = gameObject.transform.position;
+        
+    }
+
+    void OnMouseDrag()
+    {
+        dragtime += Time.deltaTime;
+
+        //Differentite click from drag
+        if (dragtime > 0.3f)
+        {
+            // Launch Object
+            if (manipMode == 0)
+            {
+                //Get mouse position on screen
+                Vector3 screenPosition = Input.mousePosition;
+                screenPosition.z = Camera.main.transform.position.y - transform.position.y;
+                //Translate to world position
+                dragCurrent = Camera.main.ScreenToWorldPoint(screenPosition);
+                dragCurrent = dragStart - dragCurrent;
+                Debug.DrawRay(dragStart, dragCurrent, Color.green);
+                Debug.Log("Drag:" + dragCurrent);
+            }
+            // Drag Object
+            else if (manipMode == 1)
+            {
+                //Get mouse position on screen
+                Vector3 screenPosition = Input.mousePosition;
+                screenPosition.z = Camera.main.transform.position.y - transform.position.y;
+                //Translate to world position
+                Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
+                //Move object
+                transform.position = worldPosition;
+            }
+        }
+    }
+
+    void OnMouseUp()
+    {
+        if (manipMode == 0)
+        {
+            rb.AddForce(forceMultiplier * dragCurrent * rb.mass);
         }
     }
 
