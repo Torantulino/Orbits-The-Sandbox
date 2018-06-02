@@ -21,7 +21,7 @@ public class PhysicsObject : MonoBehaviour
     private float oldRadius;
     private float oldMass;
     private float oldDensity;
-    private float G = 66.7f;
+    private float G = 667.0f;
 
     public Vector3 velocity = Vector3.zero;
     private Vector3 a = Vector3.zero;
@@ -181,7 +181,7 @@ public class PhysicsObject : MonoBehaviour
         dragtime = 0.0f;
 
         //Get mouse position on screen
-        Vector3 screenPosition = gameObject.transform.position;
+        dragStart = gameObject.transform.position;
         
     }
 
@@ -201,7 +201,7 @@ public class PhysicsObject : MonoBehaviour
                 //Translate to world position
                 dragCurrent = Camera.main.ScreenToWorldPoint(screenPosition);
                 dragCurrent = dragStart - dragCurrent;
-                Debug.DrawRay(dragStart, dragCurrent, Color.green);
+                Debug.DrawRay(gameObject.transform.position, dragCurrent, Color.green);
                 Debug.Log("Drag:" + dragCurrent);
             }
             // Drag Object
