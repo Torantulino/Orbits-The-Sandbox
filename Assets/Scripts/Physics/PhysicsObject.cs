@@ -11,11 +11,12 @@ public class PhysicsObject : MonoBehaviour
     public bool densityLocked;
     public bool radiusLocked;
     public float volume;
-    public UIManager UiManager;
+    private UIManager UiManager;
     public bool massChanged;
     public bool densityChanged;
     public bool radiusChanged;
     public Rigidbody rb;
+    public bool isPathPlotter;
 
     private bool volumeChanged;
     private float oldRadius;
@@ -37,10 +38,15 @@ public class PhysicsObject : MonoBehaviour
 
     public int manipMode; //0 = Launch Mode, 1 = Move mode
 
+    public bool spawnWithOrbit = true;
+
 
 	// Use this for initialization
 	void Start ()
 	{
+        //Apply Random Spin
+	    rb.angularVelocity = new Vector3(0.0f, Random.Range(0.1f, 2.0f), 0.0f);
+	    UiManager = FindObjectOfType<UIManager>();
 	    forceMultiplier = 10;
         manipMode = 0;
 	    radius = gameObject.transform.localScale.x;
@@ -50,12 +56,49 @@ public class PhysicsObject : MonoBehaviour
 	    radiusLocked = false;
 	}
 
+
+
     void OnEnable ()
     {
      if (physicsObjects == null)
             physicsObjects = new List<PhysicsObject>();
 
      physicsObjects.Add(this);
+
+        if (spawnWithOrbit)
+        {
+            float strongestForce = 0.0f;
+            PhysicsObject strongestObj = null;
+            //Find Object with highest gravitational influence
+            foreach (PhysicsObject obj in physicsObjects)
+            { 
+                //Obtain Direction Vector
+                Vector3 dir = rb.position - obj.rb.position;
+                //Obtain Distance, return if 0
+                float dist = dir.magnitude;
+                if (dist != 0)
+                {
+                    //Calculate Magnitude of force
+                    float magnitude = G * (rb.mass * obj.rb.mass) / Mathf.Pow(dist, 2);
+                    //Calculate force
+                    Vector3 force = dir.normalized * magnitude;
+                    if (force.magnitude >= strongestForce)
+                        strongestObj = obj;
+                }
+            }
+            //Attempt to achive stable orbit
+            if (strongestObj != null)
+            {
+                //Obtain Oblique vector along y plane
+                Vector3 dir = rb.position - strongestObj.rb.position;
+                float dist = dir.magnitude;
+                Vector3 requiredV = new Vector3(dir.z, dir.y, dir.x);
+                float vMag = Mathf.Sqrt(G * strongestObj.rb.mass) / dist;
+                requiredV *= vMag;
+                rb.velocity = requiredV;
+
+            }
+        }
     }
 
     void OnDisable ()
@@ -66,7 +109,6 @@ public class PhysicsObject : MonoBehaviour
     void Update()
     {
         //gameObject.transform.localScale = new Vector3(radius, radius, radius);
-
         if (massChanged || densityChanged || radiusChanged || volumeChanged)
         {
             UpdateProperties();
@@ -78,20 +120,26 @@ public class PhysicsObject : MonoBehaviour
     // Simulate
     void FixedUpdate ()
     {
-        //Gravitate all Physics objects other than this one
-        foreach (PhysicsObject physicsObject in physicsObjects)
+        if (isPathPlotter)
         {
-            if (physicsObject != this)
-                Gravitate(physicsObject);
         }
-
+        else
+        {
+            //Gravitate all Physics objects other than this one
+            foreach (PhysicsObject physicsObject in physicsObjects)
+            {
+                if (physicsObject != this)
+                    Gravitate(physicsObject);
+            }
+        }
+        
         /*
         //Calculate Acceleration from Force and Mass
-        a = F / mass;
+        a = F / rb.mass;
         //Calculate Velocity from acceleration and time
-        velocity += a * Time.deltaTime;
+        velocity += a * Time.fixedDeltaTime;
         //Calculate New position from velocity and time
-	    position += velocity * Time.deltaTime;
+	    position += velocity * Time.fixedDeltaTime;
         //Move Object
 	    gameObject.transform.position = position;
         */
@@ -110,8 +158,12 @@ public class PhysicsObject : MonoBehaviour
         //Calculate force
         Vector3 force = dir.normalized * magnitude;
         //Excert force on subject object
-        //subjectObj.ExcertForce(force);
         subjectObj.rb.AddForce(force);
+     }
+
+    void ExcertForce(Vector3 force)
+    {
+        F += force;
     }
 
     void UpdateProperties()
@@ -201,7 +253,7 @@ public class PhysicsObject : MonoBehaviour
                 //Translate to world position
                 dragCurrent = Camera.main.ScreenToWorldPoint(screenPosition);
                 dragCurrent = dragStart - dragCurrent;
-                Debug.DrawRay(gameObject.transform.position, dragCurrent, Color.green);
+                Debug.DrawRay(gameObject.transform.position, dragCurrent, Color.white);
                 Debug.Log("Drag:" + dragCurrent);
             }
             // Drag Object

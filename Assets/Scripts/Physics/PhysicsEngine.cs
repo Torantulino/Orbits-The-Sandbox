@@ -4,25 +4,19 @@ using UnityEngine;
 
 public class PhysicsEngine : MonoBehaviour
 {
-    private List<PhysicsObject> physicsObjects;
+    public float timeScale;
 
-	// Initialize
-	void Start () {
-		
-	}
+    // Initialize
+    void Start ()
+    {
+        timeScale = Time.timeScale;
+    }
 	
 	// Simulate
-	void FixedUpdate () {
-        //Simulate every Physics Object
-	    for (int i = 0; i < physicsObjects.Count; i++)
-	    {
-	        
-	    }
-	}
+	void Update () {
 
-    void AddObject(PhysicsObject pObject)
-    {
-        physicsObjects.Add(pObject);
+	    Time.timeScale = timeScale;
+
     }
 
 }
