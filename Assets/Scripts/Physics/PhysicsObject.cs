@@ -59,6 +59,8 @@ public class PhysicsObject : MonoBehaviour
 	    {
 	        float strongestForce = 0.0f;
 	        PhysicsObject strongestObj = null;
+            // Sort PhysicsObjects by Mass
+            physicsObjects.Sort((y, x) => x.rb.mass.CompareTo(y.rb.mass));
 	        //Find Object with highest gravitational influence
 	        foreach (PhysicsObject obj in physicsObjects)
 	        {
@@ -88,7 +90,7 @@ public class PhysicsObject : MonoBehaviour
 	            Vector3 requiredV = new Vector3(dir.z, dir.y, -dir.x);
 	            float vMag = Mathf.Sqrt(G * strongestObj.rb.mass / dist);
 	            requiredV = requiredV.normalized * vMag;
-	            rb.velocity = requiredV;
+	            rb.velocity = requiredV + strongestObj.rb.velocity;
 
 	        }
 	    }
