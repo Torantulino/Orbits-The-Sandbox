@@ -54,7 +54,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1992733428114990}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 676, y: 0, z: 0}
+  m_LocalPosition: {x: -350, y: 0, z: -350}
   m_LocalScale: {x: 25, y: 25, z: 25}
   m_Children:
   - {fileID: 4361787485561188}
@@ -142,7 +142,7 @@ TrailRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 64ffae6a698877a43a8767c46d16d0ba, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

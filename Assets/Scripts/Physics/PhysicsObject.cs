@@ -54,7 +54,45 @@ public class PhysicsObject : MonoBehaviour
 	    densityLocked = true;
 	    massLocked = false;
 	    radiusLocked = false;
-	}
+
+	    if (spawnWithOrbit)
+	    {
+	        float strongestForce = 0.0f;
+	        PhysicsObject strongestObj = null;
+	        //Find Object with highest gravitational influence
+	        foreach (PhysicsObject obj in physicsObjects)
+	        {
+	            //Obtain Direction Vector
+	            Vector3 dir = rb.position - obj.rb.position;
+	            //Obtain Distance, return if 0
+	            float dist = dir.magnitude;
+	            if (dist != 0)
+	            {
+	                //Calculate Magnitude of force
+	                float magnitude = G * (rb.mass * obj.rb.mass) / Mathf.Pow(dist, 2);
+	                //Calculate force
+	                Vector3 force = dir.normalized * magnitude;
+	                if (force.magnitude >= strongestForce)
+	                {
+	                    strongestObj = obj;
+	                    strongestForce = force.magnitude;
+	                }
+	            }
+	        }
+	        //Attempt to achive stable orbit
+	        if (strongestObj != null)
+	        {
+	            //Obtain Oblique vector along y plane
+	            Vector3 dir = rb.position - strongestObj.rb.position;
+	            float dist = dir.magnitude;
+	            Vector3 requiredV = new Vector3(dir.z, dir.y, -dir.x);
+	            float vMag = Mathf.Sqrt(G * strongestObj.rb.mass / dist);
+	            requiredV = requiredV.normalized * vMag;
+	            rb.velocity = requiredV;
+
+	        }
+	    }
+    }
 
 
 
@@ -65,49 +103,14 @@ public class PhysicsObject : MonoBehaviour
 
      physicsObjects.Add(this);
 
-        if (spawnWithOrbit)
-        {
-            float strongestForce = 0.0f;
-            PhysicsObject strongestObj = null;
-            //Find Object with highest gravitational influence
-            foreach (PhysicsObject obj in physicsObjects)
-            { 
-                //Obtain Direction Vector
-                Vector3 dir = rb.position - obj.rb.position;
-                //Obtain Distance, return if 0
-                float dist = dir.magnitude;
-                if (dist != 0)
-                {
-                    //Calculate Magnitude of force
-                    float magnitude = G * (rb.mass * obj.rb.mass) / Mathf.Pow(dist, 2);
-                    //Calculate force
-                    Vector3 force = dir.normalized * magnitude;
-                    if (force.magnitude >= strongestForce)
-                    {
-                        strongestObj = obj;
-                        strongestForce = force.magnitude;
-                    }
-                }
-            }
-            //Attempt to achive stable orbit
-            if (strongestObj != null)
-            {
-                //Obtain Oblique vector along y plane
-                Vector3 dir = rb.position - strongestObj.rb.position;
-                float dist = dir.magnitude;
-                Vector3 requiredV = new Vector3(dir.z, dir.y, -dir.x);
-                float vMag = Mathf.Sqrt(G * strongestObj.rb.mass / dist);
-                requiredV = requiredV.normalized * vMag;
-                rb.velocity = requiredV;
-
-            }
-        }
+       
     }
 
     void OnDisable ()
     {
         physicsObjects.Remove(this);
     }
+
 
     void Update()
     {
