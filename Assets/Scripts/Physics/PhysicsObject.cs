@@ -83,7 +83,10 @@ public class PhysicsObject : MonoBehaviour
                     //Calculate force
                     Vector3 force = dir.normalized * magnitude;
                     if (force.magnitude >= strongestForce)
+                    {
                         strongestObj = obj;
+                        strongestForce = force.magnitude;
+                    }
                 }
             }
             //Attempt to achive stable orbit
@@ -92,9 +95,9 @@ public class PhysicsObject : MonoBehaviour
                 //Obtain Oblique vector along y plane
                 Vector3 dir = rb.position - strongestObj.rb.position;
                 float dist = dir.magnitude;
-                Vector3 requiredV = new Vector3(dir.z, dir.y, dir.x);
-                float vMag = Mathf.Sqrt(G * strongestObj.rb.mass) / dist;
-                requiredV *= vMag;
+                Vector3 requiredV = new Vector3(dir.z, dir.y, -dir.x);
+                float vMag = Mathf.Sqrt(G * strongestObj.rb.mass / dist);
+                requiredV = requiredV.normalized * vMag;
                 rb.velocity = requiredV;
 
             }
