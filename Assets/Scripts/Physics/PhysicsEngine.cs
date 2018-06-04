@@ -34,4 +34,11 @@ public class PhysicsEngine : MonoBehaviour
         Time.timeScale = timeAtPause;
     }
 
+    public void timeScaled(int scale)
+    {
+        if (scale >= 0 && scale <= 100)
+        {
+            timeScale = scale;
+        }
+    }
 }

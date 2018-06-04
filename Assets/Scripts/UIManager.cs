@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
@@ -7,6 +8,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 public class UIManager : MonoBehaviour
 {
@@ -15,7 +17,7 @@ public class UIManager : MonoBehaviour
     public InputField inptRadiusVal;
     public InputField inptDensityVal;
     public bool editingMass;
-    public bool editingRadius;
+    public bool editingRadius;      //Use InputField.isFocused
     public bool editingDensity;
     public Transform contentPanel;
     public Transform viewPort;
@@ -30,6 +32,7 @@ public class UIManager : MonoBehaviour
     private GameObject othersPanel;
     private GameObject pauseButton;
     private GameObject playButton;
+    private InputField inptTime;
 
     public void SetSelectedObject(PhysicsObject obj)
     {
@@ -50,11 +53,13 @@ public class UIManager : MonoBehaviour
 
 	    playButton = transform.Find("panBottom/btnPlay").gameObject;
 	    pauseButton = transform.Find("panBottom/btnPause").gameObject;
+	    inptTime = transform.Find("panBottom/txtTimeScale/inptTime").GetComponent<InputField>();
         planetPanel = transform.Find("panLeft/panPlanets").gameObject;
         starPanel = transform.Find("panLeft/panStars").gameObject;
         othersPanel = transform.Find("panLeft/panOthers").gameObject;
 	    activePanel = starPanel;
 
+	    inptTime.text = Time.timeScale.ToString();
 
         Object[] CelestialObj = Resources.LoadAll("Prefabs/Objects");
 	    foreach (Object obj in CelestialObj)
@@ -77,9 +82,10 @@ public class UIManager : MonoBehaviour
                 inptDensityVal.text = selectedObject.density.ToString();
 	    }
 
+	    if (!inptTime.isFocused)
+	        inptTime.text = Time.timeScale.ToString();
 
-
-	    if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
 	    {
 	        RaycastHit hit;
 	        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -130,6 +136,24 @@ public class UIManager : MonoBehaviour
         PhysicsEngine.resumeSimulation();
         playButton.SetActive(false);
         pauseButton.SetActive(true);
+    }
+
+
+    public void timeScaled(string scale)
+    {
+        try
+        {
+            PhysicsEngine.timeScale = int.Parse(scale);
+        }
+        catch (ArgumentNullException)
+        {
+        }
+        catch (FormatException)
+        {
+        }
+        catch (OverflowException)
+        {
+        }
     }
 
     public void trailsToggled(bool state)
