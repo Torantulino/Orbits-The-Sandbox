@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using UnityEditor;
@@ -18,6 +19,7 @@ public class UIManager : MonoBehaviour
     public bool editingDensity;
     public Transform contentPanel;
     public Transform viewPort;
+    public PhysicsEngine PhysicsEngine;
 
     private PhysicsObject selectedObject;
     private Dictionary<string, Object> CelestialObjects = new Dictionary<string, Object>();
@@ -26,6 +28,8 @@ public class UIManager : MonoBehaviour
     private GameObject planetPanel;
     private GameObject starPanel;
     private GameObject othersPanel;
+    private GameObject pauseButton;
+    private GameObject playButton;
 
     public void SetSelectedObject(PhysicsObject obj)
     {
@@ -44,6 +48,8 @@ public class UIManager : MonoBehaviour
 	    editingDensity = false;
 	    editingRadius = false;
 
+	    playButton = transform.Find("panBottom/btnPlay").gameObject;
+	    pauseButton = transform.Find("panBottom/btnPause").gameObject;
         planetPanel = transform.Find("panLeft/panPlanets").gameObject;
         starPanel = transform.Find("panLeft/panStars").gameObject;
         othersPanel = transform.Find("panLeft/panOthers").gameObject;
@@ -109,6 +115,22 @@ public class UIManager : MonoBehaviour
         }
         
     }*/
+
+
+
+    public void pausePressed()
+    {
+        PhysicsEngine.pauseSimulation();
+        pauseButton.SetActive(false);
+        playButton.SetActive(true);
+    }
+
+    public void playPressed()
+    {
+        PhysicsEngine.resumeSimulation();
+        playButton.SetActive(false);
+        pauseButton.SetActive(true);
+    }
 
     public void SwitchPanels(int id)
     {

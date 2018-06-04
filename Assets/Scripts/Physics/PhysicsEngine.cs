@@ -5,6 +5,8 @@ using UnityEngine;
 public class PhysicsEngine : MonoBehaviour
 {
     public float timeScale;
+    private float timeAtPause;
+    private bool paused;
 
     // Initialize
     void Start ()
@@ -13,10 +15,23 @@ public class PhysicsEngine : MonoBehaviour
     }
 	
 	// Simulate
-	void Update () {
+	void Update ()
+	{
+        if(!paused)
+            Time.timeScale = timeScale;
+	}
 
-	    Time.timeScale = timeScale;
+    public void pauseSimulation()
+    {
+        timeAtPause = Time.timeScale;
+        paused = true;
+        Time.timeScale = 0;
+    }
 
+    public void resumeSimulation()
+    {
+        paused = false;
+        Time.timeScale = timeAtPause;
     }
 
 }
