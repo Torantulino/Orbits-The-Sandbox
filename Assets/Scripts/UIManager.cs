@@ -123,7 +123,6 @@ public class UIManager : MonoBehaviour
         PhysicsEngine.pauseSimulation();
         pauseButton.SetActive(false);
         playButton.SetActive(true);
-        Camera.main.cullingMask = Camera.main.cullingMask | (1 << 8);
     }
 
     public void playPressed()
@@ -131,7 +130,14 @@ public class UIManager : MonoBehaviour
         PhysicsEngine.resumeSimulation();
         playButton.SetActive(false);
         pauseButton.SetActive(true);
-        Camera.main.cullingMask = Camera.main.cullingMask & ~(1 << 8);
+    }
+
+    public void trailsToggled(bool state)
+    {
+        if(state)
+            Camera.main.cullingMask = Camera.main.cullingMask | (1 << 8);
+        else
+            Camera.main.cullingMask = Camera.main.cullingMask & ~(1 << 8);
     }
 
     public void SwitchPanels(int id)
