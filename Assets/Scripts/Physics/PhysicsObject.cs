@@ -46,8 +46,10 @@ public class PhysicsObject : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-        //Apply Random Spin
-	    rb.angularVelocity = new Vector3(0.0f, Random.Range(0.1f, 2.0f), 0.0f);
+        //Apply Random Spin around local Y axis
+        Vector3 upVector = transform.up * Random.Range(0.1f, 2.0f);
+        
+	    rb.angularVelocity = upVector;
 	    UiManager = FindObjectOfType<UIManager>();
 	    forceMultiplier = 10;
         manipMode = 0;
