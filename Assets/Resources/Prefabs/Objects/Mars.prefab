@@ -22,9 +22,24 @@ GameObject:
   - component: {fileID: 114078759555086504}
   - component: {fileID: 54462981976594908}
   - component: {fileID: 135444568890539580}
-  - component: {fileID: 96333711390118396}
   m_Layer: 0
   m_Name: Mars
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1210540100142924
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4588967481508402}
+  - component: {fileID: 96329872490576372}
+  m_Layer: 0
+  m_Name: trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -67,13 +82,27 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1157805498347842}
   m_LocalRotation: {x: 0.04133521, y: -0.4585123, z: -0.88400793, w: 0.08116632}
-  m_LocalPosition: {x: 3000, y: 0, z: 500}
+  m_LocalPosition: {x: 5000, y: 0, z: 500}
   m_LocalScale: {x: 5.32, y: 5.32, z: 5.32}
   m_Children:
   - {fileID: 4171141115762310}
+  - {fileID: 4588967481508402}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -53.509003, y: -14.362, z: -162.23901}
+--- !u!4 &4588967481508402
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1210540100142924}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4409567921562796}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &23170623790263034
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -128,13 +157,13 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!96 &96333711390118396
+--- !u!96 &96329872490576372
 TrailRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1157805498347842}
+  m_GameObject: {fileID: 1210540100142924}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -237,6 +266,7 @@ MonoBehaviour:
   rb: {fileID: 54462981976594908}
   isPathPlotter: 0
   velocity: {x: 0, y: 0, z: 0}
+  isTrailRenderer: 1
   manipMode: 0
   spawnWithOrbit: 1
 --- !u!135 &135444568890539580

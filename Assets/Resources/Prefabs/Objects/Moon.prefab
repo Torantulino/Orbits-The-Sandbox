@@ -28,6 +28,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1318017751754150
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4220026438431074}
+  - component: {fileID: 96353228310307296}
+  m_Layer: 0
+  m_Name: trail
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1992733428114990
 GameObject:
   m_ObjectHideFlags: 0
@@ -39,7 +55,6 @@ GameObject:
   - component: {fileID: 54374098682096216}
   - component: {fileID: 114638467894512764}
   - component: {fileID: 135465632403418084}
-  - component: {fileID: 96188277587384530}
   m_Layer: 0
   m_Name: Moon
   m_TagString: Untagged
@@ -47,6 +62,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!4 &4220026438431074
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1318017751754150}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4342350373544962}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4342350373544962
 Transform:
   m_ObjectHideFlags: 1
@@ -54,10 +82,11 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1992733428114990}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2000, y: 0, z: 88.000015}
+  m_LocalPosition: {x: 3500, y: 0, z: 88.000015}
   m_LocalScale: {x: 2.724, y: 2.724, z: 2.724}
   m_Children:
   - {fileID: 4361787485561188}
+  - {fileID: 4220026438431074}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -128,13 +157,13 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!96 &96188277587384530
+--- !u!96 &96353228310307296
 TrailRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1992733428114990}
+  m_GameObject: {fileID: 1318017751754150}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -179,8 +208,8 @@ TrailRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
+      key0: {r: 0.8161765, g: 0.8161765, b: 0.8161765, a: 1}
+      key1: {r: 0.8161765, g: 0.8161765, b: 0.8161765, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -237,6 +266,7 @@ MonoBehaviour:
   rb: {fileID: 54374098682096216}
   isPathPlotter: 0
   velocity: {x: 0, y: 0, z: 0}
+  isTrailRenderer: 1
   manipMode: 0
   spawnWithOrbit: 1
 --- !u!135 &135465632403418084

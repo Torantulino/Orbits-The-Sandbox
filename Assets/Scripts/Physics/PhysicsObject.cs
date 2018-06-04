@@ -29,12 +29,14 @@ public class PhysicsObject : MonoBehaviour
     private Vector3 F = Vector3.zero;
 
     public static List<PhysicsObject> physicsObjects;
+    public bool isTrailRenderer;
 
     private float forceMultiplier;
     private float dragtime;
     private Vector3 dragStart;
     private Vector3 dragCurrent;
     private Vector3 dragStop;
+    private TrailRenderer trailRenderer;
 
     public int manipMode; //0 = Launch Mode, 1 = Move mode
 
@@ -54,6 +56,8 @@ public class PhysicsObject : MonoBehaviour
 	    densityLocked = true;
 	    massLocked = false;
 	    radiusLocked = false;
+	    trailRenderer = GetComponentInChildren<TrailRenderer>();
+        
 
 	    if (spawnWithOrbit)
 	    {
@@ -122,7 +126,19 @@ public class PhysicsObject : MonoBehaviour
             UpdateProperties();
         }
 
-
+        if (isTrailRenderer)
+        {
+            //Set trail renderer thickness to scale with camera distance
+            if (trailRenderer != null)
+            {
+                trailRenderer.widthMultiplier =
+                    Vector3.Distance(Camera.main.transform.position, transform.position) / 250;
+            }
+            else
+            {
+                Debug.Log(this.name + " has no trail renderer!");
+            }
+        }
     }
 
     // Simulate
