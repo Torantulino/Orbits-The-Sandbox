@@ -138,7 +138,6 @@ public class UIManager : MonoBehaviour
         pauseButton.SetActive(true);
     }
 
-
     public void timeScaled(string scale)
     {
         try
@@ -211,8 +210,6 @@ public class UIManager : MonoBehaviour
             objectToSpawn = null;
         }
     }
-
-
 
     public void LockToggled(Toggle tgl)
     {

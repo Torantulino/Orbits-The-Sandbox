@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class PhysicsObject : MonoBehaviour
 { 
-    public Vector3 position;
     //public float mass;
     public float density;
     public float radius;
@@ -11,7 +10,6 @@ public class PhysicsObject : MonoBehaviour
     public bool densityLocked;
     public bool radiusLocked;
     public float volume;
-    private UIManager UiManager;
     public bool massChanged;
     public bool densityChanged;
     public bool radiusChanged;
@@ -37,6 +35,8 @@ public class PhysicsObject : MonoBehaviour
     private Vector3 dragCurrent;
     private Vector3 dragStop;
     private TrailRenderer trailRenderer;
+    private UIManager UiManager;
+    private CamController mainCamController;
 
     public int manipMode; //0 = Launch Mode, 1 = Move mode
 
@@ -51,6 +51,11 @@ public class PhysicsObject : MonoBehaviour
         
 	    rb.angularVelocity = upVector;
 	    UiManager = FindObjectOfType<UIManager>();
+        if(UiManager == null)
+            Debug.Log("UiManager not found!");
+	    mainCamController = Camera.main.GetComponent<CamController>();
+        if(mainCamController == null)
+            Debug.Log("Main Cam Controller fot Found.");
 	    forceMultiplier = 10;
         manipMode = 0;
 	    radius = gameObject.transform.localScale.x;
@@ -253,8 +258,14 @@ public class PhysicsObject : MonoBehaviour
 
     void OnMouseDown()
     {
-        Debug.Log("Click");
+        //Send selected object to Ui Manager
         UiManager.SetSelectedObject(this);
+
+        //If Shift + Click
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            mainCamController.setCamTarget(this);
+        }
 
         dragtime = 0.0f;
 
