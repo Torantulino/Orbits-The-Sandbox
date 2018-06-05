@@ -37,6 +37,7 @@ public class PhysicsObject : MonoBehaviour
     private TrailRenderer trailRenderer;
     private UIManager UiManager;
     private CamController mainCamController;
+    private ObjectCamCtrlr previewCamCtrlr;
 
     public int manipMode; //0 = Launch Mode, 1 = Move mode
 
@@ -56,6 +57,9 @@ public class PhysicsObject : MonoBehaviour
 	    mainCamController = Camera.main.GetComponent<CamController>();
         if(mainCamController == null)
             Debug.Log("Main Cam Controller fot Found.");
+	    previewCamCtrlr = FindObjectOfType<ObjectCamCtrlr>();
+        if(previewCamCtrlr == null)
+            Debug.Log("Preview Cam Controller not found!");
 	    forceMultiplier = 10;
         manipMode = 0;
 	    radius = gameObject.transform.localScale.x;
@@ -279,7 +283,8 @@ public class PhysicsObject : MonoBehaviour
         //If Shift + Click
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            mainCamController.setCamTarget(this);
+            mainCamController.SetCamTarget(this);
+            previewCamCtrlr.SetCamTarget(this);
         }
 
         dragtime = 0.0f;

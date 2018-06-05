@@ -52,7 +52,7 @@ public class CamController : MonoBehaviour
 	    }
 	}
 
-    public void setCamTarget(PhysicsObject obj)
+    public void SetCamTarget(PhysicsObject obj)
     {
         target = obj;
         //Obtain Directional Unit Vector to Target
