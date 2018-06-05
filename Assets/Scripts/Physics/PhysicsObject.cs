@@ -256,6 +256,21 @@ public class PhysicsObject : MonoBehaviour
         }
     }
 
+    void OnCollisionEnter(Collision collision)
+    {
+        PhysicsObject theirPhysObj = collision.transform.GetComponent<PhysicsObject>();
+        if (theirPhysObj.rb.mass > rb.mass)
+        {
+            //If Smaller, Destroy
+            Destroy(transform.gameObject);
+        }
+        else if (theirPhysObj.rb.mass < rb.mass)
+        {
+            //If Bigger, Absorb
+            rb.mass += theirPhysObj.rb.mass;
+        }
+    }
+
     void OnMouseDown()
     {
         //Send selected object to Ui Manager

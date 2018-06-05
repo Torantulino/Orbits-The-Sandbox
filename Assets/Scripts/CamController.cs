@@ -25,27 +25,30 @@ public class CamController : MonoBehaviour
 	void FixedUpdate () {
 	    if (inTargetMode)
 	    {
-            //Look at Target
-	        transform.LookAt(target.transform);
+	        if (target != null)
+	        {
+	            //Look at Target
+	            transform.LookAt(target.transform);
 
-	        //Keep pace with target
-            transform.position = target.transform.position + (dist * dir);
+	            //Keep pace with target
+	            transform.position = target.transform.position + (dist * dir);
 
-	        //Update Directional Unit Vector to Target
-	        dir = transform.position - target.transform.position;
-	        dir = dir.normalized;
+	            //Update Directional Unit Vector to Target
+	            dir = transform.position - target.transform.position;
+	            dir = dir.normalized;
 
-            //Update distance from target
-            dist = Vector3.Distance(transform.position, target.transform.position);
+	            //Update distance from target
+	            dist = Vector3.Distance(transform.position, target.transform.position);
 
 
-            //If not too close to surface of planet (to prevent clipping) zoom!
-            if (dist > minDist  && Input.GetKey(KeyCode.W))
-            {
-                // Zoom
-                dist -= dist * (Time.deltaTime);
-                transform.position = target.transform.position + (dist * dir);
-            }
+	            //If not too close to surface of planet (to prevent clipping) zoom!
+	            if (dist > minDist && Input.GetKey(KeyCode.W))
+	            {
+	                // Zoom
+	                dist -= dist * (Time.deltaTime);
+	                transform.position = target.transform.position + (dist * dir);
+	            }
+	        }
 	    }
 	}
 
