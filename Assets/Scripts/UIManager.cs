@@ -16,9 +16,6 @@ public class UIManager : MonoBehaviour
     public InputField inptMassVal;
     public InputField inptRadiusVal;
     public InputField inptDensityVal;
-    public bool editingMass;
-    public bool editingRadius;      //Use InputField.isFocused
-    public bool editingDensity;
     public Transform contentPanel;
     public Transform viewPort;
     public PhysicsEngine PhysicsEngine;
@@ -47,10 +44,6 @@ public class UIManager : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-	    editingMass = false;
-	    editingDensity = false;
-	    editingRadius = false;
-
 	    playButton = transform.Find("panBottom/btnPlay").gameObject;
 	    pauseButton = transform.Find("panBottom/btnPause").gameObject;
 	    inptTime = transform.Find("panBottom/txtTimeScale/inptTime").GetComponent<InputField>();
@@ -72,19 +65,22 @@ public class UIManager : MonoBehaviour
 	// Update is called once per frame
 	void Update ()      
 	{
+        //Update properties of selected object based on UI
 	    if (selectedObject != null)
 	    {
-            if(!editingMass && !selectedObject.massLocked)
+            if(!inptMassVal.isFocused && !selectedObject.massLocked)
 	            inptMassVal.text = selectedObject.rb.mass.ToString();
-            if(!editingRadius && !selectedObject.radiusLocked)
-                inptRadiusVal.text = selectedObject.radius.ToString();
-            if(!editingDensity && !selectedObject.densityLocked)
-                inptDensityVal.text = selectedObject.density.ToString();
+            if(!inptRadiusVal.isFocused && !selectedObject.radiusLocked)
+                inptRadiusVal.text = selectedObject.Radius.ToString();
+            if(!inptDensityVal.isFocused && !selectedObject.densityLocked)
+                inptDensityVal.text = selectedObject.Density.ToString();
 	    }
 
+        //Update timescale based on UI
 	    if (!inptTime.isFocused)
 	        inptTime.text = Time.timeScale.ToString();
 
+        //Select object
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
 	    {
 	        RaycastHit hit;
@@ -233,47 +229,29 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void IsEditingMass()
-    {
-        editingMass = true;
-    }
-    public void IsEditingRadius()
-    {
-        editingRadius = true;
-    }
-    public void IsEditingDensity()
-    {
-        editingDensity = true;
-    }
+
     public void finEditingMass(string val)
     {
         float valResult;
         if (float.TryParse(val, out valResult))
         {
-            selectedObject.rb.mass = valResult;
-            selectedObject.massChanged = true;
+            selectedObject.setMass(valResult);
         }
-        editingMass = false;
     }
     public void finEditingRadius(string val)
     {
         float valResult;
         if (float.TryParse(val, out valResult))
         {
-            selectedObject.radius = valResult;
-            selectedObject.radiusChanged = true;
+            selectedObject.setRadius(valResult);
         }
-        editingRadius = false;
     }
     public void finEditingDensity(string val)
     {
         float valResult;
         if (float.TryParse(val, out valResult))
         {
-            selectedObject.density = valResult;
-            selectedObject.densityChanged = true;
+            selectedObject.setDensity(valResult);
         }
-        editingDensity = false;
     }
-
 }

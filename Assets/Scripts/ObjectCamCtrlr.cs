@@ -5,6 +5,7 @@ using UnityEngine;
 public class ObjectCamCtrlr : MonoBehaviour
 {
     private PhysicsObject target;
+    private float targetRad;
     private bool inTargetMode;
     private float minDist;
     private float dist;
@@ -13,12 +14,13 @@ public class ObjectCamCtrlr : MonoBehaviour
     private float rotSensitivity = 1;
     private Vector3 dir;
 
+
     // Use this for initialization
     void Start()
     {
         dist = 10000.0f;
-        target = null;
         target = GameObject.FindGameObjectWithTag("host").GetComponent<PhysicsObject>();
+        targetRad = target.Radius;
         if(target == null)
             Debug.Log("System host not found.");
     }
@@ -42,11 +44,11 @@ public class ObjectCamCtrlr : MonoBehaviour
 
     public void SetCamTarget(PhysicsObject obj)
     {
-
         //Obtain Scaled Distance to target
-        dist *= obj.transform.localScale.x / target.transform.localScale.x;
+        dist *= obj.transform.localScale.x / targetRad;
 
-        target = obj;    
+        target = obj;
+        targetRad = target.Radius;
 
         //Obtain Directional Unit Vector to Target
         dir = transform.position - target.transform.position;

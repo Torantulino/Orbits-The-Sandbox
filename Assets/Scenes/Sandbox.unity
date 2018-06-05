@@ -2827,7 +2827,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 902468587}
   m_HandleRect: {fileID: 902468586}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -4333,7 +4333,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1532271489571154, guid: e86594fe907b29d49bcf26ab0dcda515, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e86594fe907b29d49bcf26ab0dcda515, type: 2}
@@ -7801,7 +7801,6 @@ GameObject:
   - component: {fileID: 1827255929}
   - component: {fileID: 1827255928}
   - component: {fileID: 1827255927}
-  - component: {fileID: 1827255926}
   - component: {fileID: 1827255931}
   m_Layer: 0
   m_Name: ObjectCam
@@ -7810,13 +7809,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &1827255926
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1827255925}
-  m_Enabled: 1
 --- !u!92 &1827255927
 Behaviour:
   m_ObjectHideFlags: 0

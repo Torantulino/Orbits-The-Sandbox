@@ -1,25 +1,19 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class PhysicsObject : MonoBehaviour
-{ 
+{
     //public float mass;
-    public float density;
-    public float radius;
+    private float density;
+    private float radius;
+    private float volume;
+    private float speed;
     public bool massLocked;
     public bool densityLocked;
     public bool radiusLocked;
-    public float volume;
-    public bool massChanged;
-    public bool densityChanged;
-    public bool radiusChanged;
     public Rigidbody rb;
-    public bool isPathPlotter;
 
-    private bool volumeChanged;
-    private float oldRadius;
-    private float oldMass;
-    private float oldDensity;
     private float G = 667.0f;
 
     public Vector3 velocity = Vector3.zero;
@@ -43,15 +37,41 @@ public class PhysicsObject : MonoBehaviour
 
     public bool spawnWithOrbit = true;
 
+    public float Density
+    {
+        get { return density; }
+    }
+    public float Radius
+    {
+        get { return radius; }
+    }
+    public float Volume
+    {
+        get { return volume; }
+    }
+    public float Speed
+    {
+        get { return speed; }
+    }
 
-	// Use this for initialization
-	void Start ()
+    void Awake()
+    {
+        //Set properties
+        radius = transform.localScale.x;
+        calculateVolume(radius);
+        calculateDensity(rb.mass, volume);
+        forceMultiplier = 10;
+        manipMode = 0;
+        densityLocked = true;
+        massLocked = false;
+        radiusLocked = false;
+    }
+
+    // Use this for initialization
+    void Start ()
 	{
-        //Apply Random Spin around local Y axis
-        Vector3 upVector = transform.up * Random.Range(0.1f, 2.0f);
-        
-	    rb.angularVelocity = upVector;
-	    UiManager = FindObjectOfType<UIManager>();
+        //Aquire references
+        UiManager = FindObjectOfType<UIManager>();
         if(UiManager == null)
             Debug.Log("UiManager not found!");
 	    mainCamController = Camera.main.GetComponent<CamController>();
@@ -60,14 +80,14 @@ public class PhysicsObject : MonoBehaviour
 	    previewCamCtrlr = FindObjectOfType<ObjectCamCtrlr>();
         if(previewCamCtrlr == null)
             Debug.Log("Preview Cam Controller not found!");
-	    forceMultiplier = 10;
-        manipMode = 0;
-	    radius = gameObject.transform.localScale.x;
-	    density = 0.0001f;
-	    densityLocked = true;
-	    massLocked = false;
-	    radiusLocked = false;
-	    trailRenderer = GetComponentInChildren<TrailRenderer>();
+
+	    //Apply Random Spin around local Y axis
+	    Vector3 spinVector = transform.up * Random.Range(0.1f, 2.0f);
+	    rb.angularVelocity = spinVector;
+
+
+
+        trailRenderer = GetComponentInChildren<TrailRenderer>();
         
 
 	    if (spawnWithOrbit)
@@ -132,10 +152,6 @@ public class PhysicsObject : MonoBehaviour
     void Update()
     {
         //gameObject.transform.localScale = new Vector3(radius, radius, radius);
-        if (massChanged || densityChanged || radiusChanged || volumeChanged)
-        {
-            UpdateProperties();
-        }
 
         if (isTrailRenderer)
         {
@@ -155,17 +171,11 @@ public class PhysicsObject : MonoBehaviour
     // Simulate
     void FixedUpdate ()
     {
-        if (isPathPlotter)
+        //Gravitate all Physics objects other than this one
+        foreach (PhysicsObject physicsObject in physicsObjects)
         {
-        }
-        else
-        {
-            //Gravitate all Physics objects other than this one
-            foreach (PhysicsObject physicsObject in physicsObjects)
-            {
-                if (physicsObject != this)
-                    Gravitate(physicsObject);
-            }
+            if (physicsObject != this)
+            Gravitate(physicsObject);
         }
         
         /*
@@ -201,65 +211,107 @@ public class PhysicsObject : MonoBehaviour
         F += force;
     }
 
-    void UpdateProperties()
+    void calculateVolume(float rad)
     {
-        if (massChanged)
+        volume = (4 / 3f) * Mathf.PI * Mathf.Pow(rad, 3);
+    }
+
+    void calculateVolume(float m, float den)
+    {
+        volume = m / den;
+    }
+
+    void calculateRadius(float vol)
+    {
+        radius = Mathf.Pow(3 * (vol / (4 * Mathf.PI)), (1/3f));
+        transform.localScale = new Vector3(radius, radius, radius);
+    }
+
+    void calculateDensity(float m, float vol)
+    {
+        density = m / vol;
+    }
+
+    void calculateMass(float den, float vol)
+    {
+        rb.mass = den * vol;
+    }
+
+    public void setRadius(float newRad)
+    {
+        //Set radius
+        radius = newRad;
+        //Calculate Volume
+        calculateVolume(newRad);
+        if (massLocked)
         {
-            if (massLocked)
-            {
-            }
-            else if (!radiusLocked)
-            {
-                //Update Volume
-                volume = rb.mass / density;
-                //Update Radius
-                radius = Mathf.Pow((3 * (volume / (4 * Mathf.PI))), 1/3f);
-            }
-            else if (!densityLocked)
-            {
-                density = rb.mass / volume;
-            }
-            massChanged = false;
+            //Calculate Density
+            calculateDensity(rb.mass, volume);
         }
-        if (densityChanged)
+        else if (densityLocked)
         {
-            if (densityLocked)
-                density = oldDensity;
-            else if (!massLocked)
-                rb.mass = density * volume;
-            else if (!radiusLocked)
-            {
-                //Update Volume
-                volume = rb.mass / density;
-                //Update Radius
-                radius = Mathf.Pow((3 * (volume / 4 * Mathf.PI)), 1/3f);
-            }
-            densityChanged = false;
+            //Calculate Mass
+            calculateMass(density, volume);
         }
-        if (radiusChanged)
+        transform.localScale = new Vector3(radius, radius, radius);
+    }
+
+    public void setDensity(float newDen)
+    {
+        //Set density
+        density = newDen;
+        if (massLocked)
         {
-            if (radiusLocked)
-            {
-                radius = oldRadius;
-            }
-            else if (!massLocked)
-            {
-                //Update Volume
-                volume = (4/3f) * Mathf.PI * Mathf.Pow(radius, 3f);
-                //Update Mass
-                rb.mass = density * volume;
-            }
-            else if (!densityLocked)
-            {
-                //Update Volume
-                volume = (4/3f) * Mathf.PI * Mathf.Pow(radius, 3f);
-                //Update Density
-                density = rb.mass / volume;
-            }
-            radiusChanged = false;
+            //Calculate Volume
+            calculateVolume(rb.mass, newDen);
+            //Update Radius
+            calculateRadius(volume);
+        }
+        else if (radiusLocked)
+        {
+            //Calculate Mass
+            calculateMass(newDen, volume);
         }
     }
 
+    public void setMass(float newMass)
+    {
+        //Set Mass
+        rb.mass = newMass;
+        if (radiusLocked)
+        {
+            //Calculate Density
+            calculateDensity(newMass, volume);
+        }
+        else if (densityLocked)
+        {
+            //Calculate Volume
+            calculateVolume(newMass, density);
+            //Update Radius
+            calculateRadius(volume);
+        }
+    }
+
+    public void setVolume(float newVol)
+    {
+        //Calculate Radius
+        calculateRadius(newVol);
+        if (massLocked)
+        {
+            //Calculate Density
+            calculateDensity(rb.mass, newVol);
+        }
+        else if (densityLocked)
+        {
+            //Calculate Mass
+            calculateMass(density, newVol);
+        }
+    }
+
+    public void setSpeed(float newSpeed)
+    {
+        
+    }
     void OnCollisionEnter(Collision collision)
     {
         PhysicsObject theirPhysObj = collision.transform.GetComponent<PhysicsObject>();
@@ -271,7 +323,7 @@ public class PhysicsObject : MonoBehaviour
         else if (theirPhysObj.rb.mass < rb.mass)
         {
             //If Bigger, Absorb
-            rb.mass += theirPhysObj.rb.mass;
+            setMass(rb.mass + theirPhysObj.rb.mass);
         }
     }
 
