@@ -14,7 +14,7 @@ public class PhysicsObject : MonoBehaviour
     public bool radiusLocked;
     public Rigidbody rb;
 
-    private float G = 667.0f;
+    private float G = 667.408f;
 
     public Vector3 velocity = Vector3.zero;
     private Vector3 a = Vector3.zero;
@@ -32,10 +32,8 @@ public class PhysicsObject : MonoBehaviour
     private UIManager UiManager;
     private CamController mainCamController;
     private ObjectCamCtrlr previewCamCtrlr;
+    private LineRenderer lineRenderer;
 
-    public int manipMode; //0 = Launch Mode, 1 = Move mode
-
-    public bool spawnWithOrbit = true;
 
     public float Density
     {
@@ -61,7 +59,6 @@ public class PhysicsObject : MonoBehaviour
         calculateVolume(radius);
         calculateDensity(rb.mass, volume);
         forceMultiplier = 10;
-        manipMode = 0;
         densityLocked = true;
         massLocked = false;
         radiusLocked = false;
@@ -81,6 +78,8 @@ public class PhysicsObject : MonoBehaviour
         if(previewCamCtrlr == null)
             Debug.Log("Preview Cam Controller not found!");
 
+	    lineRenderer = GetComponent<LineRenderer>();
+
 	    //Apply Random Spin around local Y axis
 	    Vector3 spinVector = transform.up * Random.Range(0.1f, 2.0f);
 	    rb.angularVelocity = spinVector;
@@ -90,7 +89,7 @@ public class PhysicsObject : MonoBehaviour
         trailRenderer = GetComponentInChildren<TrailRenderer>();
         
 
-	    if (spawnWithOrbit)
+	    if (UiManager.spawnWithOrbit)
 	    {
 	        float strongestForce = 0.0f;
 	        PhysicsObject strongestObj = null;
@@ -329,13 +328,6 @@ public class PhysicsObject : MonoBehaviour
 
     void OnMouseDown()
     {
-        //Send selected object to Ui Manager
-        UiManager.SetSelectedObject(this);
-
-        //Forus target camera
-        mainCamController.SetCamTarget(this);
-        previewCamCtrlr.SetCamTarget(this);
-
         dragtime = 0.0f;
 
         //Get mouse position on screen
@@ -345,13 +337,13 @@ public class PhysicsObject : MonoBehaviour
 
     void OnMouseDrag()
     {
-        dragtime += Time.deltaTime;
+        dragtime += Time.unscaledDeltaTime;
 
         //Differentite click from drag
         if (dragtime > 0.3f)
         {
             // Launch Object
-            if (manipMode == 0)
+            if (UiManager.manipMode == 0)
             {
                 //Get mouse position on screen
                 Vector3 screenPosition = Input.mousePosition;
@@ -359,28 +351,43 @@ public class PhysicsObject : MonoBehaviour
                 //Translate to world position
                 dragCurrent = Camera.main.ScreenToWorldPoint(screenPosition);
                 dragCurrent = dragStart - dragCurrent;
-                Debug.DrawRay(gameObject.transform.position, dragCurrent, Color.white);
-                Debug.Log("Drag:" + dragCurrent);
+                Vector3[] positions = new Vector3[2];
+                lineRenderer.SetPosition(0, gameObject.transform.position);
+                lineRenderer.SetPosition(1, dragCurrent);
             }
             // Drag Object
-            else if (manipMode == 1)
+            else if (UiManager.manipMode == 1)
             {
-                //Get mouse position on screen
-                Vector3 screenPosition = Input.mousePosition;
-                screenPosition.z = Camera.main.transform.position.y - transform.position.y;
-                //Translate to world position
-                Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
-                //Move object
-                transform.position = worldPosition;
+                if (mainCamController.target != this)
+                {
+                    //Get mouse position on screen
+                    Vector3 screenPosition = Input.mousePosition;
+                    screenPosition.z = Camera.main.transform.position.y - transform.position.y;
+                    //Translate to world position
+                    Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
+                    //Move object
+                    transform.position = worldPosition;
+                }
             }
         }
     }
 
     void OnMouseUp()
     {
-        if (manipMode == 0)
+        if (dragtime < 0.3f)
+        {
+            //Send selected object to Ui Manager
+            UiManager.SetSelectedObject(this);
+
+            //Forus target camera
+            mainCamController.SetCamTarget(this);
+            previewCamCtrlr.SetCamTarget(this);
+        }
+        else if (UiManager.manipMode == 0)
         {
             rb.AddForce(forceMultiplier * dragCurrent * rb.mass);
+            lineRenderer.SetPosition(0, Vector3.zero);
+            lineRenderer.SetPosition(1, Vector3.zero);
         }
     }
 

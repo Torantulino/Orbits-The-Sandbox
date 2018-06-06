@@ -18,10 +18,11 @@ public class ObjectCamCtrlr : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        dist = 10000.0f;
+        dist = 5000.0f;
         target = GameObject.FindGameObjectWithTag("host").GetComponent<PhysicsObject>();
         targetRad = target.Radius;
-        if(target == null)
+        SetCamTarget(GameObject.FindGameObjectWithTag("host").GetComponent<PhysicsObject>());
+        if (target == null)
             Debug.Log("System host not found.");
     }
 

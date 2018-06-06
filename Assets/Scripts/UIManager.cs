@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -19,6 +18,9 @@ public class UIManager : MonoBehaviour
     public Transform contentPanel;
     public Transform viewPort;
     public PhysicsEngine PhysicsEngine;
+    public int manipMode; //0 = Launch Mode, 1 = Move mode
+    public bool spawnWithOrbit = true;
+
 
     private PhysicsObject selectedObject;
     private Dictionary<string, Object> CelestialObjects = new Dictionary<string, Object>();
@@ -32,6 +34,7 @@ public class UIManager : MonoBehaviour
     private InputField inptTime;
     private Text objectName;
 
+
     public void SetSelectedObject(PhysicsObject obj)
     {
         selectedObject = obj;
@@ -42,8 +45,13 @@ public class UIManager : MonoBehaviour
         objectToSpawn = (GameObject)CelestialObjects[name];
     }
 
-	// Use this for initialization
-	void Start ()
+    void Awake()
+    {
+        manipMode = 0;
+    }
+
+    // Use this for initialization
+    void Start ()
 	{
 	    objectName = transform.Find("panObject/TitleObj").GetComponent<Text>();
 	    playButton = transform.Find("panBottom/btnPlay").gameObject;
@@ -61,6 +69,8 @@ public class UIManager : MonoBehaviour
 	    {
 	        CelestialObjects.Add(obj.name, obj);
 	    }
+
+        SetSelectedObject(GameObject.FindGameObjectWithTag("host").GetComponent<PhysicsObject>());
     }
 
 	
@@ -78,7 +88,7 @@ public class UIManager : MonoBehaviour
                 inptRadiusVal.text = selectedObject.Radius.ToString();
             //Density
             if(!inptDensityVal.isFocused)
-                inptDensityVal.text = selectedObject.Density.ToString();
+                inptDensityVal.text = selectedObject.Density.ToString();            
             //Name
 	        objectName.text = selectedObject.name;
 	    }
@@ -125,7 +135,10 @@ public class UIManager : MonoBehaviour
         
     }*/
 
-
+    public void ReloadScene()
+    {
+        Application.LoadLevel(Application.loadedLevel);
+    }
 
     public void pausePressed()
     {
@@ -164,6 +177,16 @@ public class UIManager : MonoBehaviour
             Camera.main.cullingMask = Camera.main.cullingMask | (1 << 8);
         else
             Camera.main.cullingMask = Camera.main.cullingMask & ~(1 << 8);
+    }
+
+    public void ManipModeToggled(int mode)
+    {
+        manipMode = mode;
+    }
+
+    public void SpawnWithOrbitToggled(bool state)
+    {
+        spawnWithOrbit = state;
     }
 
     public void SwitchPanels(int id)

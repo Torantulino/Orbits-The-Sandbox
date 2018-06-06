@@ -6,7 +6,7 @@ using UnityEngine.Assertions.Comparers;
 public class CamController : MonoBehaviour
 {
 
-    private PhysicsObject target;
+    public PhysicsObject target;
     private bool inTargetMode;
     private float minDist;
     private float dist;
