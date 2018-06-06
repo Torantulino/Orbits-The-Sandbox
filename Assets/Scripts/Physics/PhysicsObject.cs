@@ -332,12 +332,9 @@ public class PhysicsObject : MonoBehaviour
         //Send selected object to Ui Manager
         UiManager.SetSelectedObject(this);
 
-        //If Shift + Click
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            mainCamController.SetCamTarget(this);
-            previewCamCtrlr.SetCamTarget(this);
-        }
+        //Forus target camera
+        mainCamController.SetCamTarget(this);
+        previewCamCtrlr.SetCamTarget(this);
 
         dragtime = 0.0f;
 

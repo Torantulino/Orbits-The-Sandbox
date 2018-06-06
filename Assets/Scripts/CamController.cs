@@ -45,7 +45,13 @@ public class CamController : MonoBehaviour
 	            if (dist > minDist && Input.GetKey(KeyCode.W))
 	            {
 	                // Zoom
-	                dist -= dist * (Time.deltaTime);
+	                dist -= dist * Time.deltaTime;
+	                transform.position = target.transform.position + (dist * dir);
+	            }
+	            if (Input.GetKey(KeyCode.S))
+	            {
+	                //Zoom out
+	                dist += dist * Time.deltaTime;
 	                transform.position = target.transform.position + (dist * dir);
 	            }
 	        }

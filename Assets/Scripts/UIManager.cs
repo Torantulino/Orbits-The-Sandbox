@@ -30,6 +30,7 @@ public class UIManager : MonoBehaviour
     private GameObject pauseButton;
     private GameObject playButton;
     private InputField inptTime;
+    private Text objectName;
 
     public void SetSelectedObject(PhysicsObject obj)
     {
@@ -44,6 +45,7 @@ public class UIManager : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+	    objectName = transform.Find("panObject/TitleObj").GetComponent<Text>();
 	    playButton = transform.Find("panBottom/btnPlay").gameObject;
 	    pauseButton = transform.Find("panBottom/btnPause").gameObject;
 	    inptTime = transform.Find("panBottom/txtTimeScale/inptTime").GetComponent<InputField>();
@@ -68,12 +70,17 @@ public class UIManager : MonoBehaviour
         //Update properties of selected object based on UI
 	    if (selectedObject != null)
 	    {
-            if(!inptMassVal.isFocused && !selectedObject.massLocked)
+            //Mass
+            if(!inptMassVal.isFocused)
 	            inptMassVal.text = selectedObject.rb.mass.ToString();
-            if(!inptRadiusVal.isFocused && !selectedObject.radiusLocked)
+            //Radius
+            if(!inptRadiusVal.isFocused)
                 inptRadiusVal.text = selectedObject.Radius.ToString();
-            if(!inptDensityVal.isFocused && !selectedObject.densityLocked)
+            //Density
+            if(!inptDensityVal.isFocused)
                 inptDensityVal.text = selectedObject.Density.ToString();
+            //Name
+	        objectName.text = selectedObject.name;
 	    }
 
         //Update timescale based on UI

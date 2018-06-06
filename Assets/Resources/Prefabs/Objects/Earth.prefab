@@ -276,17 +276,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a0e8950f69c89644bc27605c2b73b40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  density: 0
-  radius: 100
   massLocked: 0
   densityLocked: 0
   radiusLocked: 0
-  volume: 0
-  massChanged: 0
-  densityChanged: 0
-  radiusChanged: 0
   rb: {fileID: 54472792345134392}
-  isPathPlotter: 0
   velocity: {x: 0, y: 0, z: 0}
   isTrailRenderer: 1
   manipMode: 0
