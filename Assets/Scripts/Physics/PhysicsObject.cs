@@ -77,8 +77,10 @@ public class PhysicsObject : MonoBehaviour
 	    previewCamCtrlr = FindObjectOfType<ObjectCamCtrlr>();
         if(previewCamCtrlr == null)
             Debug.Log("Preview Cam Controller not found!");
-
 	    lineRenderer = GetComponent<LineRenderer>();
+
+        //Add to list
+        mainCamController.PhysicsObjects.Add(this);
 
 	    //Apply Random Spin around local Y axis
 	    Vector3 spinVector = transform.up * Random.Range(0.1f, 2.0f);
@@ -391,4 +393,8 @@ public class PhysicsObject : MonoBehaviour
         }
     }
 
+    void OnDestroy()
+    {
+        mainCamController.PhysicsObjects.Remove(this);
+    }
 }
