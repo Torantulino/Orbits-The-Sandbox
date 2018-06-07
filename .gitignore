@@ -35,5 +35,7 @@ sysinfo.txt
 *.apk
 *.unitypackage
 
-#Standard Assets
+#Assets
 PostProcessing/
+Moments Recorder/
+Assets/Scripts/HiResScreenShots.cs

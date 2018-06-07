@@ -1710,6 +1710,8 @@ GameObject:
   - component: {fileID: 409090973}
   - component: {fileID: 409090978}
   - component: {fileID: 409090979}
+  - component: {fileID: 409090980}
+  - component: {fileID: 409090981}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1813,6 +1815,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   PhysicsObjects: []
+--- !u!114 &409090980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 409090972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bc1f3fb464f5014aaba65cf4c79bcc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resWidth: 2048
+  resHeight: 1152
+--- !u!114 &409090981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 409090972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd5378998db5ba9488d08a4e3b80821a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Width: 720
+  m_Height: 405
+  m_AutoAspect: 1
+  m_FramePerSecond: 15
+  m_Repeat: 0
+  m_Quality: 15
+  m_BufferSize: 10
+  WorkerPriority: 1
 --- !u!1 &416617371
 GameObject:
   m_ObjectHideFlags: 0
@@ -2365,7 +2399,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 0.39905927, g: 0.42191786, b: 0.44852942, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2432,7 +2466,7 @@ GameObject:
   - component: {fileID: 503300567}
   - component: {fileID: 503300566}
   m_Layer: 5
-  m_Name: btnPause (1)
+  m_Name: btnRestart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2528,8 +2562,8 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -7539,7 +7573,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 0.39905927, g: 0.42191786, b: 0.44852942, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -7608,7 +7642,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 0.39905927, g: 0.42191786, b: 0.44852942, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -10223,6 +10257,22 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0bd316e6132d8db4f8614058d65c5ae1, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1981470135 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1892748819793486, guid: e747c2e2c7618c84197345d5d1b0299e,
+    type: 2}
+  m_PrefabInternal: {fileID: 1395122148}
+--- !u!225 &1981470139
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1981470135}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1994699247
 GameObject:
   m_ObjectHideFlags: 0

@@ -33,6 +33,7 @@ public class UIManager : MonoBehaviour
     private GameObject playButton;
     private InputField inptTime;
     private Text objectName;
+    private CanvasGroup canvasGroup;
 
 
     public void SetSelectedObject(PhysicsObject obj)
@@ -61,6 +62,7 @@ public class UIManager : MonoBehaviour
         starPanel = transform.Find("panLeft/panStars").gameObject;
         othersPanel = transform.Find("panLeft/panOthers").gameObject;
 	    activePanel = starPanel;
+	    canvasGroup = transform.GetComponent<CanvasGroup>();
 
 	    inptTime.text = Time.timeScale.ToString();
 
@@ -111,7 +113,20 @@ public class UIManager : MonoBehaviour
 	            Debug.Log("Object Clicked!");
 	        }
 	    }
-
+        //Show/Hide UI
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            if (canvasGroup.alpha == 1.0f)
+            {
+                canvasGroup.alpha = 0.0f;
+                canvasGroup.blocksRaycasts = false;
+            }
+            else
+            {
+                canvasGroup.alpha = 1.0f;
+                canvasGroup.blocksRaycasts = true;
+            }
+        }
 	}
 
     /*
@@ -258,7 +273,6 @@ public class UIManager : MonoBehaviour
             }
         }
     }
-
 
     public void finEditingMass(string val)
     {

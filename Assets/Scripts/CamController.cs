@@ -18,6 +18,7 @@ public class CamController : MonoBehaviour
     private int targetNo;
     private float targetRad;
     private UIManager UiManager;
+    private ObjectCamCtrlr objectCamCtrlr;
 
     void OnEnable()
     {
@@ -31,6 +32,7 @@ public class CamController : MonoBehaviour
 	    target = GameObject.FindGameObjectWithTag("host").GetComponent<PhysicsObject>();
 	    targetRad = target.transform.localScale.x;
 	    SetCamTarget(target);
+        objectCamCtrlr = FindObjectOfType<ObjectCamCtrlr>();
     }
 
     // Update is called once per frame
@@ -58,13 +60,13 @@ public class CamController : MonoBehaviour
 	            if (dist > minDist && Input.GetKey(KeyCode.W))
 	            {
 	                // Zoom
-	                dist -= dist * Time.deltaTime;
+	                dist -= dist * Time.unscaledDeltaTime;
 	                transform.position = target.transform.position + (dist * dir);
 	            }
 	            if (Input.GetKey(KeyCode.S))
 	            {
 	                //Zoom out
-	                dist += dist * Time.deltaTime;
+	                dist += dist * Time.unscaledDeltaTime;
 	                transform.position = target.transform.position + (dist * dir);
 	            }
 	        }
@@ -81,6 +83,8 @@ public class CamController : MonoBehaviour
 	            SetCamTarget(PhysicsObjects[targetNo]);
 	            //Send selected object to Ui Manager
 	            UiManager.SetSelectedObject(PhysicsObjects[targetNo]);
+                //Send selected object to preview cam
+	            objectCamCtrlr.SetCamTarget(PhysicsObjects[targetNo]);
             }
             if (Input.GetKeyDown(KeyCode.RightArrow))
 	        {
@@ -95,6 +99,9 @@ public class CamController : MonoBehaviour
 	            SetCamTarget(PhysicsObjects[targetNo]);
 	            //Send selected object to Ui Manager
 	            UiManager.SetSelectedObject(PhysicsObjects[targetNo]);
+	            //Send selected object to preview cam
+	            objectCamCtrlr.SetCamTarget(PhysicsObjects[targetNo]);
+
             }
 
         }
