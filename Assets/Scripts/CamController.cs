@@ -17,6 +17,7 @@ public class CamController : MonoBehaviour
     public List<PhysicsObject> PhysicsObjects;
     private int targetNo;
     private float targetRad;
+    private UIManager UiManager;
 
     void OnEnable()
     {
@@ -24,7 +25,8 @@ public class CamController : MonoBehaviour
 
     // Use this for initialization
     void Start ()
-	{
+    {
+        UiManager = FindObjectOfType<UIManager>();
 	    dist = 20000f;
 	    target = GameObject.FindGameObjectWithTag("host").GetComponent<PhysicsObject>();
 	    targetRad = target.transform.localScale.x;
@@ -77,8 +79,10 @@ public class CamController : MonoBehaviour
 	                targetNo = PhysicsObjects.Count - 1;
 	            }
 	            SetCamTarget(PhysicsObjects[targetNo]);
-	        }
-	        if (Input.GetKeyDown(KeyCode.RightArrow))
+	            //Send selected object to Ui Manager
+	            UiManager.SetSelectedObject(PhysicsObjects[targetNo]);
+            }
+            if (Input.GetKeyDown(KeyCode.RightArrow))
 	        {
 	            if (targetNo < PhysicsObjects.Count - 1)
 	            {
@@ -89,6 +93,8 @@ public class CamController : MonoBehaviour
 	                targetNo = 0;
 	            }
 	            SetCamTarget(PhysicsObjects[targetNo]);
+	            //Send selected object to Ui Manager
+	            UiManager.SetSelectedObject(PhysicsObjects[targetNo]);
             }
 
         }

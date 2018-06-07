@@ -154,8 +154,6 @@ public class PhysicsObject : MonoBehaviour
     {
         //gameObject.transform.localScale = new Vector3(radius, radius, radius);
 
-        if (isTrailRenderer)
-        {
             //Set trail renderer thickness to scale with camera distance
             if (trailRenderer != null)
             {
@@ -166,7 +164,6 @@ public class PhysicsObject : MonoBehaviour
             {
                 Debug.Log(this.name + " has no trail renderer!");
             }
-        }
     }
 
     // Simulate
