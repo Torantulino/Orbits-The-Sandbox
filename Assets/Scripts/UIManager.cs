@@ -34,6 +34,7 @@ public class UIManager : MonoBehaviour
     private InputField inptTime;
     private Text objectName;
     private CanvasGroup canvasGroup;
+    private CamController camController;
 
 
     public void SetSelectedObject(PhysicsObject obj)
@@ -65,6 +66,8 @@ public class UIManager : MonoBehaviour
 	    canvasGroup = transform.GetComponent<CanvasGroup>();
 
 	    inptTime.text = Time.timeScale.ToString();
+
+	    camController = FindObjectOfType<CamController>();
 
         Object[] CelestialObj = Resources.LoadAll("Prefabs/Objects");
 	    foreach (Object obj in CelestialObj)
@@ -242,7 +245,7 @@ public class UIManager : MonoBehaviour
             Debug.Log("test!");
             //Get mouse position on screen
             Vector3 screenPosition = Input.mousePosition;
-            screenPosition.z = Camera.main.transform.position.y;
+            screenPosition.z = camController.transform.position.y;
             //Translate to world position
             Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
 
