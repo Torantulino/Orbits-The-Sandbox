@@ -35,7 +35,7 @@ public class UIManager : MonoBehaviour
     private Text objectName;
     private CanvasGroup canvasGroup;
     private CamController camController;
-
+    private GameObject pausePanel;
 
     public void SetSelectedObject(PhysicsObject obj)
     {
@@ -62,7 +62,8 @@ public class UIManager : MonoBehaviour
         planetPanel = transform.Find("panLeft/panPlanets").gameObject;
         starPanel = transform.Find("panLeft/panStars").gameObject;
         othersPanel = transform.Find("panLeft/panOthers").gameObject;
-	    activePanel = starPanel;
+	    pausePanel = transform.Find("panPause").gameObject;
+        activePanel = starPanel;
 	    canvasGroup = transform.GetComponent<CanvasGroup>();
 
 	    inptTime.text = Time.timeScale.ToString();
@@ -130,6 +131,18 @@ public class UIManager : MonoBehaviour
                 canvasGroup.blocksRaycasts = true;
             }
         }
+        //Pause
+	    if (Input.GetKeyDown(KeyCode.Escape))
+	    {
+	        if (!pausePanel.activeSelf)
+	        {
+	            PauseGame();
+	        }
+            else
+	        {
+	            ResumeGame();
+	        }
+	    }
 	}
 
     /*
@@ -300,5 +313,24 @@ public class UIManager : MonoBehaviour
         {
             selectedObject.setDensity(valResult);
         }
+    }
+
+    public void PauseGame()
+    {
+        pausePanel.SetActive(true);
+        PhysicsEngine.pauseSimulation();
+    }
+
+    public void ResumeGame()
+    {
+       // if(pausePanel == null)
+        //    pausePanel = GameObject.Find("panPause").gameObject;
+        pausePanel.SetActive(false);
+        PhysicsEngine.resumeSimulation();
+    }
+
+    public void Quit()
+    {
+        Application.Quit();
     }
 }

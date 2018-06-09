@@ -78,6 +78,8 @@ public class PhysicsObject : MonoBehaviour
         if(previewCamCtrlr == null)
             Debug.Log("Preview Cam Controller not found!");
 	    lineRenderer = GetComponent<LineRenderer>();
+	    trailRenderer = GetComponentInChildren<TrailRenderer>();
+
 
         //Add to list
         mainCamController.PhysicsObjects.Add(this);
@@ -86,9 +88,9 @@ public class PhysicsObject : MonoBehaviour
 	    Vector3 spinVector = transform.up * Random.Range(0.1f, 2.0f);
 	    rb.angularVelocity = spinVector;
 
+        //Clear Bugged Trail
+        trailRenderer.Clear();
 
-
-        trailRenderer = GetComponentInChildren<TrailRenderer>();
         
 
 	    if (UiManager.spawnWithOrbit)
