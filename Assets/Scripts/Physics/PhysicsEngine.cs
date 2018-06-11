@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PhysicsEngine : MonoBehaviour
@@ -10,11 +11,11 @@ public class PhysicsEngine : MonoBehaviour
     private bool paused;
     private float G = 667.408f;
 
+
     // Initialize
     void Start ()
     {
         timeScale = Time.timeScale;
-        ObjectPairs = new List<Pair>();
     }
 	
 	void Update ()
@@ -26,7 +27,7 @@ public class PhysicsEngine : MonoBehaviour
     // Simulate
     void FixedUpdate()
     {
-        foreach (Pair objectPair in ObjectPairs)
+        foreach (Pair objectPair in ObjectPairs.ToList())
         {
             //Obtain Direction Vector
             Vector3 dir = objectPair.O1.rb.position - objectPair.O2.rb.position;
@@ -46,6 +47,9 @@ public class PhysicsEngine : MonoBehaviour
 
     public void AddObject(PhysicsObject physicsObject)
     {
+        if(ObjectPairs == null)
+            ObjectPairs = new List<Pair>();
+
         foreach (PhysicsObject obj in PhysicsObject.physicsObjects)
         {
             //For every other object
@@ -56,7 +60,7 @@ public class PhysicsEngine : MonoBehaviour
                 pair.O2 = obj;
                 //Check if list already contains pair
                 bool alreadyInList = false;
-                foreach (Pair objectPair in ObjectPairs)
+                foreach (Pair objectPair in ObjectPairs.ToList())
                 {
                     //If pair already exists
                     if ((objectPair.O1 == pair.O1 && objectPair.O2 == pair.O2) ||
@@ -69,6 +73,15 @@ public class PhysicsEngine : MonoBehaviour
                 if (!alreadyInList)
                     ObjectPairs.Add(pair);
             }
+        }
+    }
+
+    public void RemoveObject(PhysicsObject physicsObject)
+    {
+        foreach (Pair objectPair in ObjectPairs.ToList())
+        {
+            if (objectPair.O1 == physicsObject || objectPair.O2 == physicsObject)
+                ObjectPairs.Remove(objectPair);
         }
     }
 

@@ -231,8 +231,8 @@ TrailRenderer:
       ctime6: 0
       ctime7: 0
       atime0: 0
-      atime1: 65535
-      atime2: 0
+      atime1: 43646
+      atime2: 65535
       atime3: 0
       atime4: 0
       atime5: 0
@@ -240,7 +240,7 @@ TrailRenderer:
       atime7: 0
       m_Mode: 0
       m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
+      m_NumAlphaKeys: 3
     numCornerVertices: 0
     numCapVertices: 0
     alignment: 0
@@ -301,7 +301,6 @@ MonoBehaviour:
   rb: {fileID: 54829433555896014}
   velocity: {x: 0, y: 0, z: 0}
   isTrailRenderer: 0
-  spawnMode: 0
 --- !u!120 &120601861573441252
 LineRenderer:
   m_ObjectHideFlags: 1

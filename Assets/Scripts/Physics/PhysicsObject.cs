@@ -183,6 +183,7 @@ public class PhysicsObject : MonoBehaviour
 
     void OnDisable ()
     {
+        physicsEngine.RemoveObject(this);
         physicsObjects.Remove(this);
     }
 
