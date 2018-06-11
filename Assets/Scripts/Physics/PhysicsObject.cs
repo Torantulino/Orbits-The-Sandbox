@@ -15,6 +15,7 @@ public class PhysicsObject : MonoBehaviour
     public Rigidbody rb;
 
     private float G = 667.408f;
+    //private float G = 1.61803398875f;
 
     public Vector3 velocity = Vector3.zero;
     private Vector3 a = Vector3.zero;
@@ -34,6 +35,8 @@ public class PhysicsObject : MonoBehaviour
     private ObjectCamCtrlr previewCamCtrlr;
     private LineRenderer lineRenderer;
 
+    public int spawnMode;
+    private bool spawnee = false;
 
     public float Density
     {
@@ -80,9 +83,12 @@ public class PhysicsObject : MonoBehaviour
 	    lineRenderer = GetComponent<LineRenderer>();
 	    trailRenderer = GetComponentInChildren<TrailRenderer>();
 
+        //TEMP
+	    int spawnMode = 1;
 
-        //Add to list
-        mainCamController.PhysicsObjects.Add(this);
+
+    //Add to list
+    mainCamController.PhysicsObjects.Add(this);
 
 	    //Apply Random Spin around local Y axis
 	    Vector3 spinVector = transform.up * Random.Range(0.1f, 2.0f);
@@ -91,12 +97,11 @@ public class PhysicsObject : MonoBehaviour
         //Clear Bugged Trail
         trailRenderer.Clear();
 
-        
-
-	    if (UiManager.spawnWithOrbit)
+	    PhysicsObject strongestObj = null;
+        if (UiManager.spawnWithOrbit)
 	    {
 	        float strongestForce = 0.0f;
-	        PhysicsObject strongestObj = null;
+	        strongestObj = null;
             // Sort PhysicsObjects by Mass
             physicsObjects.Sort((y, x) => x.rb.mass.CompareTo(y.rb.mass));
 	        //Find Object with highest gravitational influence
@@ -132,7 +137,41 @@ public class PhysicsObject : MonoBehaviour
 
 	        }
 	    }
-    }
+	    if (strongestObj != null)
+	    {
+
+	        //TEMP
+	        int div = 5;
+	        //Symetrical Spawning
+	        if (spawnMode == 1 && !spawnee)
+	        {
+	            float twoPi = 2 * Mathf.PI;
+	            //Loop starts at 1 to account for this object
+	            for (int i = 1; i < div; i++)
+	            {
+	                //Calculate angle
+	                float theta = (twoPi / div) * i;
+	                //Spawn new object
+	                GameObject spawnedObj = Instantiate(this.gameObject);
+	                //- Rotate object about object of largest gravitational influence -
+	                //Translate coordinate system so that OLGI is at center
+	                Vector2 pos = new Vector2(rb.position.x - strongestObj.rb.position.x,
+	                    rb.position.z - strongestObj.rb.position.z);
+	                //Perform Rotation
+	                Vector2 newPos = new Vector2(pos.x * Mathf.Cos(theta) - pos.y * Mathf.Sin(theta),
+	                    pos.y * Mathf.Cos(theta) + pos.x * Mathf.Sin(theta));
+	                //Translate coordinate system back to its original state
+	                newPos = new Vector2(newPos.x + strongestObj.rb.position.x, newPos.y + strongestObj.rb.position.z);
+	                //Apply position
+	                spawnedObj.transform.position = new Vector3(newPos.x, strongestObj.rb.position.y, newPos.y);
+	                //Set spawnee flag to prevent spawning loop
+	                spawnedObj.GetComponent<PhysicsObject>().spawnee = true;
+	                //Reset velocity
+	                spawnedObj.GetComponent<PhysicsObject>().rb.velocity = Vector3.zero;
+	            }
+	        }
+	    }
+	}
 
 
 
