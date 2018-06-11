@@ -150,6 +150,11 @@ public class UIManager : MonoBehaviour
 	            ResumeGame();
 	        }
 	    }
+        //Delete
+	    if (Input.GetKeyDown(KeyCode.Delete))
+	    {
+	        Destroy(selectedObject.gameObject);
+	    }
 	}
 
     /*
