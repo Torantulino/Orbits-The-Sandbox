@@ -34,8 +34,8 @@ public class PhysicsObject : MonoBehaviour
     private CamController mainCamController;
     private ObjectCamCtrlr previewCamCtrlr;
     private LineRenderer lineRenderer;
+    private PhysicsEngine physicsEngine;
 
-    public int spawnMode;
     private bool spawnee = false;
 
     public float Density
@@ -65,6 +65,7 @@ public class PhysicsObject : MonoBehaviour
         densityLocked = true;
         massLocked = false;
         radiusLocked = false;
+        physicsEngine = FindObjectOfType<PhysicsEngine>();
     }
 
     // Use this for initialization
@@ -83,12 +84,8 @@ public class PhysicsObject : MonoBehaviour
 	    lineRenderer = GetComponent<LineRenderer>();
 	    trailRenderer = GetComponentInChildren<TrailRenderer>();
 
-        //TEMP
-	    int spawnMode = 1;
-
-
-    //Add to list
-    mainCamController.PhysicsObjects.Add(this);
+        //Add to list
+        mainCamController.PhysicsObjects.Add(this);
 
 	    //Apply Random Spin around local Y axis
 	    Vector3 spinVector = transform.up * Random.Range(0.1f, 2.0f);
@@ -139,12 +136,10 @@ public class PhysicsObject : MonoBehaviour
 	    }
 	    if (strongestObj != null)
 	    {
-
-	        //TEMP
-	        int div = 5;
 	        //Symetrical Spawning
-	        if (spawnMode == 1 && !spawnee)
+	        if (UiManager.spawnSymetry && !spawnee)
 	        {
+	            int div = UiManager.symDivs;
 	            float twoPi = 2 * Mathf.PI;
 	            //Loop starts at 1 to account for this object
 	            for (int i = 1; i < div; i++)
@@ -182,6 +177,7 @@ public class PhysicsObject : MonoBehaviour
 
      physicsObjects.Add(this);
 
+    physicsEngine.AddObject(this);  
        
     }
 
@@ -207,48 +203,6 @@ public class PhysicsObject : MonoBehaviour
             }
     }
 
-    // Simulate
-    void FixedUpdate ()
-    {
-        //Gravitate all Physics objects other than this one
-        foreach (PhysicsObject physicsObject in physicsObjects)
-        {
-            if (physicsObject != this)
-            Gravitate(physicsObject);
-        }
-        
-        /*
-        //Calculate Acceleration from Force and Mass
-        a = F / rb.mass;
-        //Calculate Velocity from acceleration and time
-        velocity += a * Time.fixedDeltaTime;
-        //Calculate New position from velocity and time
-	    position += velocity * Time.fixedDeltaTime;
-        //Move Object
-	    gameObject.transform.position = position;
-        */
-	}
-
-    void Gravitate(PhysicsObject subjectObj)
-    {
-        //Obtain Direction Vector
-        Vector3 dir = rb.position - subjectObj.rb.position;
-        //Obtain Distance, return if 0
-        float dist = dir.magnitude;
-        if(dist == 0)
-            return;
-        //Calculate Magnitude of force
-        float magnitude = G * (rb.mass * subjectObj.rb.mass) / Mathf.Pow(dist, 2);
-        //Calculate force
-        Vector3 force = dir.normalized * magnitude;
-        //Excert force on subject object
-        subjectObj.rb.AddForce(force);
-     }
-
-    void ExcertForce(Vector3 force)
-    {
-        F += force;
-    }
 
     void calculateVolume(float rad)
     {

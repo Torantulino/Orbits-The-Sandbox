@@ -20,7 +20,8 @@ public class UIManager : MonoBehaviour
     public PhysicsEngine PhysicsEngine;
     public int manipMode; //0 = Launch Mode, 1 = Move mode
     public bool spawnWithOrbit = true;
-
+    public bool spawnSymetry;
+    public int symDivs;
 
     private PhysicsObject selectedObject;
     private Dictionary<string, Object> CelestialObjects = new Dictionary<string, Object>();
@@ -32,6 +33,7 @@ public class UIManager : MonoBehaviour
     private GameObject pauseButton;
     private GameObject playButton;
     private InputField inptTime;
+    private InputField inptDivs;
     private Text objectName;
     private CanvasGroup canvasGroup;
     private CamController camController;
@@ -50,6 +52,8 @@ public class UIManager : MonoBehaviour
     void Awake()
     {
         manipMode = 0;
+        symDivs = 2;
+        spawnSymetry = false;
     }
 
     // Use this for initialization
@@ -59,12 +63,15 @@ public class UIManager : MonoBehaviour
 	    playButton = transform.Find("panBottom/btnPlay").gameObject;
 	    pauseButton = transform.Find("panBottom/btnPause").gameObject;
 	    inptTime = transform.Find("panBottom/txtTimeScale/inptTime").GetComponent<InputField>();
+	    inptDivs = transform.Find("panBottom/txtSym/inptDivs").GetComponent<InputField>();
         planetPanel = transform.Find("panLeft/panPlanets").gameObject;
         starPanel = transform.Find("panLeft/panStars").gameObject;
         othersPanel = transform.Find("panLeft/panOthers").gameObject;
 	    pausePanel = transform.Find("panPause").gameObject;
         activePanel = starPanel;
 	    canvasGroup = transform.GetComponent<CanvasGroup>();
+
+	    inptDivs.text = symDivs.ToString();
 
 	    inptTime.text = Time.timeScale.ToString();
 
@@ -287,6 +294,32 @@ public class UIManager : MonoBehaviour
                 selectedObject.radiusLocked = tgl.isOn;
                 inptRadiusVal.interactable = !tgl.isOn;
             }
+        }
+    }
+
+    public void toggleSymetry(bool state)
+    {
+        spawnSymetry = state;
+        inptDivs.interactable = state;
+    }
+
+    public void DivsChanged()
+    {
+        int result;
+        if (int.TryParse(inptDivs.text, out result))
+        {
+            if(result > 1 && result < 100)
+            {
+                symDivs = result;
+            }
+            else
+            {
+                inptDivs.text = symDivs.ToString();
+            }
+        }
+        else
+        {
+            inptDivs.text = symDivs.ToString();
         }
     }
 
