@@ -4,10 +4,24 @@ using UnityEngine;
 
 public class MusicManagaer : MonoBehaviour
 {
-
+    public static MusicManagaer MusicMan = null;
     private AudioSource source;
     private Object[] soundtrack;
     private int lastPlayed;
+
+    void Awake()
+    {
+        if (MusicMan == null)
+        {
+            MusicMan = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else
+        {
+            Destroy(this.gameObject);
+
+        }
+    }
 
     void Start()
     {

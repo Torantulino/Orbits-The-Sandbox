@@ -15,6 +15,7 @@ public class PhysicsEngine : MonoBehaviour
     // Initialize
     void Start ()
     {
+        Time.timeScale = 1;
         timeScale = Time.timeScale;
     }
 	

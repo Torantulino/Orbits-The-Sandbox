@@ -6,6 +6,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
@@ -38,6 +39,9 @@ public class UIManager : MonoBehaviour
     private CanvasGroup canvasGroup;
     private CamController camController;
     private GameObject pausePanel;
+    private InputField inptPosX;
+    private InputField inptPosY;
+    private InputField inptPosZ;
 
     public void SetSelectedObject(PhysicsObject obj)
     {
@@ -51,9 +55,9 @@ public class UIManager : MonoBehaviour
 
     void Awake()
     {
-        manipMode = 0;
-        symDivs = 2;
-        spawnSymetry = false;
+        manipMode = 1;
+        symDivs = 5;
+        spawnSymetry = true;
     }
 
     // Use this for initialization
@@ -68,6 +72,9 @@ public class UIManager : MonoBehaviour
         starPanel = transform.Find("panLeft/panStars").gameObject;
         othersPanel = transform.Find("panLeft/panOthers").gameObject;
 	    pausePanel = transform.Find("panPause").gameObject;
+	    inptPosX = transform.Find("panObject/txtPosX/inptPosX").GetComponent<InputField>();
+	    inptPosY = transform.Find("panObject/txtPosY/inptPosY").GetComponent<InputField>();
+	    inptPosZ = transform.Find("panObject/txtPosZ/inptPosZ").GetComponent<InputField>();
         activePanel = starPanel;
 	    canvasGroup = transform.GetComponent<CanvasGroup>();
 
@@ -104,10 +111,20 @@ public class UIManager : MonoBehaviour
                 inptDensityVal.text = selectedObject.Density.ToString();            
             //Name
 	        objectName.text = selectedObject.name;
-	    }
+	        //PosX
+            if (!inptPosX.isFocused)
+	            inptPosX.text = selectedObject.rb.position.x.ToString();
+	        //PosY
+            if(!inptPosY.isFocused)
+	            inptPosY.text = selectedObject.rb.position.y.ToString();
+	        //PosZ
+            if(!inptPosZ.isFocused)
+    	        inptPosZ.text = selectedObject.rb.position.z.ToString();
+
+        }
 
         //Update timescale based on UI
-	    if (!inptTime.isFocused)
+        if (!inptTime.isFocused)
 	        inptTime.text = Time.timeScale.ToString();
 
         //Select object
@@ -129,6 +146,7 @@ public class UIManager : MonoBehaviour
         {
             if (canvasGroup.alpha == 1.0f)
             {
+
                 canvasGroup.alpha = 0.0f;
                 canvasGroup.blocksRaycasts = false;
             }
@@ -156,27 +174,6 @@ public class UIManager : MonoBehaviour
 	        Destroy(selectedObject.gameObject);
 	    }
 	}
-
-    /*
-    void PopulatePlanetSpawner()
-    {
-        foreach (GameObject obj in CelestialObjects)
-        {
-            Transform newContent = Instantiate(contentPanel, viewPort);
-            
-            AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(obj), ImportAssetOptions.ForceUpdate);
-            //Create texture from Prefab
-            Texture newTex = null;
-            //newTex = AssetPreview.GetMiniThumbnail(obj);
-            newTex = AssetDatabase.GetCachedIcon(AssetDatabase.GetAssetPath(obj));
-            //Create sprite from texture
-            Sprite newSprite = Sprite.Create(newTex as Texture2D, new Rect(0.0f, 0.0f, newTex.width, newTex.height), new Vector2(0.5f, 0.5f));
-            //Assign Spirte to button
-            newContent.GetComponent<Image>().sprite = newSprite;
-            
-        }
-        
-    }*/
 
     public void ReloadScene()
     {
@@ -350,6 +347,34 @@ public class UIManager : MonoBehaviour
         if (float.TryParse(val, out valResult))
         {
             selectedObject.setDensity(valResult);
+        }
+    }
+
+    public void finEditingPosX(string val)
+    {
+        float valResult;
+        if (float.TryParse(val, out valResult))
+        {
+            Vector3 objPos = selectedObject.transform.position;
+            selectedObject.transform.position = new Vector3(valResult, objPos.y, objPos.z);
+        }
+    }
+    public void finEditingPosY(string val)
+    {
+        float valResult;
+        if (float.TryParse(val, out valResult))
+        {
+            Vector3 objPos = selectedObject.transform.position;
+            selectedObject.transform.position = new Vector3(objPos.x, valResult, objPos.z);
+        }
+    }
+    public void finEditingPosZ(string val)
+    {
+        float valResult;
+        if (float.TryParse(val, out valResult))
+        {
+            Vector3 objPos = selectedObject.transform.position;
+            selectedObject.transform.position = new Vector3(objPos.x, objPos.y, valResult);
         }
     }
 
