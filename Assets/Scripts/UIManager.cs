@@ -23,6 +23,7 @@ public class UIManager : MonoBehaviour
     public bool spawnWithOrbit = true;
     public bool spawnSymetry;
     public int symDivs;
+    public float orbVMultiplier;
 
     private PhysicsObject selectedObject;
     private Dictionary<string, Object> CelestialObjects = new Dictionary<string, Object>();
@@ -58,6 +59,7 @@ public class UIManager : MonoBehaviour
         manipMode = 1;
         symDivs = 5;
         spawnSymetry = true;
+        orbVMultiplier = 0;
     }
 
     // Use this for initialization
@@ -169,7 +171,7 @@ public class UIManager : MonoBehaviour
 	        }
 	    }
         //Delete
-	    if (Input.GetKeyDown(KeyCode.Delete))
+	    if (Input.GetKeyDown(KeyCode.Delete) || Input.GetKeyDown(KeyCode.Backspace))
 	    {
 	        Destroy(selectedObject.gameObject);
 	    }
@@ -209,6 +211,11 @@ public class UIManager : MonoBehaviour
         catch (OverflowException)
         {
         }
+    }
+
+    public void OrbVMultiplierChanged(float val)
+    {
+        orbVMultiplier = val;
     }
 
     public void trailsToggled(bool state)

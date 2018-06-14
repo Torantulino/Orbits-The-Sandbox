@@ -129,10 +129,10 @@ public class PhysicsObject : MonoBehaviour
 	            float dist = dir.magnitude;
 	            Vector3 requiredV = new Vector3(dir.z, dir.y, -dir.x);
 	            float vMag = Mathf.Sqrt(G * strongestObj.rb.mass / dist);
-	            requiredV = requiredV.normalized * vMag;
+	            requiredV = requiredV.normalized * (vMag + (UiManager.orbVMultiplier * vMag/5));
 	            rb.velocity = requiredV + strongestObj.rb.velocity;
 
-	        }
+            }
 	    }
 	    if (strongestObj != null)
 	    {
