@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MusicManagaer : MonoBehaviour
 {
@@ -25,8 +26,17 @@ public class MusicManagaer : MonoBehaviour
 
     void Start()
     {
-        //Load soundtrack
-        soundtrack = Resources.LoadAll("Music");
+        if (SceneManager.GetActiveScene().name == "Darkness")
+        {
+            //Load soundtrack
+            soundtrack = Resources.LoadAll("Music/neon");
+
+        }
+        else
+        {
+            //Load soundtrack
+            soundtrack = Resources.LoadAll("Music");
+        }
         //Obtain reference to audiosource
         source = transform.Find("Source").GetComponent<AudioSource>();
 
