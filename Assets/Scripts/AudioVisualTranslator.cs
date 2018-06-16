@@ -40,8 +40,16 @@ public class AudioVisualTranslator : MonoBehaviour
         float av = (prevVal + thirdVal + bass) / 3;
         if (av > 10)
             av = 10;
-        bloomSettings.bloom.intensity = Mathf.Lerp(Mathf.Max(lastAv, 1.0f), Mathf.Max(av, 1.0f), Time.unscaledDeltaTime * 10); 
+#if UNITY_EDITOR
+        bloomSettings.bloom.intensity = 0.0f;
+
+
+#else
+        bloomSettings.bloom.intensity = Mathf.Lerp(Mathf.Max(lastAv, 1.0f), Mathf.Max(av, 1.0f), Time.unscaledDeltaTime * 10);
         mainCam.GetComponent<PostProcessingBehaviour>().profile.bloom.settings = bloomSettings;
+
+#endif
+
         if (isThird)
         {
             thirdVal = bass;

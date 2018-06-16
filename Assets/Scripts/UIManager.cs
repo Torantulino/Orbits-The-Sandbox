@@ -69,7 +69,7 @@ public class UIManager : MonoBehaviour
 	    playButton = transform.Find("panBottom/btnPlay").gameObject;
 	    pauseButton = transform.Find("panBottom/btnPause").gameObject;
 	    inptTime = transform.Find("panBottom/txtTimeScale/inptTime").GetComponent<InputField>();
-	    inptDivs = transform.Find("panBottom/txtSym/inptDivs").GetComponent<InputField>();
+	    inptDivs = transform.Find("panSpawn/txtSym/inptDivs").GetComponent<InputField>();
         planetPanel = transform.Find("panLeft/panPlanets").gameObject;
         starPanel = transform.Find("panLeft/panStars").gameObject;
         othersPanel = transform.Find("panLeft/panOthers").gameObject;
