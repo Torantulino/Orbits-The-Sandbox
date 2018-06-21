@@ -44,6 +44,7 @@ public class UIManager : MonoBehaviour
     private InputField inptPosY;
     private InputField inptPosZ;
 
+
     public void SetSelectedObject(PhysicsObject obj)
     {
         selectedObject = obj;
@@ -112,7 +113,7 @@ public class UIManager : MonoBehaviour
             if(!inptDensityVal.isFocused)
                 inptDensityVal.text = selectedObject.Density.ToString();            
             //Name
-	        objectName.text = selectedObject.name;
+	        objectName.text = selectedObject.name.ToUpper();
 	        //PosX
             if (!inptPosX.isFocused)
 	            inptPosX.text = selectedObject.rb.position.x.ToString();
@@ -182,6 +183,7 @@ public class UIManager : MonoBehaviour
         Application.LoadLevel(Application.loadedLevel);
     }
 
+    //Pause
     public void pausePressed()
     {
         PhysicsEngine.pauseSimulation();
@@ -189,6 +191,7 @@ public class UIManager : MonoBehaviour
         playButton.SetActive(true);
     }
 
+    //Play
     public void playPressed()
     {
         PhysicsEngine.resumeSimulation();
