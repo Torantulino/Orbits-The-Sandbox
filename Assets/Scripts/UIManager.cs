@@ -6,10 +6,13 @@ using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Experimental.UIElements;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Button = UnityEngine.Experimental.UIElements.Button;
+using Image = UnityEngine.UI.Image;
 using Object = UnityEngine.Object;
+using Toggle = UnityEngine.UI.Toggle;
 
 public class UIManager : MonoBehaviour
 {
@@ -47,7 +50,12 @@ public class UIManager : MonoBehaviour
     private InputField inptPosZ;
     private Image imgSpawnObj;
     private Color desiredTrailColor;
-
+    private GameObject panObjects;
+    private GameObject panBrush;
+    private GameObject panSpawn;
+    private GameObject panObject;
+    private UnityEngine.UI.Button tabObj;
+    private UnityEngine.UI.Button tabScene;
 
 
     void Awake()
@@ -60,7 +68,11 @@ public class UIManager : MonoBehaviour
 
     // Use this for initialization
     void Start ()
-	{
+    {
+        panObjects = transform.Find("panLeft").gameObject;
+        panBrush = transform.Find("panBrush").gameObject;
+        panSpawn = transform.Find("panSpawn").gameObject;
+        panObject = transform.Find("panObject").gameObject;
 	    objectName = transform.Find("panObject/TitleObj").GetComponent<Text>();
 	    playButton = transform.Find("panBottom/btnPlay").gameObject;
 	    pauseButton = transform.Find("panBottom/btnPause").gameObject;
@@ -74,6 +86,8 @@ public class UIManager : MonoBehaviour
 	    inptPosY = transform.Find("panObject/txtPosY/inptPosY").GetComponent<InputField>();
 	    inptPosZ = transform.Find("panObject/txtPosZ/inptPosZ").GetComponent<InputField>();
 	    imgSpawnObj = transform.Find("panBrush/imgSpawnObj").GetComponent<Image>();
+        tabObj = transform.Find("panTabs/tabObjs/btnObjs").GetComponent<UnityEngine.UI.Button>();
+        tabScene = transform.Find("panTabs/tabScene/btnScene").GetComponent<UnityEngine.UI.Button>();
 	    colPicker = GameObject.FindObjectOfType<CUIColorPicker>();
         activePanel = starPanel;
 	    canvasGroup = transform.GetComponent<CanvasGroup>();
@@ -85,6 +99,12 @@ public class UIManager : MonoBehaviour
 	    camController = FindObjectOfType<CamController>();
 
 	    colPicker.SetOnValueChangeCallback(TrailColChanged);
+
+        //Highlight Active Tab
+        ColorBlock colBlock = ColorBlock.defaultColorBlock;
+        colBlock.colorMultiplier = 1.5f;
+        tabObj.colors = colBlock;
+
 
         Object[] CelestialObj = Resources.LoadAll("Prefabs/Objects");
 	    foreach (Object obj in CelestialObj)
@@ -318,6 +338,35 @@ public class UIManager : MonoBehaviour
             tR.endColor = new Vector4(tR.endColor.r, tR.endColor.g, tR.endColor.b, 0.0f);
 
         }
+    }
+
+    public void SwitchTab(int val)
+    {
+        //If Obejcts Tab Pressed
+        if (val == 0)
+        {
+            //Toggle All panels
+            panObjects.SetActive(!panObjects.activeSelf);
+            panBrush.SetActive(!panBrush.activeSelf);
+            panSpawn.SetActive(!panSpawn.activeSelf);
+            panObject.SetActive(!panObject.activeSelf);
+
+            if (panObject.activeSelf)
+            {
+                //Highlight Active Tab
+                ColorBlock colBlock = ColorBlock.defaultColorBlock;
+                colBlock.colorMultiplier = 1.5f;
+                tabObj.colors = colBlock;
+            }
+            else
+            {
+                //Highlight Active Tab
+                ColorBlock colBlock = ColorBlock.defaultColorBlock;
+                colBlock.colorMultiplier = 1.0f;
+                tabObj.colors = colBlock;
+
+            }
+        } 
     }
 
     public void LockToggled(Toggle tgl)
