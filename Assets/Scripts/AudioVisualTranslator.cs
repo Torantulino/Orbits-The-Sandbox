@@ -17,6 +17,7 @@ public class AudioVisualTranslator : MonoBehaviour
     public float tenor;
     public float alto;
     public float soprano;
+    public bool isActivated;
     private float prevVal;
     private float thirdVal;
     private float lastAv;
@@ -25,6 +26,7 @@ public class AudioVisualTranslator : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        isActivated = true;
         samples = new float[64];
         freqBands = new float[8];
         mainCam = Camera.main.gameObject;
@@ -35,38 +37,41 @@ public class AudioVisualTranslator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GetFreqBands();
-        audioSource.GetSpectrumData(samples, 0, FFTWindow.BlackmanHarris);
-        float av = (prevVal + thirdVal + bass) / 3;
-        if (av > 10)
-            av = 10;
-        bloomSettings.bloom.intensity = Mathf.Lerp(Mathf.Max(lastAv, 1.0f), Mathf.Max(av, 1.0f), Time.unscaledDeltaTime * 10);
-        mainCam.GetComponent<PostProcessingBehaviour>().profile.bloom.settings = bloomSettings;
-
-
-        if (isThird)
+        if (isActivated)
         {
-            thirdVal = bass;
-            isThird = false;
+            GetFreqBands();
+            audioSource.GetSpectrumData(samples, 0, FFTWindow.BlackmanHarris);
+            float av = (prevVal + thirdVal + bass) / 3;
+            if (av > 10)
+                av = 10;
+            bloomSettings.bloom.intensity =
+                Mathf.Lerp(Mathf.Max(lastAv, 1.0f), Mathf.Max(av, 1.0f), Time.unscaledDeltaTime * 10);
+            mainCam.GetComponent<PostProcessingBehaviour>().profile.bloom.settings = bloomSettings;
+
+
+            if (isThird)
+            {
+                thirdVal = bass;
+                isThird = false;
+            }
+            else
+            {
+                prevVal = bass;
+                isThird = true;
+            }
+
+            lastAv = av;
+            /*
+            Get8Bands();
+            audioSource.GetSpectrumData(samples, 0, FFTWindow.BlackmanHarris);
+            if (freqBands[1] > 10)
+                freqBands[1] = 10;
+            bloomSettings.bloom.intensity = Mathf.Max(freqBands[1], 1.0f);
+            mainCam.GetComponent<PostProcessingBehaviour>().profile.bloom.settings = bloomSettings;
+            */
+
+
         }
-        else
-        {
-            prevVal = bass;
-            isThird = true;
-        }
-
-        lastAv = av;
-        /*
-        Get8Bands();
-        audioSource.GetSpectrumData(samples, 0, FFTWindow.BlackmanHarris);
-        if (freqBands[1] > 10)
-            freqBands[1] = 10;
-        bloomSettings.bloom.intensity = Mathf.Max(freqBands[1], 1.0f);
-        mainCam.GetComponent<PostProcessingBehaviour>().profile.bloom.settings = bloomSettings;
-        */
-
-
-
     }
 
     void GetFreqBands()

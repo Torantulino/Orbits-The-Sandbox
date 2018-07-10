@@ -7,6 +7,7 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Experimental.UIElements;
+using UnityEngine.PostProcessing;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Button = UnityEngine.Experimental.UIElements.Button;
@@ -29,9 +30,11 @@ public class UIManager : MonoBehaviour
     public int symDivs;
     public float orbVMultiplier;
 
+    private AudioVisualTranslator audioVT;
     private PhysicsObject selectedObject;
     private CUIColorPicker colPicker;
     private Dictionary<string, Object> CelestialObjects = new Dictionary<string, Object>();
+    private Dictionary<string, Material> Skyboxes = new Dictionary<string, Material>();
     private GameObject objectToSpawn;
     private GameObject activePanel;
     private GameObject planetPanel;
@@ -88,6 +91,7 @@ public class UIManager : MonoBehaviour
 	    imgSpawnObj = transform.Find("panBrush/imgSpawnObj").GetComponent<Image>();
         tabObj = transform.Find("panTabs/tabObjs/btnObjs").GetComponent<UnityEngine.UI.Button>();
         tabScene = transform.Find("panTabs/tabScene/btnScene").GetComponent<UnityEngine.UI.Button>();
+        audioVT = GameObject.FindObjectOfType<AudioVisualTranslator>();
 	    colPicker = GameObject.FindObjectOfType<CUIColorPicker>();
         activePanel = starPanel;
 	    canvasGroup = transform.GetComponent<CanvasGroup>();
@@ -98,19 +102,26 @@ public class UIManager : MonoBehaviour
 
 	    camController = FindObjectOfType<CamController>();
 
-	    colPicker.SetOnValueChangeCallback(TrailColChanged);
+	    //colPicker.SetOnValueChangeCallback(TrailColChanged);                                                  ##########PUT BACK##########
 
         //Highlight Active Tab
         ColorBlock colBlock = ColorBlock.defaultColorBlock;
         colBlock.colorMultiplier = 1.5f;
         tabObj.colors = colBlock;
 
-
+        //Load Celestial Objects
         Object[] CelestialObj = Resources.LoadAll("Prefabs/Objects");
 	    foreach (Object obj in CelestialObj)
 	    {
 	        CelestialObjects.Add(obj.name, obj);
 	    }
+
+        //Load Skyboxes
+        Object[] sbxs = Resources.LoadAll("Materials/Skyboxes");
+        foreach (Object skybox in sbxs)
+        {
+            Skyboxes.Add(skybox.name, (Material)skybox);
+        }
 
         SetSelectedObject(GameObject.FindGameObjectWithTag("host").GetComponent<PhysicsObject>());
     }
@@ -197,10 +208,37 @@ public class UIManager : MonoBehaviour
 	    }
 	}
 
+    public void SetSkybox(string name)
+    {
+        if(Skyboxes[name] != null)
+            RenderSettings.skybox = Skyboxes[name];
+    }
 
     public void SetSelectedObject(PhysicsObject obj)
     {
         selectedObject = obj;
+    }
+
+    public void ToggleNeon(bool val)
+    {
+        BloomModel.Settings bloomSettings = Camera.main.GetComponent<PostProcessingBehaviour>().profile.bloom.settings;
+        if (val)
+        {
+            bloomSettings.bloom.intensity = 2.35f;
+            bloomSettings.bloom.threshold = 0.4f;
+            bloomSettings.bloom.radius = 4.0f;
+            bloomSettings.lensDirt.intensity = 0.0f;
+            audioVT.isActivated = true;
+        }
+        else
+        {
+            audioVT.isActivated = false;
+            bloomSettings.bloom.intensity = 0.5f;
+            bloomSettings.bloom.threshold = 1.0f;
+            bloomSettings.bloom.radius = 2.99f;
+            bloomSettings.lensDirt.intensity = 10;
+        }
+        Camera.main.GetComponent<PostProcessingBehaviour>().profile.bloom.settings = bloomSettings;
     }
 
     public void SetObjectToSpawn(string name)
