@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Button = UnityEngine.Experimental.UIElements.Button;
 using Object = UnityEngine.Object;
 
 public class UIManager : MonoBehaviour
@@ -43,17 +44,9 @@ public class UIManager : MonoBehaviour
     private InputField inptPosX;
     private InputField inptPosY;
     private InputField inptPosZ;
+    private Image imgSpawnObj;
 
 
-    public void SetSelectedObject(PhysicsObject obj)
-    {
-        selectedObject = obj;
-    }
-
-    public void SetObjectToSpawn(string name)
-    {
-        objectToSpawn = (GameObject)CelestialObjects[name];
-    }
 
     void Awake()
     {
@@ -78,6 +71,7 @@ public class UIManager : MonoBehaviour
 	    inptPosX = transform.Find("panObject/txtPosX/inptPosX").GetComponent<InputField>();
 	    inptPosY = transform.Find("panObject/txtPosY/inptPosY").GetComponent<InputField>();
 	    inptPosZ = transform.Find("panObject/txtPosZ/inptPosZ").GetComponent<InputField>();
+	    imgSpawnObj = transform.Find("panBrush/imgSpawnObj").GetComponent<Image>();
         activePanel = starPanel;
 	    canvasGroup = transform.GetComponent<CanvasGroup>();
 
@@ -177,6 +171,23 @@ public class UIManager : MonoBehaviour
 	        Destroy(selectedObject.gameObject);
 	    }
 	}
+
+
+    public void SetSelectedObject(PhysicsObject obj)
+    {
+        selectedObject = obj;
+    }
+
+    public void SetObjectToSpawn(string name)
+    {
+        objectToSpawn = (GameObject)CelestialObjects[name];
+    }
+
+    public void SetImgSpawnObj(Image btnImage)
+    {
+        imgSpawnObj.sprite = btnImage.sprite;
+    }
+
 
     public void ReloadScene()
     {
