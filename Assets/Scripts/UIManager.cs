@@ -27,6 +27,7 @@ public class UIManager : MonoBehaviour
     public float orbVMultiplier;
 
     private PhysicsObject selectedObject;
+    private CUIColorPicker colPicker;
     private Dictionary<string, Object> CelestialObjects = new Dictionary<string, Object>();
     private GameObject objectToSpawn;
     private GameObject activePanel;
@@ -45,6 +46,7 @@ public class UIManager : MonoBehaviour
     private InputField inptPosY;
     private InputField inptPosZ;
     private Image imgSpawnObj;
+    private Color desiredTrailColor;
 
 
 
@@ -72,6 +74,7 @@ public class UIManager : MonoBehaviour
 	    inptPosY = transform.Find("panObject/txtPosY/inptPosY").GetComponent<InputField>();
 	    inptPosZ = transform.Find("panObject/txtPosZ/inptPosZ").GetComponent<InputField>();
 	    imgSpawnObj = transform.Find("panBrush/imgSpawnObj").GetComponent<Image>();
+	    colPicker = GameObject.FindObjectOfType<CUIColorPicker>();
         activePanel = starPanel;
 	    canvasGroup = transform.GetComponent<CanvasGroup>();
 
@@ -80,6 +83,8 @@ public class UIManager : MonoBehaviour
 	    inptTime.text = Time.timeScale.ToString();
 
 	    camController = FindObjectOfType<CamController>();
+
+	    colPicker.SetOnValueChangeCallback(TrailColChanged);
 
         Object[] CelestialObj = Resources.LoadAll("Prefabs/Objects");
 	    foreach (Object obj in CelestialObj)
@@ -181,6 +186,16 @@ public class UIManager : MonoBehaviour
     public void SetObjectToSpawn(string name)
     {
         objectToSpawn = (GameObject)CelestialObjects[name];
+        //Set colour picker UI to reflect trail colour
+        colPicker.Color = objectToSpawn.GetComponentInChildren<TrailRenderer>().startColor;
+        //reset desired trail colour
+        desiredTrailColor = colPicker.Color;
+    }
+
+    public void TrailColChanged(Color col)
+    {
+        //Update desired trail colour based on user selection
+        desiredTrailColor = col;
     }
 
     public void SetImgSpawnObj(Image btnImage)
@@ -294,6 +309,14 @@ public class UIManager : MonoBehaviour
 
             GameObject SpawnedObj = Instantiate(objectToSpawn);
             SpawnedObj.transform.position = worldPosition;
+
+            //Set Trail colour based on UI selection
+            TrailRenderer tR = SpawnedObj.GetComponentInChildren<TrailRenderer>();
+            tR.startColor = desiredTrailColor;
+            tR.endColor = desiredTrailColor;
+            //Ensure alpha value is 0
+            tR.endColor = new Vector4(tR.endColor.r, tR.endColor.g, tR.endColor.b, 0.0f);
+
         }
     }
 
