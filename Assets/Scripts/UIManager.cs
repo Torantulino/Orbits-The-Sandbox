@@ -106,7 +106,7 @@ public class UIManager : MonoBehaviour
 
 	    camController = FindObjectOfType<CamController>();
 
-	    //colPicker.SetOnValueChangeCallback(TrailColChanged);                                                  ##########PUT BACK##########
+	    colPicker.SetOnValueChangeCallback(TrailColChanged);
 
         //Highlight Active Tab
         ColorBlock colBlock = ColorBlock.defaultColorBlock;
