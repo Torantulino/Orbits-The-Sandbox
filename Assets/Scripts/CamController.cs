@@ -57,20 +57,34 @@ public class CamController : MonoBehaviour
 
 
 	            //If not too close to surface of planet (to prevent clipping) zoom!
-	            if (dist > minDist && Input.GetKey(KeyCode.W))
-	            {
+	            if (dist > minDist && Input.GetKey(KeyCode.W) || dist > minDist && Input.GetKey(KeyCode.UpArrow) || dist > minDist && Input.GetAxis("Mouse ScrollWheel") > 0f)
+                {
+                    if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+                    {
+                        //Zoom in faster with mouse wheel
+                        dist -= dist * Time.unscaledDeltaTime * 5.0f;
+                        transform.position = target.transform.position + (dist * dir);
+                    }
 	                // Zoom
 	                dist -= dist * Time.unscaledDeltaTime;
 	                transform.position = target.transform.position + (dist * dir);
 	            }
-	            if (Input.GetKey(KeyCode.S))
+	            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow) || Input.GetAxis("Mouse ScrollWheel") < 0f)
 	            {
-	                //Zoom out
-	                dist += dist * Time.unscaledDeltaTime;
+	                if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+	                {
+	                    //Zoom out faster with mouse wheel
+	                    dist += dist * Time.unscaledDeltaTime * 5.0f;
+	                    transform.position = target.transform.position + (dist * dir);
+
+                    }
+                    //Zoom out
+                    dist += dist * Time.unscaledDeltaTime;
 	                transform.position = target.transform.position + (dist * dir);
 	            }
 	        }
-	        if (Input.GetKeyDown(KeyCode.LeftArrow))
+            //Cycle Left
+	        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
 	        {
 	            if (targetNo > 0)
 	            {
@@ -86,7 +100,8 @@ public class CamController : MonoBehaviour
                 //Send selected object to preview cam
 	            objectCamCtrlr.SetCamTarget(PhysicsObjects[targetNo]);
             }
-            if (Input.GetKeyDown(KeyCode.RightArrow))
+            //Cycle Right
+            if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
 	        {
 	            if (targetNo < PhysicsObjects.Count - 1)
 	            {
@@ -103,7 +118,6 @@ public class CamController : MonoBehaviour
 	            objectCamCtrlr.SetCamTarget(PhysicsObjects[targetNo]);
 
             }
-
         }
     }
 
