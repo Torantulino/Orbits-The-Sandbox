@@ -283,7 +283,6 @@ public class UIManager : MonoBehaviour
 
             GameObject SpawnedObj = Instantiate(objectToSpawn);
             SpawnedObj.transform.position = worldPosition;
-            objectToSpawn = null;
         }
     }
 
