@@ -57,6 +57,8 @@ public class UIManager : MonoBehaviour
     private GameObject panBrush;
     private GameObject panSpawn;
     private GameObject panObject;
+    private GameObject panSettings;
+    private GameObject panBackgrounds;
     private UnityEngine.UI.Button tabObj;
     private UnityEngine.UI.Button tabScene;
 
@@ -76,6 +78,8 @@ public class UIManager : MonoBehaviour
         panBrush = transform.Find("panBrush").gameObject;
         panSpawn = transform.Find("panSpawn").gameObject;
         panObject = transform.Find("panObject").gameObject;
+        panSettings = transform.Find("panSettings").gameObject;
+        panBackgrounds = transform.Find("panBackgrounds").gameObject;
 	    objectName = transform.Find("panObject/TitleObj").GetComponent<Text>();
 	    playButton = transform.Find("panBottom/btnPlay").gameObject;
 	    pauseButton = transform.Find("panBottom/btnPause").gameObject;
@@ -383,11 +387,14 @@ public class UIManager : MonoBehaviour
         //If Obejcts Tab Pressed
         if (val == 0)
         {
-            //Toggle All panels
+            //Toggle Object Panels
             panObjects.SetActive(!panObjects.activeSelf);
             panBrush.SetActive(!panBrush.activeSelf);
             panSpawn.SetActive(!panSpawn.activeSelf);
             panObject.SetActive(!panObject.activeSelf);
+            //Set Scene Panels to off
+            panSettings.SetActive(false);
+            panBackgrounds.SetActive(false);
 
             if (panObject.activeSelf)
             {
@@ -402,9 +409,44 @@ public class UIManager : MonoBehaviour
                 ColorBlock colBlock = ColorBlock.defaultColorBlock;
                 colBlock.colorMultiplier = 1.0f;
                 tabObj.colors = colBlock;
-
             }
-        } 
+            //Remove Highlight from other Tab
+            ColorBlock cb = ColorBlock.defaultColorBlock;
+            cb.colorMultiplier = 1.0f;
+            tabScene.colors = cb;
+
+        }
+        //If Scene Tab Pressed
+        if (val == 1)
+        {
+            //Toggle Scene Panels
+            panSettings.SetActive(!panBackgrounds.activeSelf);
+            panBackgrounds.SetActive(!panBackgrounds.activeSelf);
+            //Set Object Panels to Off
+            panObjects.SetActive(false);
+            panBrush.SetActive(false);
+            panSpawn.SetActive(false);
+            panObject.SetActive(false);
+
+            if (panBackgrounds.activeSelf)
+            {
+                //Highlight Active Tab
+                ColorBlock colBlock = ColorBlock.defaultColorBlock;
+                colBlock.colorMultiplier = 1.5f;
+                tabScene.colors = colBlock;
+            }
+            else
+            {
+                //Remove Highlight
+                ColorBlock colBlock = ColorBlock.defaultColorBlock;
+                colBlock.colorMultiplier = 1.0f;
+                tabScene.colors = colBlock;
+            }
+            //Remove Highlight from other Tab
+            ColorBlock cb = ColorBlock.defaultColorBlock;
+            cb.colorMultiplier = 1.0f;
+            tabObj.colors = cb;
+        }
     }
 
     public void LockToggled(Toggle tgl)
