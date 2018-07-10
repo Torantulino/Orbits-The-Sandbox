@@ -206,7 +206,7 @@ public class UIManager : MonoBehaviour
 	        }
 	    }
         //Delete
-	    if (Input.GetKeyDown(KeyCode.Delete) || Input.GetKeyDown(KeyCode.Backspace))
+	    if (Input.GetKeyDown(KeyCode.Delete))
 	    {
 	        Destroy(selectedObject.gameObject);
 	    }
