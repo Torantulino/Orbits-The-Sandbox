@@ -74,15 +74,23 @@ public class PhysicsObject : MonoBehaviour
         //Aquire references
         UiManager = FindObjectOfType<UIManager>();
         if(UiManager == null)
-            Debug.Log("UiManager not found!");
+            Debug.Log("UiManager not found by " + this.name + "!");
+
 	    mainCamController = Camera.main.GetComponent<CamController>();
         if(mainCamController == null)
-            Debug.Log("Main Cam Controller fot Found.");
-	    previewCamCtrlr = FindObjectOfType<ObjectCamCtrlr>();
+            Debug.Log("Main Cam Controller fot found by " + this.name + "!");
+
+	    previewCamCtrlr = FindObjectOfType<ObjectCamCtrlr>(); 
         if(previewCamCtrlr == null)
-            Debug.Log("Preview Cam Controller not found!");
+            Debug.Log("Preview Cam Controller not found by " + this.name + "!");
+
 	    lineRenderer = GetComponent<LineRenderer>();
+        if(lineRenderer == null)
+            Debug.Log("Line renderer not found on object " + this.name + "!");   
+
 	    trailRenderer = GetComponentInChildren<TrailRenderer>();
+        if(trailRenderer == null)
+            Debug.Log("Trail renderer not found on object " + this.name + "!");        
 
         //Add to list
         mainCamController.PhysicsObjects.Add(this);
