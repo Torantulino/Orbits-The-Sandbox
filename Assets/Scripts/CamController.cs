@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using UnityEngine;
 using UnityEngine.Assertions.Comparers;
 
@@ -19,6 +20,7 @@ public class CamController : MonoBehaviour
     private float targetRad;
     private UIManager UiManager;
     private ObjectCamCtrlr objectCamCtrlr;
+    private CinemachineVirtualCamera mainVirtualCamera;
 
     void OnEnable()
     {
@@ -33,6 +35,7 @@ public class CamController : MonoBehaviour
 	    targetRad = target.transform.localScale.x;
 	    SetCamTarget(target);
         objectCamCtrlr = FindObjectOfType<ObjectCamCtrlr>();
+        mainVirtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
     }
 
     // Update is called once per frame

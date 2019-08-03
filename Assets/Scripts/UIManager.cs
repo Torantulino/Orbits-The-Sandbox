@@ -66,8 +66,8 @@ public class UIManager : MonoBehaviour
     void Awake()
     {
         manipMode = 1;
-        symDivs = 5;
-        spawnSymetry = true;
+        symDivs = 0;
+        spawnSymetry = false;
         orbVMultiplier = 0;
     }
 
@@ -237,10 +237,10 @@ public class UIManager : MonoBehaviour
         else
         {
             audioVT.isActivated = false;
-            bloomSettings.bloom.intensity = 0.5f;
+            bloomSettings.bloom.intensity = 0.0f;
             bloomSettings.bloom.threshold = 1.0f;
-            bloomSettings.bloom.radius = 2.99f;
-            bloomSettings.lensDirt.intensity = 10;
+            bloomSettings.bloom.radius = 0.0f;
+            bloomSettings.lensDirt.intensity = 0;
         }
         Camera.main.GetComponent<PostProcessingBehaviour>().profile.bloom.settings = bloomSettings;
     }
