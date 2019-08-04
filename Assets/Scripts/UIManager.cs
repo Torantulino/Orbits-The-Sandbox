@@ -56,7 +56,8 @@ public class UIManager : MonoBehaviour
     private GameObject panBackgrounds;
     private UnityEngine.UI.Button tabObj;
     private UnityEngine.UI.Button tabScene;
-
+    
+    InfiniteGrids placementGrid;
 
     void Awake()
     {
@@ -96,6 +97,7 @@ public class UIManager : MonoBehaviour
 	    colPicker = GameObject.FindObjectOfType<CUIColorPicker>();
         activePanel = starPanel;
 	    canvasGroup = transform.GetComponent<CanvasGroup>();
+        placementGrid = FindObjectOfType<InfiniteGrids>();
 
 	    inptDivs.text = symDivs.ToString();
 
@@ -358,22 +360,37 @@ public class UIManager : MonoBehaviour
     void SpawnObject()
     {
         if (objectToSpawn != null)
-        {
-            Debug.Log("test!");
-            //Get mouse position on screen
+        { 
+            
+            Debug.Log("Object Spawn Start!");
+            // Get mouse position on screen
             Vector3 screenPosition = Input.mousePosition;
-            screenPosition.z = Camera.main.transform.position.y;
-            //Translate to world position
-            Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
 
+            // Raycast into screen looking for placement plane
+            Ray ray = Camera.main.ScreenPointToRay(screenPosition);
+
+            // Check if ray hit, if so, get hitpoint
+            float rayLength = 0.0f;
+            Vector3 hitPoint = new Vector3();
+            if(placementGrid.plane.Raycast(ray, out rayLength))
+            {
+                hitPoint = ray.GetPoint(rayLength);
+            }
+            else
+            {
+                Debug.Log("Ray did not hit placement plane.");
+                return;
+            }
+
+            // Spawn object
             GameObject SpawnedObj = Instantiate(objectToSpawn);
-            SpawnedObj.transform.position = worldPosition;
+            SpawnedObj.transform.position = hitPoint;
 
-            //Set Trail colour based on UI selection
+            // Set Trail colour based on UI selection
             TrailRenderer tR = SpawnedObj.GetComponentInChildren<TrailRenderer>();
             tR.startColor = desiredTrailColor;
             tR.endColor = desiredTrailColor;
-            //Ensure alpha value is 0
+            // Ensure alpha value is 0
             tR.endColor = new Vector4(tR.endColor.r, tR.endColor.g, tR.endColor.b, 0.0f);
 
         }

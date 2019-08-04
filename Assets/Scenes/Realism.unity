@@ -160,8 +160,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GLMat: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
-  gridCount: 1000
+  gridCount: 10000
   gridSize: 10
+  gridBrightness: 0.8
 --- !u!4 &63817804 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4869953532238596, guid: 9b61bf4e9ee242749af789447a7d8c0a,
