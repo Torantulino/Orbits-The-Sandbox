@@ -94,9 +94,6 @@ public class PhysicsObject : MonoBehaviour
         if(trailRenderer == null)
             Debug.Log("Trail renderer not found on object " + this.name + "!");        
 
-        //Add to list
-        mainCamController.SetFocalObject(this.gameObject);
-
 	    //Apply Random Spin around local Y axis
 	    Vector3 spinVector = transform.up * Random.Range(0.1f, 2.0f) / rb.mass;
 	    rb.angularVelocity = spinVector;
