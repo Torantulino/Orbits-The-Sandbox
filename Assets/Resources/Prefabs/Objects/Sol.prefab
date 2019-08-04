@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 1032647534354684}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children: []
   m_Father: {fileID: 4204575701041052}
   m_RootOrder: 2
@@ -4862,7 +4862,7 @@ Transform:
   m_GameObject: {fileID: 1252106105866974}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children: []
   m_Father: {fileID: 4204575701041052}
   m_RootOrder: 3
@@ -9953,7 +9953,7 @@ MonoBehaviour:
   rb: {fileID: 54829433555896014}
   velocity: {x: 0, y: 0, z: 0}
   isTrailRenderer: 0
-  spawnWithOrbit: 1
+  spawnWithOrbit: 0
 --- !u!54 &54829433555896014
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -9962,7 +9962,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1780368068488432}
   serializedVersion: 2
-  m_Mass: 1989000
+  m_Mass: 1989
   m_Drag: 0
   m_AngularDrag: 0
   m_UseGravity: 0
@@ -10350,8 +10350,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 1
-      minScalar: 1
+      scalar: 0.75
+      minScalar: 0.75
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -10808,7 +10808,7 @@ ParticleSystem:
     m_TextureColorAffectsParticles: 1
     m_TextureAlphaAffectsParticles: 1
     m_TextureBilinearFiltering: 0
-    randomDirectionAmount: 0
+    randomDirectionAmount: 1
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
