@@ -24,6 +24,8 @@ public class PhysicsObject : MonoBehaviour
     public static List<PhysicsObject> physicsObjects;
     public bool isTrailRenderer;
 
+    public bool spawnWithOrbit;
+
     private float forceMultiplier;
     private float dragtime;
     private Vector3 dragStart;
@@ -31,7 +33,7 @@ public class PhysicsObject : MonoBehaviour
     private Vector3 dragStop;
     private TrailRenderer trailRenderer;
     private UIManager UiManager;
-    private CamController mainCamController;
+    private OrbitControls mainCamController;
     private ObjectCamCtrlr previewCamCtrlr;
     private LineRenderer lineRenderer;
     private PhysicsEngine physicsEngine;
@@ -76,7 +78,7 @@ public class PhysicsObject : MonoBehaviour
         if(UiManager == null)
             Debug.Log("UiManager not found by " + this.name + "!");
 
-	    mainCamController = Camera.main.GetComponent<CamController>();
+	    mainCamController = Camera.main.GetComponent<OrbitControls>();
         if(mainCamController == null)
             Debug.Log("Main Cam Controller fot found by " + this.name + "!");
 
@@ -93,17 +95,17 @@ public class PhysicsObject : MonoBehaviour
             Debug.Log("Trail renderer not found on object " + this.name + "!");        
 
         //Add to list
-        mainCamController.PhysicsObjects.Add(this);
+        mainCamController.SetFocalObject(this.gameObject);
 
 	    //Apply Random Spin around local Y axis
-	    Vector3 spinVector = transform.up * Random.Range(0.1f, 2.0f);
+	    Vector3 spinVector = transform.up * Random.Range(0.1f, 2.0f) / rb.mass;
 	    rb.angularVelocity = spinVector;
 
         //Clear Bugged Trail
         trailRenderer.Clear();
 
 	    PhysicsObject strongestObj = null;
-        if (UiManager.spawnWithOrbit)
+        if (spawnWithOrbit)
 	    {
 	        float strongestForce = 0.0f;
 	        strongestObj = null;
@@ -361,7 +363,7 @@ public class PhysicsObject : MonoBehaviour
             // Drag Object
             else if (UiManager.manipMode == 1)
             {
-                if (mainCamController.target != this)
+                if (mainCamController.FocalObject != this)
                 {
                     //Get mouse position on screen
                     Vector3 screenPosition = Input.mousePosition;
@@ -383,8 +385,8 @@ public class PhysicsObject : MonoBehaviour
             UiManager.SetSelectedObject(this);
 
             //Forus target camera
-            mainCamController.SetCamTarget(this);
-            previewCamCtrlr.SetCamTarget(this);
+            mainCamController.SetFocalObject(this.gameObject);
+            //previewCamCtrlr.SetFocalObject(this);
         }
         else if (UiManager.manipMode == 0)
         {
@@ -394,8 +396,8 @@ public class PhysicsObject : MonoBehaviour
         }
     }
 
-    void OnDestroy()
-    {
-        mainCamController.PhysicsObjects.Remove(this);
-    }
+    // void OnDestroy()
+    // {
+    //     mainCamController.PhysicsObjects.Remove(this);
+    // }
 }

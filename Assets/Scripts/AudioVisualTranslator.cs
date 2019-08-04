@@ -2,14 +2,13 @@
 using UnityEngine;
 using System.Collections;
 using System.Linq;
-using UnityEngine.PostProcessing;
-
+using UnityEngine.Rendering.PostProcessing;
 public class AudioVisualTranslator : MonoBehaviour
 {
 
     public GameObject mainCam;
-    private PostProcessingProfile PPP;
-    private BloomModel.Settings bloomSettings;
+    private PostProcessProfile PPP;
+    private Bloom bloomSettings;
     private AudioSource audioSource;
     public float[] samples;
     public float[] freqBands;
@@ -30,8 +29,8 @@ public class AudioVisualTranslator : MonoBehaviour
         samples = new float[64];
         freqBands = new float[8];
         mainCam = Camera.main.gameObject;
-        bloomSettings = mainCam.GetComponent<PostProcessingBehaviour>().profile.bloom.settings;
         audioSource = FindObjectOfType<AudioSource>();
+        //bloomSettings = Camera.main.GetComponent<PostProcessLayer>().GetSettings<Bloom>();
     }
 
     // Update is called once per frame
@@ -44,9 +43,9 @@ public class AudioVisualTranslator : MonoBehaviour
             float av = (prevVal + thirdVal + bass) / 3;
             if (av > 10)
                 av = 10;
-            bloomSettings.bloom.intensity =
-                Mathf.Lerp(Mathf.Max(lastAv, 1.0f), Mathf.Max(av, 1.0f), Time.unscaledDeltaTime * 10);
-            mainCam.GetComponent<PostProcessingBehaviour>().profile.bloom.settings = bloomSettings;
+            //bloomSettings.intensity.value = Mathf.Lerp(Mathf.Max(lastAv, 1.0f), Mathf.Max(av, 1.0f), Time.unscaledDeltaTime * 10);
+           // mainCam.GetComponent<PostProcessLayer>().profile.bloom.settings = bloomSettings;
+           //TODO: UPDATE THIS
 
 
             if (isThird)

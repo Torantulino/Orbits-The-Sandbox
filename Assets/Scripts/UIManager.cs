@@ -2,15 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Experimental.UIElements;
-using UnityEngine.PostProcessing;
+using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Button = UnityEngine.Experimental.UIElements.Button;
 using Image = UnityEngine.UI.Image;
 using Object = UnityEngine.Object;
 using Toggle = UnityEngine.UI.Toggle;
@@ -23,9 +20,8 @@ public class UIManager : MonoBehaviour
     public InputField inptDensityVal;
     public Transform contentPanel;
     public Transform viewPort;
-    public PhysicsEngine PhysicsEngine;
+    public PhysicsEngine physicsEngine;
     public int manipMode; //0 = Launch Mode, 1 = Move mode
-    public bool spawnWithOrbit = true;
     public bool spawnSymetry;
     public int symDivs;
     public float orbVMultiplier;
@@ -46,7 +42,6 @@ public class UIManager : MonoBehaviour
     private InputField inptDivs;
     private Text objectName;
     private CanvasGroup canvasGroup;
-    private CamController camController;
     private GameObject pausePanel;
     private InputField inptPosX;
     private InputField inptPosY;
@@ -69,6 +64,8 @@ public class UIManager : MonoBehaviour
         symDivs = 0;
         spawnSymetry = false;
         orbVMultiplier = 0;
+
+        physicsEngine = FindObjectOfType<PhysicsEngine>();
     }
 
     // Use this for initialization
@@ -103,8 +100,6 @@ public class UIManager : MonoBehaviour
 	    inptDivs.text = symDivs.ToString();
 
 	    inptTime.text = Time.timeScale.ToString();
-
-	    camController = FindObjectOfType<CamController>();
 
 	    colPicker.SetOnValueChangeCallback(TrailColChanged);
 
@@ -225,24 +220,23 @@ public class UIManager : MonoBehaviour
 
     public void ToggleNeon(bool val)
     {
-        BloomModel.Settings bloomSettings = Camera.main.GetComponent<PostProcessingBehaviour>().profile.bloom.settings;
+        Bloom bloomSettings = Camera.main.GetComponent<PostProcessLayer>().GetSettings<Bloom>();
         if (val)
         {
-            bloomSettings.bloom.intensity = 2.35f;
-            bloomSettings.bloom.threshold = 0.4f;
-            bloomSettings.bloom.radius = 4.0f;
-            bloomSettings.lensDirt.intensity = 0.0f;
+            bloomSettings.intensity.value = 2.35f;
+            bloomSettings.threshold.value = 0.4f;
+            //bloomSettings.radius = 4.0f;
             audioVT.isActivated = true;
         }
         else
         {
             audioVT.isActivated = false;
-            bloomSettings.bloom.intensity = 0.0f;
-            bloomSettings.bloom.threshold = 1.0f;
-            bloomSettings.bloom.radius = 0.0f;
-            bloomSettings.lensDirt.intensity = 0;
+            bloomSettings.intensity.value = 0.0f;
+            bloomSettings.threshold.value = 1.0f;
+            //bloomSettings.setRadius(0.0f);
+            //bloomSettings.lensDirt.intensity = 0;
         }
-        Camera.main.GetComponent<PostProcessingBehaviour>().profile.bloom.settings = bloomSettings;
+        //TODO: Do settings need to be set again?
     }
 
     public void SetObjectToSpawn(string name)
@@ -274,7 +268,7 @@ public class UIManager : MonoBehaviour
     //Pause
     public void pausePressed()
     {
-        PhysicsEngine.pauseSimulation();
+        physicsEngine.pauseSimulation();
         pauseButton.SetActive(false);
         playButton.SetActive(true);
     }
@@ -282,7 +276,7 @@ public class UIManager : MonoBehaviour
     //Play
     public void playPressed()
     {
-        PhysicsEngine.resumeSimulation();
+        physicsEngine.resumeSimulation();
         playButton.SetActive(false);
         pauseButton.SetActive(true);
     }
@@ -291,7 +285,7 @@ public class UIManager : MonoBehaviour
     {
         try
         {
-            PhysicsEngine.timeScale = int.Parse(scale);
+            physicsEngine.timeScale = int.Parse(scale);
         }
         catch (ArgumentNullException)
         {
@@ -324,7 +318,10 @@ public class UIManager : MonoBehaviour
 
     public void SpawnWithOrbitToggled(bool state)
     {
-        spawnWithOrbit = state;
+        foreach (Object item in CelestialObjects.Values)
+        {
+            ((GameObject)item).GetComponent<PhysicsObject>().spawnWithOrbit = state;
+        }
     }
 
     public void SwitchPanels(int id)
@@ -365,7 +362,7 @@ public class UIManager : MonoBehaviour
             Debug.Log("test!");
             //Get mouse position on screen
             Vector3 screenPosition = Input.mousePosition;
-            screenPosition.z = camController.transform.position.y;
+            screenPosition.z = Camera.main.transform.position.y;
             //Translate to world position
             Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
 
@@ -553,7 +550,7 @@ public class UIManager : MonoBehaviour
     public void PauseGame()
     {
         pausePanel.SetActive(true);
-        PhysicsEngine.pauseSimulation();
+        physicsEngine.pauseSimulation();
     }
 
     public void ResumeGame()
@@ -561,7 +558,7 @@ public class UIManager : MonoBehaviour
        // if(pausePanel == null)
         //    pausePanel = GameObject.Find("panPause").gameObject;
         pausePanel.SetActive(false);
-        PhysicsEngine.resumeSimulation();
+        physicsEngine.resumeSimulation();
     }
 
     public void Quit()
