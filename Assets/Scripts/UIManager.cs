@@ -62,7 +62,7 @@ public class UIManager : MonoBehaviour
     void Awake()
     {
         manipMode = 1;
-        symDivs = 0;
+        symDivs = 5;
         spawnSymetry = false;
         orbVMultiplier = 0;
 
