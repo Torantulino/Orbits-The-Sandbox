@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using Cinemachine;
 
 public class PhysicsObject : MonoBehaviour
 {
@@ -34,7 +35,7 @@ public class PhysicsObject : MonoBehaviour
     private TrailRenderer trailRenderer;
     private UIManager UiManager;
     private OrbitControls mainCamController;
-    private ObjectCamCtrlr previewCamCtrlr;
+    private CinemachineVirtualCamera previewCamCtrlr;
     private LineRenderer lineRenderer;
     private PhysicsEngine physicsEngine;
 
@@ -82,7 +83,7 @@ public class PhysicsObject : MonoBehaviour
         if(mainCamController == null)
             Debug.Log("Main Cam Controller fot found by " + this.name + "!");
 
-	    previewCamCtrlr = FindObjectOfType<ObjectCamCtrlr>(); 
+	    previewCamCtrlr = FindObjectOfType<CinemachineVirtualCamera>(); 
         if(previewCamCtrlr == null)
             Debug.Log("Preview Cam Controller not found by " + this.name + "!");
 
@@ -383,7 +384,8 @@ public class PhysicsObject : MonoBehaviour
 
             //Forus target camera
             mainCamController.SetFocalObject(this.gameObject);
-            //previewCamCtrlr.SetFocalObject(this);
+            previewCamCtrlr.m_Follow = this.transform;
+            previewCamCtrlr.m_LookAt = this.transform;
         }
         else if (UiManager.manipMode == 0)
         {
