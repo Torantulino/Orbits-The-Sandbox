@@ -43,11 +43,11 @@ public class InfiniteGrids : MonoBehaviour
         Vector3 rounedPos = lookPosition;
  
         //Actual look position
-        GL.Color( Color.black );
-        GL.Vertex( lookPosition );
-        GL.Vertex( lookPosition + Vector3.up );
+        // GL.Color( Color.black );
+        // GL.Vertex( lookPosition );
+        // GL.Vertex( lookPosition + Vector3.up );
  
-            GL.Color(highWhite);
+        GL.Color(highWhite);
  
         //Major x line
         GL.Vertex( rounedPos + new Vector3( gridCount * gridSize, 0, 0 ) );
