@@ -49,11 +49,7 @@ public class UIManager : MonoBehaviour
     private Image imgSpawnObj;
     private Color desiredTrailColor;
     private GameObject panObjects;
-    private GameObject panBrush;
-    private GameObject panSpawn;
-    private GameObject panObject;
-    private GameObject panSettings;
-    private GameObject panBackgrounds;
+    private GameObject panScene;
     private UnityEngine.UI.Button tabObj;
     private UnityEngine.UI.Button tabScene;
     
@@ -72,25 +68,21 @@ public class UIManager : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
-        panObjects = transform.Find("panLeft").gameObject;
-        panBrush = transform.Find("panBrush").gameObject;
-        panSpawn = transform.Find("panSpawn").gameObject;
-        panObject = transform.Find("panObject").gameObject;
-        panSettings = transform.Find("panSettings").gameObject;
-        panBackgrounds = transform.Find("panBackgrounds").gameObject;
-	    objectName = transform.Find("panObject/TitleObj").GetComponent<Text>();
+        panObjects = transform.Find("panObjects").gameObject;
+        panScene = transform.Find("panScene").gameObject;
+	    objectName = transform.Find("panObjects/panObject/TitleObj").GetComponent<Text>();
 	    playButton = transform.Find("panBottom/btnPlay").gameObject;
 	    pauseButton = transform.Find("panBottom/btnPause").gameObject;
 	    inptTime = transform.Find("panBottom/txtTimeScale/inptTime").GetComponent<InputField>();
-	    inptDivs = transform.Find("panSpawn/txtSym/inptDivs").GetComponent<InputField>();
-        planetPanel = transform.Find("panLeft/panPlanets").gameObject;
-        starPanel = transform.Find("panLeft/panStars").gameObject;
-        othersPanel = transform.Find("panLeft/panOthers").gameObject;
+	    inptDivs = transform.Find("panObjects/panSpawn/txtSym/inptDivs").GetComponent<InputField>();
+        planetPanel = transform.Find("panObjects/panLeft/panPlanets").gameObject;
+        starPanel = transform.Find("panObjects/panLeft/panStars").gameObject;
+        othersPanel = transform.Find("panObjects/panLeft/panOthers").gameObject;
 	    pausePanel = transform.Find("panPause").gameObject;
-	    inptPosX = transform.Find("panObject/txtPosX/inptPosX").GetComponent<InputField>();
-	    inptPosY = transform.Find("panObject/txtPosY/inptPosY").GetComponent<InputField>();
-	    inptPosZ = transform.Find("panObject/txtPosZ/inptPosZ").GetComponent<InputField>();
-	    imgSpawnObj = transform.Find("panBrush/imgSpawnObj").GetComponent<Image>();
+	    inptPosX = transform.Find("panObjects/panObject/txtPosX/inptPosX").GetComponent<InputField>();
+	    inptPosY = transform.Find("panObjects/panObject/txtPosY/inptPosY").GetComponent<InputField>();
+	    inptPosZ = transform.Find("panObjects/panObject/txtPosZ/inptPosZ").GetComponent<InputField>();
+	    imgSpawnObj = transform.Find("panObjects/panBrush/imgSpawnObj").GetComponent<Image>();
         tabObj = transform.Find("panTabs/tabObjs/btnObjs").GetComponent<UnityEngine.UI.Button>();
         tabScene = transform.Find("panTabs/tabScene/btnScene").GetComponent<UnityEngine.UI.Button>();
         audioVT = GameObject.FindObjectOfType<AudioVisualTranslator>();
@@ -403,14 +395,10 @@ public class UIManager : MonoBehaviour
         {
             //Toggle Object Panels
             panObjects.SetActive(!panObjects.activeSelf);
-            panBrush.SetActive(!panBrush.activeSelf);
-            panSpawn.SetActive(!panSpawn.activeSelf);
-            panObject.SetActive(!panObject.activeSelf);
             //Set Scene Panels to off
-            panSettings.SetActive(false);
-            panBackgrounds.SetActive(false);
+            panScene.SetActive(false);
 
-            if (panObject.activeSelf)
+            if (panObjects.activeSelf)
             {
                 //Highlight Active Tab
                 ColorBlock colBlock = ColorBlock.defaultColorBlock;
@@ -434,15 +422,11 @@ public class UIManager : MonoBehaviour
         if (val == 1)
         {
             //Toggle Scene Panels
-            panSettings.SetActive(!panBackgrounds.activeSelf);
-            panBackgrounds.SetActive(!panBackgrounds.activeSelf);
+            panScene.SetActive(!panScene.activeSelf);
             //Set Object Panels to Off
             panObjects.SetActive(false);
-            panBrush.SetActive(false);
-            panSpawn.SetActive(false);
-            panObject.SetActive(false);
 
-            if (panBackgrounds.activeSelf)
+            if (panScene.activeSelf)
             {
                 //Highlight Active Tab
                 ColorBlock colBlock = ColorBlock.defaultColorBlock;
