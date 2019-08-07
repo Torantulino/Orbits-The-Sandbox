@@ -52,7 +52,8 @@ public class UIManager : MonoBehaviour
     private GameObject panScene;
     private UnityEngine.UI.Button tabObj;
     private UnityEngine.UI.Button tabScene;
-    
+
+
     InfiniteGrids placementGrid;
 
     void Awake()
@@ -66,36 +67,36 @@ public class UIManager : MonoBehaviour
     }
 
     // Use this for initialization
-    void Start ()
+    void Start()
     {
         panObjects = transform.Find("panObjects").gameObject;
         panScene = transform.Find("panScene").gameObject;
-	    objectName = transform.Find("panObjects/panObject/TitleObj").GetComponent<Text>();
-	    playButton = transform.Find("panBottom/btnPlay").gameObject;
-	    pauseButton = transform.Find("panBottom/btnPause").gameObject;
-	    inptTime = transform.Find("panBottom/txtTimeScale/inptTime").GetComponent<InputField>();
-	    inptDivs = transform.Find("panObjects/panSpawn/txtSym/inptDivs").GetComponent<InputField>();
+        objectName = transform.Find("panObjects/panObject/TitleObj").GetComponent<Text>();
+        playButton = transform.Find("panBottom/btnPlay").gameObject;
+        pauseButton = transform.Find("panBottom/btnPause").gameObject;
+        inptTime = transform.Find("panBottom/txtTimeScale/inptTime").GetComponent<InputField>();
+        inptDivs = transform.Find("panObjects/panSpawn/txtSym/inptDivs").GetComponent<InputField>();
         planetPanel = transform.Find("panObjects/panLeft/panPlanets").gameObject;
         starPanel = transform.Find("panObjects/panLeft/panStars").gameObject;
         othersPanel = transform.Find("panObjects/panLeft/panOthers").gameObject;
-	    pausePanel = transform.Find("panPause").gameObject;
-	    inptPosX = transform.Find("panObjects/panObject/txtPosX/inptPosX").GetComponent<InputField>();
-	    inptPosY = transform.Find("panObjects/panObject/txtPosY/inptPosY").GetComponent<InputField>();
-	    inptPosZ = transform.Find("panObjects/panObject/txtPosZ/inptPosZ").GetComponent<InputField>();
-	    imgSpawnObj = transform.Find("panObjects/panBrush/imgSpawnObj").GetComponent<Image>();
+        pausePanel = transform.Find("panPause").gameObject;
+        inptPosX = transform.Find("panObjects/panObject/txtPosX/inptPosX").GetComponent<InputField>();
+        inptPosY = transform.Find("panObjects/panObject/txtPosY/inptPosY").GetComponent<InputField>();
+        inptPosZ = transform.Find("panObjects/panObject/txtPosZ/inptPosZ").GetComponent<InputField>();
+        imgSpawnObj = transform.Find("panObjects/panBrush/imgSpawnObj").GetComponent<Image>();
         tabObj = transform.Find("panTabs/tabObjs/btnObjs").GetComponent<UnityEngine.UI.Button>();
         tabScene = transform.Find("panTabs/tabScene/btnScene").GetComponent<UnityEngine.UI.Button>();
         audioVT = GameObject.FindObjectOfType<AudioVisualTranslator>();
-	    colPicker = GameObject.FindObjectOfType<CUIColorPicker>();
+        colPicker = GameObject.FindObjectOfType<CUIColorPicker>();
         activePanel = starPanel;
-	    canvasGroup = transform.GetComponent<CanvasGroup>();
+        canvasGroup = transform.GetComponent<CanvasGroup>();
         placementGrid = FindObjectOfType<InfiniteGrids>();
 
-	    inptDivs.text = symDivs.ToString();
+        inptDivs.text = symDivs.ToString();
 
-	    inptTime.text = Time.timeScale.ToString();
+        inptTime.text = Time.timeScale.ToString();
 
-	    colPicker.SetOnValueChangeCallback(TrailColChanged);
+        colPicker.SetOnValueChangeCallback(TrailColChanged);
 
         //Highlight Active Tab
         ColorBlock colBlock = ColorBlock.defaultColorBlock;
@@ -104,10 +105,10 @@ public class UIManager : MonoBehaviour
 
         //Load Celestial Objects
         Object[] CelestialObj = Resources.LoadAll("Prefabs/Objects");
-	    foreach (Object obj in CelestialObj)
-	    {
-	        CelestialObjects.Add(obj.name, obj);
-	    }
+        foreach (Object obj in CelestialObj)
+        {
+            CelestialObjects.Add(obj.name, obj);
+        }
 
         //Load Skyboxes
         Object[] sbxs = Resources.LoadAll("Materials/Skyboxes");
@@ -119,54 +120,54 @@ public class UIManager : MonoBehaviour
         SetSelectedObject(GameObject.FindGameObjectWithTag("host").GetComponent<PhysicsObject>());
     }
 
-	
-	// Update is called once per frame
-	void Update ()      
-	{
+
+    // Update is called once per frame
+    void Update()
+    {
         //Update properties of selected object based on UI
-	    if (selectedObject != null)
-	    {
+        if (selectedObject != null)
+        {
             //Mass
-            if(!inptMassVal.isFocused)
-	            inptMassVal.text = selectedObject.rb.mass.ToString();
+            if (!inptMassVal.isFocused)
+                inptMassVal.text = selectedObject.rb.mass.ToString();
             //Radius
-            if(!inptRadiusVal.isFocused)
+            if (!inptRadiusVal.isFocused)
                 inptRadiusVal.text = selectedObject.Radius.ToString();
             //Density
-            if(!inptDensityVal.isFocused)
-                inptDensityVal.text = selectedObject.Density.ToString();            
+            if (!inptDensityVal.isFocused)
+                inptDensityVal.text = selectedObject.Density.ToString();
             //Name
-	        objectName.text = selectedObject.name.ToUpper();
-	        //PosX
+            objectName.text = selectedObject.name.ToUpper();
+            //PosX
             if (!inptPosX.isFocused)
-	            inptPosX.text = selectedObject.rb.position.x.ToString();
-	        //PosY
-            if(!inptPosY.isFocused)
-	            inptPosY.text = selectedObject.rb.position.y.ToString();
-	        //PosZ
-            if(!inptPosZ.isFocused)
-    	        inptPosZ.text = selectedObject.rb.position.z.ToString();
+                inptPosX.text = selectedObject.rb.position.x.ToString();
+            //PosY
+            if (!inptPosY.isFocused)
+                inptPosY.text = selectedObject.rb.position.y.ToString();
+            //PosZ
+            if (!inptPosZ.isFocused)
+                inptPosZ.text = selectedObject.rb.position.z.ToString();
 
         }
 
         //Update timescale based on UI
         if (!inptTime.isFocused)
-	        inptTime.text = Time.timeScale.ToString();
+            inptTime.text = Time.timeScale.ToString();
 
         //Select object
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
-	    {
-	        RaycastHit hit;
-	        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-	        if (!Physics.Raycast(ray, out hit, 10000))
-	        {
-	            SpawnObject();
-	        }
-	        else
-	        {
-	            Debug.Log("Object Clicked!");
-	        }
-	    }
+        {
+            RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (!Physics.Raycast(ray, out hit, 10000))
+            {
+                SpawnObject();
+            }
+            else
+            {
+                Debug.Log("Object Clicked!");
+            }
+        }
         //Show/Hide UI
         if (Input.GetKeyDown(KeyCode.F1))
         {
@@ -183,27 +184,27 @@ public class UIManager : MonoBehaviour
             }
         }
         //Pause
-	    if (Input.GetKeyDown(KeyCode.Escape))
-	    {
-	        if (!pausePanel.activeSelf)
-	        {
-	            PauseGame();
-	        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (!pausePanel.activeSelf)
+            {
+                PauseGame();
+            }
             else
-	        {
-	            ResumeGame();
-	        }
-	    }
+            {
+                ResumeGame();
+            }
+        }
         //Delete
-	    if (Input.GetKeyDown(KeyCode.Delete))
-	    {
-	        Destroy(selectedObject.gameObject);
-	    }
-	}
+        if (Input.GetKeyDown(KeyCode.Delete))
+        {
+            Destroy(selectedObject.gameObject);
+        }
+    }
 
     public void SetSkybox(string name)
     {
-        if(Skyboxes[name] != null)
+        if (Skyboxes[name] != null)
             RenderSettings.skybox = Skyboxes[name];
     }
 
@@ -299,7 +300,7 @@ public class UIManager : MonoBehaviour
 
     public void trailsToggled(bool state)
     {
-        if(state)
+        if (state)
             Camera.main.cullingMask = Camera.main.cullingMask | (1 << 8);
         else
             Camera.main.cullingMask = Camera.main.cullingMask & ~(1 << 8);
@@ -352,8 +353,8 @@ public class UIManager : MonoBehaviour
     void SpawnObject()
     {
         if (objectToSpawn != null)
-        { 
-            
+        {
+
             Debug.Log("Object Spawn Start!");
             // Get mouse position on screen
             Vector3 screenPosition = Input.mousePosition;
@@ -364,7 +365,7 @@ public class UIManager : MonoBehaviour
             // Check if ray hit, if so, get hitpoint
             float rayLength = 0.0f;
             Vector3 hitPoint = new Vector3();
-            if(placementGrid.plane.Raycast(ray, out rayLength))
+            if (placementGrid.plane.Raycast(ray, out rayLength))
             {
                 hitPoint = ray.GetPoint(rayLength);
             }
@@ -388,26 +389,93 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void SwitchTab(int val)
+    IEnumerator MinimiseUI(int val)
     {
-        //If Obejcts Tab Pressed
+        GameObject contracter = null;
+        GameObject expander = null;
+
+
+        switch (val)
+        {
+            // Set Expander/Contracter
+            case 0:
+                //If Objects Tab Pressed
+                if (panScene.activeSelf)
+                    contracter = panScene;
+                if (panObjects.activeSelf)
+                    contracter = panObjects;
+                else
+                    expander = panObjects;
+                break;
+            case 1:
+                //If Scene Tab Pressed
+                if (panObjects.activeSelf)
+                    contracter = panObjects;
+                if (panScene.activeSelf)
+                    contracter = panScene;
+                else
+                    expander = panScene;
+                break;
+        }
+
+        //##Contract##
+        float spdy;
+        float start_time;
+        if (contracter != null)
+        {
+            Debug.Log("Contracter Start pos: " + contracter.transform.position);
+            Vector3 target_pos = new Vector3(contracter.transform.position.x, contracter.transform.position.y - 210.0f, contracter.transform.position.z);
+            spdy = 0;
+            start_time = Time.realtimeSinceStartup;
+            while (Time.realtimeSinceStartup - start_time < 0.1f)
+            {
+                spdy = Mathf.Lerp(spdy, (target_pos.y - contracter.transform.position.y) * 0.7f, 0.4f);
+                contracter.transform.position = new Vector3(contracter.transform.position.x, contracter.transform.position.y + spdy, contracter.transform.position.z);
+                yield return new WaitForEndOfFrame();
+            }
+            contracter.transform.position = target_pos;
+            Debug.Log("Contracter End pos: " + contracter.transform.position);
+        }
+
+
+        //##After contracting##
+        // Set contracter to inactive
+        if (contracter != null)
+            contracter.SetActive(false);
+        // Set expander to active
+        if (expander != null)
+            expander.SetActive(true);
+
+        //##EXPAND##
+        if (expander != null)
+        {
+            expander.transform.position = new Vector3(635.5f, 147.5f, 0.0f);
+            Debug.Log("Expander Start pos: " + expander.transform.position);
+            Vector3 target_pos = new Vector3(expander.transform.position.x, expander.transform.position.y + 210.0f, expander.transform.position.z);
+            spdy = 0;
+            start_time = Time.realtimeSinceStartup;
+            while (Time.realtimeSinceStartup - start_time < 0.5f)
+            {
+                spdy = Mathf.Lerp(spdy, (target_pos.y - expander.transform.position.y) * 0.7f, 0.4f);
+                expander.transform.position = new Vector3(expander.transform.position.x, expander.transform.position.y + spdy, expander.transform.position.z);
+                yield return new WaitForEndOfFrame();
+            }
+            expander.transform.position = target_pos;
+            Debug.Log("Expander End pos: " + expander.transform.position);
+        }
+
+        //If Object Tab Pressed
         if (val == 0)
         {
-            //Toggle Object Panels
-            panObjects.SetActive(!panObjects.activeSelf);
-            //Set Scene Panels to off
-            panScene.SetActive(false);
-
+            //Highlight Active Tab
             if (panObjects.activeSelf)
             {
-                //Highlight Active Tab
                 ColorBlock colBlock = ColorBlock.defaultColorBlock;
                 colBlock.colorMultiplier = 1.5f;
                 tabObj.colors = colBlock;
             }
             else
             {
-                //Highlight Active Tab
                 ColorBlock colBlock = ColorBlock.defaultColorBlock;
                 colBlock.colorMultiplier = 1.0f;
                 tabObj.colors = colBlock;
@@ -416,16 +484,12 @@ public class UIManager : MonoBehaviour
             ColorBlock cb = ColorBlock.defaultColorBlock;
             cb.colorMultiplier = 1.0f;
             tabScene.colors = cb;
-
         }
+
+
         //If Scene Tab Pressed
         if (val == 1)
         {
-            //Toggle Scene Panels
-            panScene.SetActive(!panScene.activeSelf);
-            //Set Object Panels to Off
-            panObjects.SetActive(false);
-
             if (panScene.activeSelf)
             {
                 //Highlight Active Tab
@@ -445,6 +509,12 @@ public class UIManager : MonoBehaviour
             cb.colorMultiplier = 1.0f;
             tabObj.colors = cb;
         }
+
+        yield return new WaitForSeconds(0.0f);
+    }
+    public void SwitchTab(int val)
+    {
+        StartCoroutine(MinimiseUI(val));
     }
 
     public void LockToggled(Toggle tgl)
@@ -480,7 +550,7 @@ public class UIManager : MonoBehaviour
         int result;
         if (int.TryParse(inptDivs.text, out result))
         {
-            if(result > 1 && result < 100)
+            if (result > 1 && result < 100)
             {
                 symDivs = result;
             }
@@ -556,7 +626,7 @@ public class UIManager : MonoBehaviour
 
     public void ResumeGame()
     {
-       // if(pausePanel == null)
+        // if(pausePanel == null)
         //    pausePanel = GameObject.Find("panPause").gameObject;
         pausePanel.SetActive(false);
         physicsEngine.resumeSimulation();
