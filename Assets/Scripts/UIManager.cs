@@ -32,7 +32,7 @@ public class UIManager : MonoBehaviour
     private Dictionary<string, Object> CelestialObjects = new Dictionary<string, Object>();
     private Dictionary<string, Material> Skyboxes = new Dictionary<string, Material>();
     private GameObject objectToSpawn;
-    private GameObject activePanel;
+    private GameObject activeObjectPanel;
     private GameObject planetPanel;
     private GameObject starPanel;
     private GameObject othersPanel;
@@ -53,6 +53,8 @@ public class UIManager : MonoBehaviour
     private UnityEngine.UI.Button tabObj;
     private UnityEngine.UI.Button tabScene;
 
+    private GameObject activePanel;
+    private Button activeTab;
 
     InfiniteGrids placementGrid;
 
@@ -88,7 +90,7 @@ public class UIManager : MonoBehaviour
         tabScene = transform.Find("panTabs/tabScene/btnScene").GetComponent<UnityEngine.UI.Button>();
         audioVT = GameObject.FindObjectOfType<AudioVisualTranslator>();
         colPicker = GameObject.FindObjectOfType<CUIColorPicker>();
-        activePanel = starPanel;
+        activeObjectPanel = starPanel;
         canvasGroup = transform.GetComponent<CanvasGroup>();
         placementGrid = FindObjectOfType<InfiniteGrids>();
 
@@ -97,6 +99,10 @@ public class UIManager : MonoBehaviour
         inptTime.text = Time.timeScale.ToString();
 
         colPicker.SetOnValueChangeCallback(TrailColChanged);
+
+        // Default active UI tab/panel
+        activePanel = panObjects;
+        activeTab = tabObj;
 
         //Highlight Active Tab
         ColorBlock colBlock = ColorBlock.defaultColorBlock;
@@ -319,37 +325,37 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void SwitchPanels(int id)
+    // Called from Unity
+    public void SwitchObjectPanel(int id)
     {
         if (id == 0)
         {
-            if (activePanel != starPanel)
+            if (activeObjectPanel != starPanel)
             {
-                activePanel.SetActive(false);
+                activeObjectPanel.SetActive(false);
                 starPanel.SetActive(true);
-                activePanel = starPanel;
+                activeObjectPanel = starPanel;
             }
         }
         else if (id == 1)
         {
-            if (activePanel != planetPanel)
+            if (activeObjectPanel != planetPanel)
             {
-                activePanel.SetActive(false);
+                activeObjectPanel.SetActive(false);
                 planetPanel.SetActive(true);
-                activePanel = planetPanel;
+                activeObjectPanel = planetPanel;
             }
         }
         else if (id == 2)
         {
-            if (activePanel != othersPanel)
+            if (activeObjectPanel != othersPanel)
             {
-                activePanel.SetActive(false);
+                activeObjectPanel.SetActive(false);
                 othersPanel.SetActive(true);
-                activePanel = othersPanel;
+                activeObjectPanel = othersPanel;
             }
         }
     }
-
     void SpawnObject()
     {
         if (objectToSpawn != null)
@@ -389,51 +395,50 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    IEnumerator MinimiseUI(int val)
+    // Switches the main UI panel
+    // 0: Objects, 1: Scene
+    IEnumerator SwitchActivePanel(int val)
     {
         GameObject contracter = null;
         GameObject expander = null;
         Button contracterTab = null;
         Button expanderTab = null;
 
+        // Set Contracter
+        if (activePanel != null)
+        {
+            contracter = activePanel;
+            contracterTab = activeTab;
+        }
+
         switch (val)
         {
-            // Set Expander/Contracter
-            case 0:
-                //If Objects Tab Pressed
-                if (panScene.activeSelf)
+            // Set Expander
+            case 0: //If Objects Tab Pressed
+                if(activePanel == panObjects)
                 {
-                    contracter = panScene;
-                    contracterTab = tabScene;
-                }
-                if (panObjects.activeSelf)
-                {
-                    contracter = panObjects;
-                    contracterTab = tabObj;
+                    activePanel = null;
+                    activeTab = null;
                 }
                 else
                 {
                     expander = panObjects;
-                    expanderTab = tabObj;
+                    activePanel = panObjects;
+                    activeTab = tabObj;
                 }
-                break;
-            case 1:
-                //If Scene Tab Pressed
-                if (panObjects.activeSelf)
-                {
-                    contracter = panObjects;
-                    contracterTab = tabObj;
 
-                }
-                if (panScene.activeSelf)
+                break;
+            case 1: //If Scene Tab Pressed
+                if (activePanel == panScene)
                 {
-                    contracter = panScene;
-                    contracterTab = tabScene;
+                    activePanel = null;
+                    activeTab = null;
                 }
                 else
                 {
                     expander = panScene;
-                    expanderTab = tabScene;
+                    activePanel = panScene;
+                    activeTab = tabScene;
                 }
                 break;
         }
@@ -504,7 +509,7 @@ public class UIManager : MonoBehaviour
     }
     public void SwitchTab(int val)
     {
-        StartCoroutine(MinimiseUI(val));
+        StartCoroutine(SwitchActivePanel(val));
     }
 
     public void LockToggled(Toggle tgl)

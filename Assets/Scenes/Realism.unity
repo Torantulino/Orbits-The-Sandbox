@@ -736,25 +736,20 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114232189371426422, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b,
+    - target: {fileID: 114968272049106510, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b,
         type: 3}
-      propertyPath: m_Color.r
-      value: 0.007843138
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SwitchObjectPanel
       objectReference: {fileID: 0}
-    - target: {fileID: 114232189371426422, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b,
+    - target: {fileID: 114385616892493058, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b,
         type: 3}
-      propertyPath: m_Color.g
-      value: 0.25490198
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SwitchObjectPanel
       objectReference: {fileID: 0}
-    - target: {fileID: 114232189371426422, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b,
+    - target: {fileID: 114198785292674550, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b,
         type: 3}
-      propertyPath: m_Color.b
-      value: 0.3019608
-      objectReference: {fileID: 0}
-    - target: {fileID: 114232189371426422, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b,
-        type: 3}
-      propertyPath: m_Color.a
-      value: 0.29411766
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SwitchObjectPanel
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b, type: 3}
