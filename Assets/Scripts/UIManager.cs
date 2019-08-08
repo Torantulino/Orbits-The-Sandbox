@@ -393,7 +393,8 @@ public class UIManager : MonoBehaviour
     {
         GameObject contracter = null;
         GameObject expander = null;
-
+        Button contracterTab = null;
+        Button expanderTab = null;
 
         switch (val)
         {
@@ -401,21 +402,56 @@ public class UIManager : MonoBehaviour
             case 0:
                 //If Objects Tab Pressed
                 if (panScene.activeSelf)
+                {
                     contracter = panScene;
+                    contracterTab = tabScene;
+                }
                 if (panObjects.activeSelf)
+                {
                     contracter = panObjects;
+                    contracterTab = tabObj;
+                }
                 else
+                {
                     expander = panObjects;
+                    expanderTab = tabObj;
+                }
                 break;
             case 1:
                 //If Scene Tab Pressed
                 if (panObjects.activeSelf)
+                {
                     contracter = panObjects;
+                    contracterTab = tabObj;
+
+                }
                 if (panScene.activeSelf)
+                {
                     contracter = panScene;
+                    contracterTab = tabScene;
+                }
                 else
+                {
                     expander = panScene;
+                    expanderTab = tabScene;
+                }
                 break;
+        }
+
+
+        //Highlight Active Tab
+        if (expanderTab != null)
+        {
+            ColorBlock colBlock = ColorBlock.defaultColorBlock;
+            colBlock.colorMultiplier = 1.5f;
+            expanderTab.colors = colBlock;
+        }
+        //Remove Highlight from contracted Tab
+        if (contracterTab != null)
+        {
+            ColorBlock cb = ColorBlock.defaultColorBlock;
+            cb.colorMultiplier = 1.0f;
+            contracterTab.colors = cb;
         }
 
         //##Contract##
@@ -462,52 +498,6 @@ public class UIManager : MonoBehaviour
             }
             expander.transform.position = target_pos;
             Debug.Log("Expander End pos: " + expander.transform.position);
-        }
-
-        //If Object Tab Pressed
-        if (val == 0)
-        {
-            //Highlight Active Tab
-            if (panObjects.activeSelf)
-            {
-                ColorBlock colBlock = ColorBlock.defaultColorBlock;
-                colBlock.colorMultiplier = 1.5f;
-                tabObj.colors = colBlock;
-            }
-            else
-            {
-                ColorBlock colBlock = ColorBlock.defaultColorBlock;
-                colBlock.colorMultiplier = 1.0f;
-                tabObj.colors = colBlock;
-            }
-            //Remove Highlight from other Tab
-            ColorBlock cb = ColorBlock.defaultColorBlock;
-            cb.colorMultiplier = 1.0f;
-            tabScene.colors = cb;
-        }
-
-
-        //If Scene Tab Pressed
-        if (val == 1)
-        {
-            if (panScene.activeSelf)
-            {
-                //Highlight Active Tab
-                ColorBlock colBlock = ColorBlock.defaultColorBlock;
-                colBlock.colorMultiplier = 1.5f;
-                tabScene.colors = colBlock;
-            }
-            else
-            {
-                //Remove Highlight
-                ColorBlock colBlock = ColorBlock.defaultColorBlock;
-                colBlock.colorMultiplier = 1.0f;
-                tabScene.colors = colBlock;
-            }
-            //Remove Highlight from other Tab
-            ColorBlock cb = ColorBlock.defaultColorBlock;
-            cb.colorMultiplier = 1.0f;
-            tabObj.colors = cb;
         }
 
         yield return new WaitForSeconds(0.0f);
