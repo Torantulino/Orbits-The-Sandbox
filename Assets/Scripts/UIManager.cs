@@ -49,13 +49,9 @@ public class UIManager : MonoBehaviour
     private Image imgSpawnObj;
     private Color desiredTrailColor;
     private GameObject panObjects;
-    private GameObject panScene;
-    private UnityEngine.UI.Button tabObj;
-    private UnityEngine.UI.Button tabScene;
+    private GameObject panEntities;
 
-    private GameObject activePanel;
-    private Button activeTab;
-
+    private bool uiAnimating = false;
     InfiniteGrids placementGrid;
 
     void Awake()
@@ -72,24 +68,22 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         panObjects = transform.Find("panObjects").gameObject;
-        panScene = transform.Find("panScene").gameObject;
-        objectName = transform.Find("panObjects/panObject/TitleObj").GetComponent<Text>();
+        panEntities = transform.Find("panEntities").gameObject;
+        //objectName = transform.Find("panObjects/panObject/TitleObj").GetComponent<Text>();
         playButton = transform.Find("panBottom/btnPlay").gameObject;
         pauseButton = transform.Find("panBottom/btnPause").gameObject;
         inptTime = transform.Find("panBottom/txtTimeScale/inptTime").GetComponent<InputField>();
-        inptDivs = transform.Find("panObjects/panSpawn/txtSym/inptDivs").GetComponent<InputField>();
-        planetPanel = transform.Find("panObjects/panLeft/panPlanets").gameObject;
-        starPanel = transform.Find("panObjects/panLeft/panStars").gameObject;
-        othersPanel = transform.Find("panObjects/panLeft/panOthers").gameObject;
+        inptDivs = transform.Find("panObjects/panel/panSpawn/txtSym/inptDivs").GetComponent<InputField>();
+        planetPanel = transform.Find("panObjects/panel/panLeft/panPlanets").gameObject;
+        starPanel = transform.Find("panObjects/panel/panLeft/panStars").gameObject;
+        othersPanel = transform.Find("panObjects/panel/panLeft/panOthers").gameObject;
         pausePanel = transform.Find("panPause").gameObject;
-        inptPosX = transform.Find("panObjects/panObject/txtPosX/inptPosX").GetComponent<InputField>();
-        inptPosY = transform.Find("panObjects/panObject/txtPosY/inptPosY").GetComponent<InputField>();
-        inptPosZ = transform.Find("panObjects/panObject/txtPosZ/inptPosZ").GetComponent<InputField>();
-        imgSpawnObj = transform.Find("panObjects/panBrush/imgSpawnObj").GetComponent<Image>();
-        tabObj = transform.Find("panTabs/tabObjs/btnObjs").GetComponent<UnityEngine.UI.Button>();
-        tabScene = transform.Find("panTabs/tabScene/btnScene").GetComponent<UnityEngine.UI.Button>();
+        // inptPosX = transform.Find("panObjects/panObject/txtPosX/inptPosX").GetComponent<InputField>();
+        // inptPosY = transform.Find("panObjects/panObject/txtPosY/inptPosY").GetComponent<InputField>();
+        // inptPosZ = transform.Find("panObjects/panObject/txtPosZ/inptPosZ").GetComponent<InputField>();
+        // imgSpawnObj = transform.Find("panObjects/panBrush/imgSpawnObj").GetComponent<Image>();
         audioVT = GameObject.FindObjectOfType<AudioVisualTranslator>();
-        colPicker = GameObject.FindObjectOfType<CUIColorPicker>();
+        // colPicker = GameObject.FindObjectOfType<CUIColorPicker>();
         activeObjectPanel = starPanel;
         canvasGroup = transform.GetComponent<CanvasGroup>();
         placementGrid = FindObjectOfType<InfiniteGrids>();
@@ -98,16 +92,7 @@ public class UIManager : MonoBehaviour
 
         inptTime.text = Time.timeScale.ToString();
 
-        colPicker.SetOnValueChangeCallback(TrailColChanged);
-
-        // Default active UI tab/panel
-        activePanel = panObjects;
-        activeTab = tabObj;
-
-        //Highlight Active Tab
-        ColorBlock colBlock = ColorBlock.defaultColorBlock;
-        colBlock.colorMultiplier = 1.5f;
-        tabObj.colors = colBlock;
+        // colPicker.SetOnValueChangeCallback(TrailColChanged);
 
         //Load Celestial Objects
         Object[] CelestialObj = Resources.LoadAll("Prefabs/Objects");
@@ -130,31 +115,32 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //TODO: Move to rightclick menu
         //Update properties of selected object based on UI
-        if (selectedObject != null)
-        {
-            //Mass
-            if (!inptMassVal.isFocused)
-                inptMassVal.text = selectedObject.rb.mass.ToString();
-            //Radius
-            if (!inptRadiusVal.isFocused)
-                inptRadiusVal.text = selectedObject.Radius.ToString();
-            //Density
-            if (!inptDensityVal.isFocused)
-                inptDensityVal.text = selectedObject.Density.ToString();
-            //Name
-            objectName.text = selectedObject.name.ToUpper();
-            //PosX
-            if (!inptPosX.isFocused)
-                inptPosX.text = selectedObject.rb.position.x.ToString();
-            //PosY
-            if (!inptPosY.isFocused)
-                inptPosY.text = selectedObject.rb.position.y.ToString();
-            //PosZ
-            if (!inptPosZ.isFocused)
-                inptPosZ.text = selectedObject.rb.position.z.ToString();
+        // if (selectedObject != null)
+        // {
+        //     //Mass
+        //     if (!inptMassVal.isFocused)
+        //         inptMassVal.text = selectedObject.rb.mass.ToString();
+        //     //Radius
+        //     if (!inptRadiusVal.isFocused)
+        //         inptRadiusVal.text = selectedObject.Radius.ToString();
+        //     //Density
+        //     if (!inptDensityVal.isFocused)
+        //         inptDensityVal.text = selectedObject.Density.ToString();
+        //     //Name
+        //     objectName.text = selectedObject.name.ToUpper();
+        //     //PosX
+        //     if (!inptPosX.isFocused)
+        //         inptPosX.text = selectedObject.rb.position.x.ToString();
+        //     //PosY
+        //     if (!inptPosY.isFocused)
+        //         inptPosY.text = selectedObject.rb.position.y.ToString();
+        //     //PosZ
+        //     if (!inptPosZ.isFocused)
+        //         inptPosZ.text = selectedObject.rb.position.z.ToString();
 
-        }
+        // }
 
         //Update timescale based on UI
         if (!inptTime.isFocused)
@@ -396,115 +382,101 @@ public class UIManager : MonoBehaviour
     }
 
     // Switches the main UI panel
-    // 0: Objects, 1: Scene
+    // 0: Objects, 1: Entities
     IEnumerator SwitchActivePanel(int val)
     {
-        GameObject contracter = null;
-        GameObject expander = null;
-        Button contracterTab = null;
-        Button expanderTab = null;
+        if(uiAnimating)
+            yield break;
+        uiAnimating = true;
+        GameObject parent = null;
+        GameObject panel = null;
+        GameObject maximiser = null;
+        bool expanding;
+        int side = 0;
+        float dist = 204.0f;
 
-        // Set Contracter
-        if (activePanel != null)
-        {
-            contracter = activePanel;
-            contracterTab = activeTab;
-        }
-
+        // Get panel
         switch (val)
         {
-            // Set Expander
-            case 0: //If Objects Tab Pressed
-                if(activePanel == panObjects)
-                {
-                    activePanel = null;
-                    activeTab = null;
-                }
-                else
-                {
-                    expander = panObjects;
-                    activePanel = panObjects;
-                    activeTab = tabObj;
-                }
-
+            case 0: // Objects Panel
+                parent = panObjects;
+                side = -1;
                 break;
-            case 1: //If Scene Tab Pressed
-                if (activePanel == panScene)
-                {
-                    activePanel = null;
-                    activeTab = null;
-                }
-                else
-                {
-                    expander = panScene;
-                    activePanel = panScene;
-                    activeTab = tabScene;
-                }
+            case 1: // Entity Panel
+                parent = panEntities;
+                side = 1;
                 break;
         }
 
+        {
+            maximiser = parent.transform.Find("btnMaximise").gameObject;
+            if (maximiser == null)
+                Debug.LogError("Panel Maximise button not found.");
+            panel = parent.transform.Find("panel").gameObject;
+            if (panel == null)
+                Debug.LogError("Panel not found.");
+        }
 
-        //Highlight Active Tab
-        if (expanderTab != null)
-        {
-            ColorBlock colBlock = ColorBlock.defaultColorBlock;
-            colBlock.colorMultiplier = 1.5f;
-            expanderTab.colors = colBlock;
-        }
-        //Remove Highlight from contracted Tab
-        if (contracterTab != null)
-        {
-            ColorBlock cb = ColorBlock.defaultColorBlock;
-            cb.colorMultiplier = 1.0f;
-            contracterTab.colors = cb;
-        }
+        // Check if currently acive
+        if (panel.activeSelf)
+            expanding = false;
+        else
+            expanding = true;
+
+        float spdx;
+        float start_time;
 
         //##Contract##
-        float spdy;
-        float start_time;
-        if (contracter != null)
+        if (!expanding)
         {
-            Debug.Log("Contracter Start pos: " + contracter.transform.position);
-            Vector3 target_pos = new Vector3(contracter.transform.position.x, contracter.transform.position.y - 210.0f, contracter.transform.position.z);
-            spdy = 0;
+            Debug.Log("Contracter Start pos: " + parent.transform.position);
+            Vector3 target_pos = new Vector3(parent.transform.position.x + dist * side, parent.transform.position.y, parent.transform.position.z);
+            spdx = 0;
             start_time = Time.realtimeSinceStartup;
             while (Time.realtimeSinceStartup - start_time < 0.1f)
             {
-                spdy = Mathf.Lerp(spdy, (target_pos.y - contracter.transform.position.y) * 0.7f, 0.4f);
-                contracter.transform.position = new Vector3(contracter.transform.position.x, contracter.transform.position.y + spdy, contracter.transform.position.z);
+                spdx = Mathf.Lerp(spdx, (target_pos.x - parent.transform.position.x) * 0.7f, 0.4f);
+                parent.transform.position = new Vector3(parent.transform.position.x + spdx, parent.transform.position.y, parent.transform.position.z);
                 yield return new WaitForEndOfFrame();
             }
-            contracter.transform.position = target_pos;
-            Debug.Log("Contracter End pos: " + contracter.transform.position);
+            // Lock panel inplace
+            parent.transform.position = target_pos;
+            Debug.Log("Contracter End pos: " + parent.transform.position);
         }
 
 
         //##After contracting##
-        // Set contracter to inactive
-        if (contracter != null)
-            contracter.SetActive(false);
-        // Set expander to active
-        if (expander != null)
-            expander.SetActive(true);
+        // Panel Exiting
+        if (panel.activeSelf)
+        {
+            panel.SetActive(false);
+            maximiser.SetActive(true);
+        }
+        // Panel Entering
+        else
+        {
+            panel.SetActive(true);
+            maximiser.SetActive(false);
+        }
 
         //##EXPAND##
-        if (expander != null)
+        if (expanding)
         {
-            expander.transform.position = new Vector3(635.5f, 147.5f, 0.0f);
-            Debug.Log("Expander Start pos: " + expander.transform.position);
-            Vector3 target_pos = new Vector3(expander.transform.position.x, expander.transform.position.y + 210.0f, expander.transform.position.z);
-            spdy = 0;
+            Debug.Log("Expander Start pos: " + parent.transform.position);
+            Vector3 target_pos = new Vector3(parent.transform.position.x - dist * side, parent.transform.position.y, parent.transform.position.z);
+            spdx = 0;
             start_time = Time.realtimeSinceStartup;
             while (Time.realtimeSinceStartup - start_time < 0.5f)
             {
-                spdy = Mathf.Lerp(spdy, (target_pos.y - expander.transform.position.y) * 0.7f, 0.4f);
-                expander.transform.position = new Vector3(expander.transform.position.x, expander.transform.position.y + spdy, expander.transform.position.z);
+                spdx = Mathf.Lerp(spdx, (target_pos.x - parent.transform.position.x) * 0.7f, 0.4f);
+                parent.transform.position = new Vector3(parent.transform.position.x  + spdx, parent.transform.position.y, parent.transform.position.z);
                 yield return new WaitForEndOfFrame();
             }
-            expander.transform.position = target_pos;
-            Debug.Log("Expander End pos: " + expander.transform.position);
+            parent.transform.position = target_pos;
+            Debug.Log("Expander End pos: " + parent.transform.position);
         }
 
+        uiAnimating = false;
         yield return new WaitForSeconds(0.0f);
     }
     public void SwitchTab(int val)
