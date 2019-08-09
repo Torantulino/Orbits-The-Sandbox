@@ -26,17 +26,18 @@ public class MusicManagaer : MonoBehaviour
 
     void Start()
     {
-        if (SceneManager.GetActiveScene().name == "Darkness")
-        {
-            //Load soundtrack
-            soundtrack = Resources.LoadAll("Music/neon");
-
-        }
-        else
+        if (SceneManager.GetActiveScene().name == "Realism")
         {
             //Load soundtrack
             soundtrack = Resources.LoadAll("Music");
+
         }
+        // else
+        // {
+        //     //Load menu music?
+        //     soundtrack = Resources.LoadAll("Music");
+        // }
+        
         //Obtain reference to audiosource
         source = transform.Find("Source").GetComponent<AudioSource>();
 
