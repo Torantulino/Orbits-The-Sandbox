@@ -84,7 +84,7 @@ public class UIManager : MonoBehaviour
         // imgSpawnObj = transform.Find("panObjects/panBrush/imgSpawnObj").GetComponent<Image>();
         audioVT = GameObject.FindObjectOfType<AudioVisualTranslator>();
         // colPicker = GameObject.FindObjectOfType<CUIColorPicker>();
-        activeObjectPanel = starPanel;
+        activeObjectPanel = planetPanel;
         canvasGroup = transform.GetComponent<CanvasGroup>();
         placementGrid = FindObjectOfType<InfiniteGrids>();
 
