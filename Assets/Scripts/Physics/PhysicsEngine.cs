@@ -6,23 +6,22 @@ using UnityEngine;
 public class PhysicsEngine : MonoBehaviour
 {
     public static List<Pair> ObjectPairs;
-    public float timeScale;
     private float timeAtPause;
     private bool paused;
     private float G = 667.408f;
+
+    public const float TIMESCALER = 0.01f;
 
 
     // Initialize
     void Start ()
     {
-        Time.timeScale = 1;
-        timeScale = Time.timeScale;
+        ScaleTime(1);
     }
 	
 	void Update ()
 	{
-        if(!paused)
-            Time.timeScale = timeScale;
+
 	}
 
     // Simulate
@@ -99,11 +98,14 @@ public class PhysicsEngine : MonoBehaviour
         Time.timeScale = timeAtPause;
     }
 
-    public void timeScaled(int scale)
+    public void ScaleTime(float scale)
     {
-        if (scale >= 0 && scale <= 100)
+        scale *= TIMESCALER;
+
+        if (scale >= 0.0f && scale <= 100.0f)
         {
-            timeScale = scale;
+            Time.timeScale = scale;
+            Time.fixedDeltaTime = scale * 0.02f;
         }
     }
 }
