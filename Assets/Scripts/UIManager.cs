@@ -393,7 +393,7 @@ public class UIManager : MonoBehaviour
         GameObject maximiser = null;
         bool expanding;
         int side = 0;
-        float dist = 204.0f;
+        float dist = 266.0f;
 
         // Get panel
         switch (val)
