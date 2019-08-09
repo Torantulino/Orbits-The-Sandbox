@@ -20,7 +20,7 @@ public class OrbitControls : MonoBehaviour
     [SerializeField]
     private Vector3 _Sensitivity = new Vector3(15, -10, -0.1f);
 
-    private float _Distance;
+    public float _Distance;
     private void Awake()
     {
     }

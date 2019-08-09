@@ -38,9 +38,8 @@ public class PhysicsObject : MonoBehaviour
     private CinemachineVirtualCamera previewCamCtrlr;
     private LineRenderer lineRenderer;
     private PhysicsEngine physicsEngine;
-
     private bool spawnee = false;
-
+    private ContextMenu contextMenu;
     public float Density
     {
         get { return density; }
@@ -95,6 +94,10 @@ public class PhysicsObject : MonoBehaviour
         if(trailRenderer == null)
             Debug.Log("Trail renderer not found on object " + this.name + "!");        
 
+        contextMenu = GameObject.FindObjectOfType<ContextMenu>();
+        if(contextMenu == null)
+            Debug.Log("Context Menu not found!");
+        
 	    //Apply Random Spin around local Y axis
 	    Vector3 spinVector = transform.up * Random.Range(0.1f, 2.0f) / rb.mass;
 	    rb.angularVelocity = spinVector;
@@ -377,6 +380,7 @@ public class PhysicsObject : MonoBehaviour
 
     void OnMouseUp()
     {
+        
         if (dragtime < 0.3f)
         {
             //Send selected object to Ui Manager
@@ -395,6 +399,16 @@ public class PhysicsObject : MonoBehaviour
         }
     }
 
+
+    // Called every frame while the mouse is over the GUIElement or Collider.
+    void OnMouseOver()
+    {
+        //Right click
+        if(Input.GetMouseButtonDown(1))
+        {
+            contextMenu.SetTarget(this.gameObject);
+        }
+    }
     // void OnDestroy()
     // {
     //     mainCamController.PhysicsObjects.Remove(this);
