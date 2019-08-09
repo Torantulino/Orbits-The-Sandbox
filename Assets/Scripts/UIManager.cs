@@ -90,7 +90,6 @@ public class UIManager : MonoBehaviour
 
         inptDivs.text = symDivs.ToString();
 
-        inptTime.text = Time.timeScale.ToString();
 
         // colPicker.SetOnValueChangeCallback(TrailColChanged);
 
@@ -144,7 +143,7 @@ public class UIManager : MonoBehaviour
 
         //Update timescale based on UI
         if (!inptTime.isFocused)
-            inptTime.text = Time.timeScale.ToString();
+        inptTime.text = (Time.timeScale / PhysicsEngine.TIMESCALER).ToString();
 
         //Select object
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
@@ -229,10 +228,11 @@ public class UIManager : MonoBehaviour
     public void SetObjectToSpawn(string name)
     {
         objectToSpawn = (GameObject)CelestialObjects[name];
+
         //Set colour picker UI to reflect trail colour
-        colPicker.Color = objectToSpawn.GetComponentInChildren<TrailRenderer>().startColor;
+        // colPicker.Color = objectToSpawn.GetComponentInChildren<TrailRenderer>().startColor;
         //reset desired trail colour
-        desiredTrailColor = colPicker.Color;
+        // desiredTrailColor = colPicker.Color;
     }
 
     public void TrailColChanged(Color col)
@@ -241,10 +241,10 @@ public class UIManager : MonoBehaviour
         desiredTrailColor = col;
     }
 
-    public void SetImgSpawnObj(Image btnImage)
-    {
-        imgSpawnObj.sprite = btnImage.sprite;
-    }
+    // public void SetImgSpawnObj(Image btnImage)
+    // {
+    //     imgSpawnObj.sprite = btnImage.sprite;
+    // }
 
 
     public void ReloadScene()
@@ -272,7 +272,7 @@ public class UIManager : MonoBehaviour
     {
         try
         {
-            physicsEngine.timeScale = int.Parse(scale);
+            physicsEngine.ScaleTime(int.Parse(scale));
         }
         catch (ArgumentNullException)
         {
