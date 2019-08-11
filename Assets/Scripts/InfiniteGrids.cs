@@ -5,7 +5,7 @@ using UnityEngine;
 public class InfiniteGrids : MonoBehaviour
 {
   public Material GLMat;
-    public int gridCount = 5; //number of grids to draw on each side of the look position (half size)
+    public int gridCount = 100; //number of grids to draw on each side of the look position (half size)
     public float gridSize = 1.0f; //spacing between gridlines
  
     Ray ray;
@@ -18,14 +18,58 @@ public class InfiniteGrids : MonoBehaviour
     Color highWhite;
     Color medWhite;
     Color lowWhite;
+    private List<Grid> grids = new List<Grid>();
 
+    struct Grid
+    {
+        public List<Vector3> _grid;
+        public float _cellSize;
+    }
+
+    private Grid CreateGrid(float _cellSize)
+    {
+        Grid _Grid = new Grid();
+        _Grid._cellSize = _cellSize;
+        List<Vector3> _grid = new List<Vector3>();
+
+        //Major x line
+        _grid.Add(new Vector3( gridCount * _cellSize, 0, 0 ));
+        _grid.Add(new Vector3( -gridCount * _cellSize, 0, 0 ));
+        //Major z line
+        _grid.Add(new Vector3( 0, 0, gridCount * _cellSize ));
+        _grid.Add(new Vector3( 0, 0, -gridCount * _cellSize ));
  
+        for (int i = 1; i < gridCount + 1; i++) {
+            //positive x lines
+            _grid.Add(new Vector3( i * _cellSize, 0, gridCount * _cellSize ));
+            _grid.Add(new Vector3( i * _cellSize, 0, -gridCount * _cellSize ));
+            //negative x lines
+            _grid.Add(new Vector3( -i * _cellSize, 0, gridCount * _cellSize ));
+            _grid.Add(new Vector3( -i * _cellSize, 0, -gridCount * _cellSize ));
+            //positive z lines
+            _grid.Add(new Vector3( gridCount * _cellSize, 0, i * _cellSize ));
+            _grid.Add(new Vector3( -gridCount * _cellSize, 0, i * _cellSize ));
+            //negative z lines
+            _grid.Add(new Vector3( gridCount * _cellSize, 0, -i * _cellSize ));
+            _grid.Add(new Vector3( -gridCount * _cellSize, 0, -i * _cellSize ));
+        }
+
+        _Grid._grid = _grid;
+        return _Grid;
+    }
+
     void Start () {
-        highWhite = new Color(1.0f, 1.0f, 1.0f, 0.8f * gridBrightness);
-        medWhite = new Color(1.0f, 1.0f, 1.0f, 0.3f * gridBrightness);
-        lowWhite = new Color(1.0f, 1.0f, 1.0f, 0.05f * gridBrightness);
+        highWhite = new Color(1.0f, 1.0f, 1.0f, 0.8f);
+        medWhite = new Color(1.0f, 1.0f, 1.0f, 0.3f);
+        lowWhite = new Color(1.0f, 1.0f, 1.0f, 0.05f);
         
         cam = GetComponent<Camera>();
+
+
+        grids.Add(CreateGrid(1));
+        grids.Add(CreateGrid(10));
+        grids.Add(CreateGrid(100));
+        //grids.Add(CreateGrid(1000));
     }
  
     void LateUpdate () {
@@ -33,56 +77,33 @@ public class InfiniteGrids : MonoBehaviour
         plane.Raycast( ray, out rayDist );
         lookPosition = ray.GetPoint( rayDist );
     }
- 
-    void OnPostRender () {
+    
+    void OnPostRender () 
+    {   
+        int i = 0;
+        foreach (Grid grid in grids)
+        {
+            if(i==0 && Vector3.Distance(cam.transform.position, lookPosition) > 400.0f)
+            {
+                i++;
+                continue;
+            }
+            GL.PushMatrix();
+            GLMat.SetPass(0);
+            GL.Begin(GL.LINES);
 
-        GL.PushMatrix();
-        GLMat.SetPass( 0 );
-        GL.Begin( GL.LINES );
- 
-        Vector3 rounedPos = lookPosition;
- 
-        //Actual look position
-        // GL.Color( Color.black );
-        // GL.Vertex( lookPosition );
-        // GL.Vertex( lookPosition + Vector3.up );
- 
-        GL.Color(highWhite);
- 
-        //Major x line
-        GL.Vertex( rounedPos + new Vector3( gridCount * gridSize, 0, 0 ) );
-        GL.Vertex( rounedPos + new Vector3( -gridCount * gridSize, 0, 0 ) );
-        //Major z line
-        GL.Vertex( rounedPos + new Vector3( 0, 0, gridCount * gridSize ) );
-        GL.Vertex( rounedPos + new Vector3( 0, 0, -gridCount * gridSize ) );
- 
- 
-        for (int i = 1; i < gridCount + 1; i++) {
-            if(i%50 ==0)
-                GL.Color(highWhite);
-            else if(i%10 == 0)
-                GL.Color(medWhite);
-            else
-                GL.Color(lowWhite);
+            GL.Color(Color.white * Mathf.Min((grid._cellSize / Vector3.Distance(cam.transform.position, lookPosition) + 0.3f), 1.0f));
+            foreach (Vector3 vertex in grid._grid)
+            {
+                GL.Vertex(vertex + lookPosition);
+            }
 
-            //positive x lines
-            GL.Vertex( rounedPos + new Vector3( i * gridSize, 0, gridCount * gridSize ) );
-            GL.Vertex( rounedPos + new Vector3( i * gridSize, 0, -gridCount * gridSize ) );
-            //negative x lines
-            GL.Vertex( rounedPos + new Vector3( -i * gridSize, 0, gridCount * gridSize ) );
-            GL.Vertex( rounedPos + new Vector3( -i * gridSize, 0, -gridCount * gridSize ) );
-            //positive z lines
-            GL.Vertex( rounedPos + new Vector3( gridCount * gridSize, 0, i * gridSize ) );
-            GL.Vertex( rounedPos + new Vector3( -gridCount * gridSize, 0, i * gridSize ) );
-            //negative z lines
-            GL.Vertex( rounedPos + new Vector3( gridCount * gridSize, 0, -i * gridSize ) );
-            GL.Vertex( rounedPos + new Vector3( -gridCount * gridSize, 0, -i * gridSize ) );
+            GL.End();
+            GL.PopMatrix();
+            i++;
         }
- 
-        GL.End();
-        GL.PopMatrix();
     }
- 
+    
     float Round ( float x ) {
         return Mathf.Round( x / gridSize ) * gridSize;
     }
