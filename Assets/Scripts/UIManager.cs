@@ -15,9 +15,6 @@ using Toggle = UnityEngine.UI.Toggle;
 public class UIManager : MonoBehaviour
 {
 
-    public InputField inptMassVal;
-    public InputField inptRadiusVal;
-    public InputField inptDensityVal;
     public Transform contentPanel;
     public Transform viewPort;
     public PhysicsEngine physicsEngine;
@@ -43,15 +40,17 @@ public class UIManager : MonoBehaviour
     private Text objectName;
     private CanvasGroup canvasGroup;
     private GameObject pausePanel;
-    private InputField inptPosX;
-    private InputField inptPosY;
-    private InputField inptPosZ;
     private Image imgSpawnObj;
     private Color desiredTrailColor;
     private GameObject panObjects;
     private GameObject panEntities;
-
+    private Transform contentEntites;
+    private Button lastEntityBtnSelected;
     private bool uiAnimating = false;
+    private List<GameObject> selectedEntites = new List<GameObject>();
+    private OrbitControls mainCamController;
+
+
     InfiniteGrids placementGrid;
 
     void Awake()
@@ -62,13 +61,19 @@ public class UIManager : MonoBehaviour
         orbVMultiplier = 0;
 
         physicsEngine = FindObjectOfType<PhysicsEngine>();
+
+        panObjects = transform.Find("panObjects").gameObject;
+        panEntities = transform.Find("panEntities").gameObject;
+        contentEntites = panEntities.transform.Find("panel/Scroll View/Viewport/Content");
     }
 
     // Use this for initialization
     void Start()
     {
-        panObjects = transform.Find("panObjects").gameObject;
-        panEntities = transform.Find("panEntities").gameObject;
+        mainCamController = Camera.main.GetComponent<OrbitControls>();
+        if (mainCamController == null)
+            Debug.Log("Main Cam Controller fot found by " + this.name + "!");
+
         //objectName = transform.Find("panObjects/panObject/TitleObj").GetComponent<Text>();
         playButton = transform.Find("panBottom/btnPlay").gameObject;
         pauseButton = transform.Find("panBottom/btnPause").gameObject;
@@ -78,9 +83,6 @@ public class UIManager : MonoBehaviour
         starPanel = transform.Find("panObjects/panel/panLeft/panStars").gameObject;
         othersPanel = transform.Find("panObjects/panel/panLeft/panOthers").gameObject;
         pausePanel = transform.Find("panPause").gameObject;
-        // inptPosX = transform.Find("panObjects/panObject/txtPosX/inptPosX").GetComponent<InputField>();
-        // inptPosY = transform.Find("panObjects/panObject/txtPosY/inptPosY").GetComponent<InputField>();
-        // inptPosZ = transform.Find("panObjects/panObject/txtPosZ/inptPosZ").GetComponent<InputField>();
         // imgSpawnObj = transform.Find("panObjects/panBrush/imgSpawnObj").GetComponent<Image>();
         audioVT = GameObject.FindObjectOfType<AudioVisualTranslator>();
         // colPicker = GameObject.FindObjectOfType<CUIColorPicker>();
@@ -114,32 +116,6 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //TODO: Move to rightclick menu
-        //Update properties of selected object based on UI
-        // if (selectedObject != null)
-        // {
-        //     //Mass
-        //     if (!inptMassVal.isFocused)
-        //         inptMassVal.text = selectedObject.rb.mass.ToString();
-        //     //Radius
-        //     if (!inptRadiusVal.isFocused)
-        //         inptRadiusVal.text = selectedObject.Radius.ToString();
-        //     //Density
-        //     if (!inptDensityVal.isFocused)
-        //         inptDensityVal.text = selectedObject.Density.ToString();
-        //     //Name
-        //     objectName.text = selectedObject.name.ToUpper();
-        //     //PosX
-        //     if (!inptPosX.isFocused)
-        //         inptPosX.text = selectedObject.rb.position.x.ToString();
-        //     //PosY
-        //     if (!inptPosY.isFocused)
-        //         inptPosY.text = selectedObject.rb.position.y.ToString();
-        //     //PosZ
-        //     if (!inptPosZ.isFocused)
-        //         inptPosZ.text = selectedObject.rb.position.z.ToString();
-
-        // }
 
         //Update timescale based on UI
         if (!inptTime.isFocused)
@@ -189,7 +165,74 @@ public class UIManager : MonoBehaviour
         //Delete
         if (Input.GetKeyDown(KeyCode.Delete))
         {
-            Destroy(selectedObject.gameObject);
+            foreach (GameObject _obj in selectedEntites)
+            {
+                Destroy(_obj);
+            }
+        }
+    }
+
+    public void AddToEntitiesPanel(GameObject _obj)
+    {
+        GameObject sampleButton = contentEntites.Find("SampleButton").gameObject;
+        GameObject newButton = Instantiate(sampleButton, contentEntites);
+
+        newButton.GetComponentInChildren<Text>().text = _obj.name;
+        newButton.name = _obj.name;
+        newButton.SetActive(true);
+    }    
+    public void RemoveFromEntitiesPanel(GameObject _obj)
+    {
+        GameObject toDestroy = contentEntites.Find(_obj.name).gameObject;
+        Destroy(toDestroy);
+    }
+
+    public void SelectEntityFromPanel(Button _btn)
+    {
+        // Clear Selected Entites
+        selectedEntites.Clear();
+
+        Button[] childButtons = contentEntites.GetComponentsInChildren<Button>(false);
+        // Remove old highlighting
+        foreach (Button button in childButtons)
+        {
+                ColorBlock normalColour = contentEntites.Find("SampleButton").GetComponent<Button>().colors;
+                button.colors = normalColour;
+        }
+
+
+        if (_btn.name != "SampleButton")
+        {
+            ColorBlock redTint = _btn.colors;
+            redTint.normalColor = new Color(0.00392f,  0.10196f,  0.12157f, 0.75f);
+            redTint.selectedColor = new Color(0.00392f,  0.10196f,  0.12157f, 0.75f);
+
+            // If shift button is down
+            if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && lastEntityBtnSelected != null)
+            {
+                int _thisIndex = _btn.transform.GetSiblingIndex();
+                int _lastIndex = lastEntityBtnSelected.transform.GetSiblingIndex();
+                int _startIndex = Math.Min(_thisIndex, _lastIndex);
+                int _endIndex = Math.Max(_thisIndex, _lastIndex);
+                for (int i = _startIndex; i <= _endIndex; i++)
+                {
+                    contentEntites.GetChild(i).GetComponent<Button>().colors = redTint;
+                    // Add to selected Entities
+                    string _name = contentEntites.GetChild(i).GetComponentInChildren<Text>().text;
+                    selectedEntites.Add(GameObject.Find(_name));
+                }
+            }
+            else
+            {
+                _btn.colors = redTint;
+                // Add to selected entites
+                string _name = _btn.GetComponentInChildren<Text>().text;
+                selectedEntites.Add(GameObject.Find(_name));
+                // Focus camera on object
+                SetSelectedObject(GameObject.Find(_btn.GetComponentInChildren<Text>().text).GetComponent<PhysicsObject>());
+            }
+
+            lastEntityBtnSelected = _btn;
         }
     }
 
@@ -202,6 +245,10 @@ public class UIManager : MonoBehaviour
     public void SetSelectedObject(PhysicsObject obj)
     {
         selectedObject = obj;
+
+        //Focus cameras
+        mainCamController.SetFocalObject(obj.gameObject);
+        mainCamController._Distance = Mathf.Max(obj.transform.localScale.z * 3.0f, 1.5f + obj.transform.localScale.z);
     }
 
     public void ToggleNeon(bool val)
@@ -393,7 +440,7 @@ public class UIManager : MonoBehaviour
         GameObject maximiser = null;
         bool expanding;
         int side = 0;
-        float dist = 266.0f;
+        float dist = 204.0f;
 
         // Get panel
         switch (val)
@@ -484,27 +531,6 @@ public class UIManager : MonoBehaviour
         StartCoroutine(SwitchActivePanel(val));
     }
 
-    public void LockToggled(Toggle tgl)
-    {
-        if (selectedObject != null)
-        {
-            if (tgl.name == "tglMassLock")
-            {
-                selectedObject.massLocked = tgl.isOn;
-                inptMassVal.interactable = !tgl.isOn;
-            }
-            else if (tgl.name == "tglDensityLock")
-            {
-                selectedObject.densityLocked = tgl.isOn;
-                inptDensityVal.interactable = !tgl.isOn;
-            }
-            else if (tgl.name == "tglRadiusLock")
-            {
-                selectedObject.radiusLocked = tgl.isOn;
-                inptRadiusVal.interactable = !tgl.isOn;
-            }
-        }
-    }
 
     public void toggleSymetry(bool state)
     {
@@ -532,59 +558,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void finEditingMass(string val)
+    public void ToggleSettings(bool state)
     {
-        float valResult;
-        if (float.TryParse(val, out valResult))
-        {
-            selectedObject.setMass(valResult);
-        }
+        pausePanel.transform.Find("panSettings").gameObject.SetActive(state);
     }
-    public void finEditingRadius(string val)
-    {
-        float valResult;
-        if (float.TryParse(val, out valResult))
-        {
-            selectedObject.setRadius(valResult);
-        }
-    }
-    public void finEditingDensity(string val)
-    {
-        float valResult;
-        if (float.TryParse(val, out valResult))
-        {
-            selectedObject.setDensity(valResult);
-        }
-    }
-
-    public void finEditingPosX(string val)
-    {
-        float valResult;
-        if (float.TryParse(val, out valResult))
-        {
-            Vector3 objPos = selectedObject.transform.position;
-            selectedObject.transform.position = new Vector3(valResult, objPos.y, objPos.z);
-        }
-    }
-    public void finEditingPosY(string val)
-    {
-        float valResult;
-        if (float.TryParse(val, out valResult))
-        {
-            Vector3 objPos = selectedObject.transform.position;
-            selectedObject.transform.position = new Vector3(objPos.x, valResult, objPos.z);
-        }
-    }
-    public void finEditingPosZ(string val)
-    {
-        float valResult;
-        if (float.TryParse(val, out valResult))
-        {
-            Vector3 objPos = selectedObject.transform.position;
-            selectedObject.transform.position = new Vector3(objPos.x, objPos.y, valResult);
-        }
-    }
-
     public void PauseGame()
     {
         pausePanel.SetActive(true);
