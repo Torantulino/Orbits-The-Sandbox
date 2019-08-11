@@ -9861,7 +9861,7 @@ MonoBehaviour:
   rb: {fileID: 54829433555896014}
   velocity: {x: 0, y: 0, z: 0}
   isTrailRenderer: 0
-  spawnWithOrbit: 0
+  spawnWithOrbit: 1
 --- !u!54 &54829433555896014
 Rigidbody:
   m_ObjectHideFlags: 0
