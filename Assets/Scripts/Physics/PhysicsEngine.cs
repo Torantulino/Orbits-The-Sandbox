@@ -11,6 +11,8 @@ public class PhysicsEngine : MonoBehaviour
     private float G = 667.408f;
 
     public const float TIMESCALER = 0.01f;
+    
+    public HashSet<int> objectIDs = new HashSet<int>();
 
 
     // Initialize

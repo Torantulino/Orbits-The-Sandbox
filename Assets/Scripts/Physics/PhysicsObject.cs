@@ -57,6 +57,8 @@ public class PhysicsObject : MonoBehaviour
         get { return speed; }
     }
 
+    public int ID;
+
     void Awake()
     {
         //Set properties
@@ -71,128 +73,150 @@ public class PhysicsObject : MonoBehaviour
     }
 
     // Use this for initialization
-    void Start ()
-	{
+    void Start()
+    {
         //Aquire references
         UiManager = FindObjectOfType<UIManager>();
-        if(UiManager == null)
+        if (UiManager == null)
             Debug.Log("UiManager not found by " + this.name + "!");
 
-	    mainCamController = Camera.main.GetComponent<OrbitControls>();
-        if(mainCamController == null)
+        mainCamController = Camera.main.GetComponent<OrbitControls>();
+        if (mainCamController == null)
             Debug.Log("Main Cam Controller fot found by " + this.name + "!");
 
-	    previewCamCtrlr = FindObjectOfType<CinemachineVirtualCamera>(); 
-        if(previewCamCtrlr == null)
+        previewCamCtrlr = FindObjectOfType<CinemachineVirtualCamera>();
+        if (previewCamCtrlr == null)
             Debug.Log("Preview Cam Controller not found by " + this.name + "!");
 
-	    lineRenderer = GetComponent<LineRenderer>();
-        if(lineRenderer == null)
-            Debug.Log("Line renderer not found on object " + this.name + "!");   
+        lineRenderer = GetComponent<LineRenderer>();
+        if (lineRenderer == null)
+            Debug.Log("Line renderer not found on object " + this.name + "!");
 
-	    trailRenderer = GetComponentInChildren<TrailRenderer>();
-        if(trailRenderer == null)
-            Debug.Log("Trail renderer not found on object " + this.name + "!");        
+        trailRenderer = GetComponentInChildren<TrailRenderer>();
+        if (trailRenderer == null)
+            Debug.Log("Trail renderer not found on object " + this.name + "!");
 
         contextMenu = GameObject.FindObjectOfType<ContextMenu>();
-        if(contextMenu == null)
+        if (contextMenu == null)
             Debug.Log("Context Menu not found!");
-        
-	    //Apply Random Spin around local Y axis
-	    Vector3 spinVector = transform.up * Random.Range(0.1f, 2.0f) / rb.mass;
-	    rb.angularVelocity = spinVector;
+
+        //Apply Random Spin around local Y axis
+        Vector3 spinVector = transform.up * Random.Range(0.1f, 2.0f) / rb.mass;
+        rb.angularVelocity = spinVector;
 
         //Clear Bugged Trail
         trailRenderer.Clear();
 
-	    PhysicsObject strongestObj = null;
+        // Set uniquie name
+        name = name.Replace("(Clone)", "");
+        if(name.StartsWith("["))
+            name = name.TrimStart('[','0','1','2','3','4','5','6','7','8','9',']', ' ');
+        bool idFound = false;
+
+        // Loop until free name is found
+        for (int i = 0; !idFound; i++)
+        {
+            if(!physicsEngine.objectIDs.Contains(i))
+            {
+                ID = i;
+                idFound = true;
+            }
+        }
+        // Set name
+        name = "[" + ID + "] " + name;
+        physicsEngine.objectIDs.Add(ID);
+
+        // Add to entities list
+        UiManager.AddToEntitiesPanel(this.gameObject);
+
+        PhysicsObject strongestObj = null;
         if (spawnWithOrbit)
-	    {
-	        float strongestForce = 0.0f;
-	        strongestObj = null;
+        {
+            float strongestForce = 0.0f;
+            strongestObj = null;
             // Sort PhysicsObjects by Mass
             physicsObjects.Sort((y, x) => x.rb.mass.CompareTo(y.rb.mass));
-	        //Find Object with highest gravitational influence
-	        foreach (PhysicsObject obj in physicsObjects)
-	        {
-	            //Obtain Direction Vector
-	            Vector3 dir = rb.position - obj.rb.position;
-	            //Obtain Distance, return if 0
-	            float dist = dir.magnitude;
-	            if (dist != 0)
-	            {
-	                //Calculate Magnitude of force
-	                float magnitude = G * (rb.mass * obj.rb.mass) / Mathf.Pow(dist, 2);
-	                //Calculate force
-	                Vector3 force = dir.normalized * magnitude;
-	                if (force.magnitude >= strongestForce)
-	                {
-	                    strongestObj = obj;
-	                    strongestForce = force.magnitude;
-	                }
-	            }
-	        }
-	        //Attempt to achive stable orbit
-	        if (strongestObj != null)
-	        {
-	            //Obtain Oblique vector along y plane
-	            Vector3 dir = rb.position - strongestObj.rb.position;
-	            float dist = dir.magnitude;
-	            Vector3 requiredV = new Vector3(dir.z, dir.y, -dir.x);
-	            float vMag = Mathf.Sqrt(G * strongestObj.rb.mass / dist);
-	            requiredV = requiredV.normalized * (vMag + (UiManager.orbVMultiplier * vMag/5));
-	            rb.velocity = requiredV + strongestObj.rb.velocity;
+            //Find Object with highest gravitational influence
+            foreach (PhysicsObject obj in physicsObjects)
+            {
+                //Obtain Direction Vector
+                Vector3 dir = rb.position - obj.rb.position;
+                //Obtain Distance, return if 0
+                float dist = dir.magnitude;
+                if (dist != 0)
+                {
+                    //Calculate Magnitude of force
+                    float magnitude = G * (rb.mass * obj.rb.mass) / Mathf.Pow(dist, 2);
+                    //Calculate force
+                    Vector3 force = dir.normalized * magnitude;
+                    if (force.magnitude >= strongestForce)
+                    {
+                        strongestObj = obj;
+                        strongestForce = force.magnitude;
+                    }
+                }
+            }
+            //Attempt to achive stable orbit
+            if (strongestObj != null)
+            {
+                //Obtain Oblique vector along y plane
+                Vector3 dir = rb.position - strongestObj.rb.position;
+                float dist = dir.magnitude;
+                Vector3 requiredV = new Vector3(dir.z, dir.y, -dir.x);
+                float vMag = Mathf.Sqrt(G * strongestObj.rb.mass / dist);
+                requiredV = requiredV.normalized * (vMag + (UiManager.orbVMultiplier * vMag / 5));
+                rb.velocity = requiredV + strongestObj.rb.velocity;
 
             }
-	    }
-	    if (strongestObj != null)
-	    {
-	        //Symetrical Spawning
-	        if (UiManager.spawnSymetry && !spawnee)
-	        {
-	            int div = UiManager.symDivs;
-	            float twoPi = 2 * Mathf.PI;
-	            //Loop starts at 1 to account for this object
-	            for (int i = 1; i < div; i++)
-	            {
-	                //Calculate angle
-	                float theta = (twoPi / div) * i;
-	                //Spawn new object
-	                GameObject spawnedObj = Instantiate(this.gameObject);
-	                //- Rotate object about object of largest gravitational influence -
-	                //Translate coordinate system so that OLGI is at center
-	                Vector2 pos = new Vector2(rb.position.x - strongestObj.rb.position.x,
-	                    rb.position.z - strongestObj.rb.position.z);
-	                //Perform Rotation
-	                Vector2 newPos = new Vector2(pos.x * Mathf.Cos(theta) - pos.y * Mathf.Sin(theta),
-	                    pos.y * Mathf.Cos(theta) + pos.x * Mathf.Sin(theta));
-	                //Translate coordinate system back to its original state
-	                newPos = new Vector2(newPos.x + strongestObj.rb.position.x, newPos.y + strongestObj.rb.position.z);
-	                //Apply position
-	                spawnedObj.transform.position = new Vector3(newPos.x, strongestObj.rb.position.y, newPos.y);
-	                //Set spawnee flag to prevent spawning loop
-	                spawnedObj.GetComponent<PhysicsObject>().spawnee = true;
-	                //Reset velocity
-	                spawnedObj.GetComponent<PhysicsObject>().rb.velocity = Vector3.zero;
-	            }
-	        }
-	    }
-	}
-
-
-
-    void OnEnable ()
-    {
-     if (physicsObjects == null)
-            physicsObjects = new List<PhysicsObject>();
-
-     physicsObjects.Add(this);
-
-    physicsEngine.AddObject(this);  
-       
+        }
+        if (strongestObj != null)
+        {
+            //Symetrical Spawning
+            if (UiManager.spawnSymetry && !spawnee)
+            {
+                int div = UiManager.symDivs;
+                float twoPi = 2 * Mathf.PI;
+                //Loop starts at 1 to account for this object
+                for (int i = 1; i < div; i++)
+                {
+                    //Calculate angle
+                    float theta = (twoPi / div) * i;
+                    //Spawn new object
+                    GameObject spawnedObj = Instantiate(this.gameObject);
+                    //- Rotate object about object of largest gravitational influence -
+                    //Translate coordinate system so that OLGI is at center
+                    Vector2 pos = new Vector2(rb.position.x - strongestObj.rb.position.x,
+                        rb.position.z - strongestObj.rb.position.z);
+                    //Perform Rotation
+                    Vector2 newPos = new Vector2(pos.x * Mathf.Cos(theta) - pos.y * Mathf.Sin(theta),
+                        pos.y * Mathf.Cos(theta) + pos.x * Mathf.Sin(theta));
+                    //Translate coordinate system back to its original state
+                    newPos = new Vector2(newPos.x + strongestObj.rb.position.x, newPos.y + strongestObj.rb.position.z);
+                    //Apply position
+                    spawnedObj.transform.position = new Vector3(newPos.x, strongestObj.rb.position.y, newPos.y);
+                    //Set spawnee flag to prevent spawning loop
+                    spawnedObj.GetComponent<PhysicsObject>().spawnee = true;
+                    //Reset velocity
+                    spawnedObj.GetComponent<PhysicsObject>().rb.velocity = Vector3.zero;
+                }
+            }
+        }
     }
 
-    void OnDisable ()
+
+
+    void OnEnable()
+    {
+        if (physicsObjects == null)
+            physicsObjects = new List<PhysicsObject>();
+
+        physicsObjects.Add(this);
+
+        physicsEngine.AddObject(this);
+
+    }
+
+    void OnDisable()
     {
         physicsEngine.RemoveObject(this);
         physicsObjects.Remove(this);
@@ -203,16 +227,16 @@ public class PhysicsObject : MonoBehaviour
     {
         //gameObject.transform.localScale = new Vector3(radius, radius, radius);
 
-            //Set trail renderer thickness to scale with camera distance
-            if (trailRenderer != null)
-            {
-                trailRenderer.widthMultiplier =
-                    Vector3.Distance(Camera.main.transform.position, transform.position) / 250;
-            }
-            else
-            {
-                Debug.Log(this.name + " has no trail renderer!");
-            }
+        //Set trail renderer thickness to scale with camera distance
+        if (trailRenderer != null)
+        {
+            trailRenderer.widthMultiplier =
+                Vector3.Distance(Camera.main.transform.position, transform.position) / 250;
+        }
+        else
+        {
+            Debug.Log(this.name + " has no trail renderer!");
+        }
     }
 
 
@@ -228,7 +252,7 @@ public class PhysicsObject : MonoBehaviour
 
     void calculateRadius(float vol)
     {
-        radius = Mathf.Pow(3 * (vol / (4 * Mathf.PI)), (1/3f));
+        radius = Mathf.Pow(3 * (vol / (4 * Mathf.PI)), (1 / 3f));
         transform.localScale = new Vector3(radius, radius, radius);
     }
 
@@ -315,7 +339,7 @@ public class PhysicsObject : MonoBehaviour
 
     public void setSpeed(float newSpeed)
     {
-        
+
     }
     void OnCollisionEnter(Collision collision)
     {
@@ -338,7 +362,7 @@ public class PhysicsObject : MonoBehaviour
 
         //Get mouse position on screen
         dragStart = gameObject.transform.position;
-        
+
     }
 
     void OnMouseDrag()
@@ -380,16 +404,11 @@ public class PhysicsObject : MonoBehaviour
 
     void OnMouseUp()
     {
-        
+
         if (dragtime < 0.3f)
         {
             //Send selected object to Ui Manager
             UiManager.SetSelectedObject(this);
-
-            //Forus target camera
-            mainCamController.SetFocalObject(this.gameObject);
-            previewCamCtrlr.m_Follow = this.transform;
-            previewCamCtrlr.m_LookAt = this.transform;
         }
         else if (UiManager.manipMode == 0)
         {
@@ -404,13 +423,14 @@ public class PhysicsObject : MonoBehaviour
     void OnMouseOver()
     {
         //Right click
-        if(Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1))
         {
             contextMenu.SetTarget(this.gameObject);
         }
     }
-    // void OnDestroy()
-    // {
-    //     mainCamController.PhysicsObjects.Remove(this);
-    // }
+    void OnDestroy()
+    {
+        UiManager.RemoveFromEntitiesPanel(this.gameObject);
+        physicsEngine.objectIDs.Remove(ID);
+    }
 }
