@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using UnityEngine;
 using Cinemachine;
+using UnityEngine.UI;
 
 public class PhysicsObject : MonoBehaviour
 {
@@ -230,15 +231,13 @@ public class PhysicsObject : MonoBehaviour
         //Set trail renderer thickness to scale with camera distance
         if (trailRenderer != null)
         {
-            trailRenderer.widthMultiplier =
-                Vector3.Distance(Camera.main.transform.position, transform.position) / 250;
+            trailRenderer.widthMultiplier = mainCamController._Distance / 500.0f;
         }
         else
         {
             Debug.Log(this.name + " has no trail renderer!");
         }
     }
-
 
     void calculateVolume(float rad)
     {

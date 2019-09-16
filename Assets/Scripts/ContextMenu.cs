@@ -202,4 +202,12 @@ public class ContextMenu : MonoBehaviour
         transposer.m_FollowOffset = new Vector3(0.0f, 0.0f, Mathf.Max(targetObject.transform.localScale.z * 10.0f, 1.5f + targetObject.transform.localScale.z)); ;
 
     }
+    public void SetTrailColour(Image img)
+    {
+        TrailRenderer trailRenderer = targetObject.GetComponentInChildren<TrailRenderer>();
+        trailRenderer.startColor = img.color;
+        trailRenderer.endColor = img.color;
+        // Ensure alpha value is 0
+        trailRenderer.endColor = new Vector4(trailRenderer.endColor.r, trailRenderer.endColor.g, trailRenderer.endColor.b, 0.0f);
+    }
 }
