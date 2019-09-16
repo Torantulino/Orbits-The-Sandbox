@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class ContextMenu : MonoBehaviour
 {
@@ -56,8 +57,21 @@ public class ContextMenu : MonoBehaviour
     // It is called after all Update functions have been called.
     void LateUpdate()
     {
+        // Right click on empty space
+        if (Input.GetMouseButtonDown(1) && !EventSystem.current.IsPointerOverGameObject())
+        {
+            RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (!Physics.Raycast(ray, out hit, 10000))
+                targetObject = null;
+        }
+
+
         if (targetObject != null && canvas.enabled)
         {
+            // Enable line renderer
+            lineRenderer.enabled = true;
+            
             // Calculate position diection based on camera
             Vector3 direction = Vector3.Normalize(Vector3.Normalize(Camera.main.transform.position - targetObject.transform.position) + Camera.main.transform.up);
             // Set target posiiton
@@ -102,7 +116,10 @@ public class ContextMenu : MonoBehaviour
                 inptPosZ.text = targetPhysicsObject.rb.position.z.ToString();
         }
         else
+        {
             canvas.enabled = false;
+            lineRenderer.enabled = false;
+        }
     }
 
     public void LockToggled(Toggle tgl)
