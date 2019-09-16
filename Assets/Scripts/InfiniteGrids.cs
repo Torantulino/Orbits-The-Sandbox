@@ -41,19 +41,19 @@ public class InfiniteGrids : MonoBehaviour
         _grid.Add(new Vector3( 0, 0, gridCount * _cellSize ));
         _grid.Add(new Vector3( 0, 0, -gridCount * _cellSize ));
  
-        for (int i = 1; i < gridCount + 1; i++) {
+        for (float i = 1.0f; i < gridCount + 1; i++) {
             //positive x lines
-            _grid.Add(new Vector3( i * _cellSize, 0, gridCount * _cellSize ));
-            _grid.Add(new Vector3( i * _cellSize, 0, -gridCount * _cellSize ));
+            _grid.Add(new Vector3( i * _cellSize, 0.0f, gridCount * _cellSize ));
+            _grid.Add(new Vector3( i * _cellSize, 0.0f, -gridCount * _cellSize ));
             //negative x lines
-            _grid.Add(new Vector3( -i * _cellSize, 0, gridCount * _cellSize ));
-            _grid.Add(new Vector3( -i * _cellSize, 0, -gridCount * _cellSize ));
+            _grid.Add(new Vector3( -i * _cellSize, 0.0f, gridCount * _cellSize ));
+            _grid.Add(new Vector3( -i * _cellSize, 0.0f, -gridCount * _cellSize ));
             //positive z lines
-            _grid.Add(new Vector3( gridCount * _cellSize, 0, i * _cellSize ));
-            _grid.Add(new Vector3( -gridCount * _cellSize, 0, i * _cellSize ));
+            _grid.Add(new Vector3( gridCount * _cellSize, 0.0f, i * _cellSize ));
+            _grid.Add(new Vector3( -gridCount * _cellSize, 0.0f, i * _cellSize ));
             //negative z lines
-            _grid.Add(new Vector3( gridCount * _cellSize, 0, -i * _cellSize ));
-            _grid.Add(new Vector3( -gridCount * _cellSize, 0, -i * _cellSize ));
+            _grid.Add(new Vector3( gridCount * _cellSize, 0.0f, -i * _cellSize ));
+            _grid.Add(new Vector3( -gridCount * _cellSize, 0.0f, -i * _cellSize ));
         }
 
         _Grid._grid = _grid;
@@ -68,9 +68,9 @@ public class InfiniteGrids : MonoBehaviour
         cam = GetComponent<Camera>();
         orbitControls = GetComponent<OrbitControls>();
 
-        grids.Add(CreateGrid(1));
-        grids.Add(CreateGrid(10));
-        grids.Add(CreateGrid(100));
+        grids.Add(CreateGrid(1.0f));
+        grids.Add(CreateGrid(10.0f));
+        //grids.Add(CreateGrid(100.0f));
         //grids.Add(CreateGrid(1000));
     }
  
