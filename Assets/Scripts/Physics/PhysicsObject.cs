@@ -371,33 +371,33 @@ public class PhysicsObject : MonoBehaviour
         //Differentite click from drag
         if (dragtime > 0.3f)
         {
-            // Launch Object
-            if (UiManager.manipMode == 0)
-            {
-                //Get mouse position on screen
-                Vector3 screenPosition = Input.mousePosition;
-                screenPosition.z = Camera.main.transform.position.y - transform.position.y;
-                //Translate to world position
-                dragCurrent = Camera.main.ScreenToWorldPoint(screenPosition);
-                dragCurrent = dragStart - dragCurrent;
-                Vector3[] positions = new Vector3[2];
-                lineRenderer.SetPosition(0, gameObject.transform.position);
-                lineRenderer.SetPosition(1, dragCurrent);
-            }
-            // Drag Object
-            else if (UiManager.manipMode == 1)
-            {
-                if (mainCamController.FocalObject != this)
-                {
-                    //Get mouse position on screen
-                    Vector3 screenPosition = Input.mousePosition;
-                    screenPosition.z = Camera.main.transform.position.y - transform.position.y;
-                    //Translate to world position
-                    Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
-                    //Move object
-                    transform.position = worldPosition;
-                }
-            }
+            // // Launch Object
+            // if (UiManager.manipMode == 0)
+            // {
+            //     //Get mouse position on screen
+            //     Vector3 screenPosition = Input.mousePosition;
+            //     screenPosition.z = Camera.main.transform.position.y - transform.position.y;
+            //     //Translate to world position
+            //     dragCurrent = Camera.main.ScreenToWorldPoint(screenPosition);
+            //     dragCurrent = dragStart - dragCurrent;
+            //     Vector3[] positions = new Vector3[2];
+            //     lineRenderer.SetPosition(0, gameObject.transform.position);
+            //     lineRenderer.SetPosition(1, dragCurrent);
+            // }
+            // // Drag Object
+            // else if (UiManager.manipMode == 1)
+            // {
+            //     if (mainCamController.FocalObject != this)
+            //     {
+            //         //Get mouse position on screen
+            //         Vector3 screenPosition = Input.mousePosition;
+            //         screenPosition.z = Camera.main.transform.position.y - transform.position.y;
+            //         //Translate to world position
+            //         Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
+            //         //Move object
+            //         transform.position = worldPosition;
+            //     }
+            // }
         }
     }
 
@@ -409,12 +409,12 @@ public class PhysicsObject : MonoBehaviour
             //Send selected object to Ui Manager
             UiManager.SetSelectedObject(this);
         }
-        else if (UiManager.manipMode == 0)
-        {
-            rb.AddForce(forceMultiplier * dragCurrent * rb.mass);
-            lineRenderer.SetPosition(0, Vector3.zero);
-            lineRenderer.SetPosition(1, Vector3.zero);
-        }
+        // else if (UiManager.manipMode == 0)
+        // {
+        //     rb.AddForce(forceMultiplier * dragCurrent * rb.mass);
+        //     lineRenderer.SetPosition(0, Vector3.zero);
+        //     lineRenderer.SetPosition(1, Vector3.zero);
+        // }
     }
 
 
