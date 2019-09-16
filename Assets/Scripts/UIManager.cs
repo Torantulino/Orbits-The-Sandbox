@@ -49,6 +49,7 @@ public class UIManager : MonoBehaviour
     private bool uiAnimating = false;
     private List<GameObject> selectedEntites = new List<GameObject>();
     private OrbitControls mainCamController;
+    private Canvas canvas;
 
 
     InfiniteGrids placementGrid;
@@ -89,7 +90,8 @@ public class UIManager : MonoBehaviour
         activeObjectPanel = planetPanel;
         canvasGroup = transform.GetComponent<CanvasGroup>();
         placementGrid = FindObjectOfType<InfiniteGrids>();
-
+        canvas = GetComponent<Canvas>();
+        
         inptDivs.text = symDivs.ToString();
 
 
@@ -420,15 +422,10 @@ public class UIManager : MonoBehaviour
 
             // Set Trail colour based on UI selection
             TrailRenderer tR = SpawnedObj.GetComponentInChildren<TrailRenderer>();
-            tR.startColor = desiredTrailColor;
-            tR.endColor = desiredTrailColor;
-            // Ensure alpha value is 0
-            tR.endColor = new Vector4(tR.endColor.r, tR.endColor.g, tR.endColor.b, 0.0f);
-
         }
     }
 
-    // Switches the main UI panel
+    // Toggles the visibility of the given UI panel
     // 0: Objects, 1: Entities
     IEnumerator SwitchActivePanel(int val)
     {
@@ -440,7 +437,7 @@ public class UIManager : MonoBehaviour
         GameObject maximiser = null;
         bool expanding;
         int side = 0;
-        float dist = 204.0f;
+        float dist = 304.0f * canvas.scaleFactor;
 
         // Get panel
         switch (val)
@@ -526,6 +523,8 @@ public class UIManager : MonoBehaviour
         uiAnimating = false;
         yield return new WaitForSeconds(0.0f);
     }
+
+    //Called by unity when minimise UI button pressed
     public void SwitchTab(int val)
     {
         StartCoroutine(SwitchActivePanel(val));
