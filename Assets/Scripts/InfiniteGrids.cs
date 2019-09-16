@@ -10,7 +10,7 @@ public class InfiniteGrids : MonoBehaviour
  
     Ray ray;
     float rayDist;
-    Vector3 lookPosition;
+    Vector3 origin;
     public Plane plane = new Plane( Vector3.up, Vector3.zero ); //world plane to draw the grid on
     Camera cam;
 
@@ -19,6 +19,8 @@ public class InfiniteGrids : MonoBehaviour
     Color medWhite;
     Color lowWhite;
     private List<Grid> grids = new List<Grid>();
+
+    private OrbitControls orbitControls;
 
     struct Grid
     {
@@ -64,7 +66,7 @@ public class InfiniteGrids : MonoBehaviour
         lowWhite = new Color(1.0f, 1.0f, 1.0f, 0.05f);
         
         cam = GetComponent<Camera>();
-
+        orbitControls = GetComponent<OrbitControls>();
 
         grids.Add(CreateGrid(1));
         grids.Add(CreateGrid(10));
@@ -73,29 +75,45 @@ public class InfiniteGrids : MonoBehaviour
     }
  
     void LateUpdate () {
-        ray = cam.ScreenPointToRay( new Vector3( Screen.width / 2, Screen.height / 2, 0 ) );
-        plane.Raycast( ray, out rayDist );
-        lookPosition = ray.GetPoint( rayDist );
+
     }
     
     void OnPostRender () 
     {   
+        // Calculate new plane
+        origin = orbitControls.FocalObject.position;
+        plane = new Plane( Vector3.up, origin );
+
+        // Get grid origin position
+        ray = cam.ScreenPointToRay( new Vector3( Screen.width / 2.0f, Screen.height / 2.0f, 0.0f ) );
+        plane.Raycast( ray, out rayDist );
+        origin = ray.GetPoint( rayDist );
+
+
+        // Get distance from origin to camera
+        float cameraDistance = Vector3.Distance(cam.transform.position, origin);
+
         int i = 0;
         foreach (Grid grid in grids)
         {
-            if(i==0 && Vector3.Distance(cam.transform.position, lookPosition) > 400.0f)
+            // Don't render grid 0 when cam is further than 400.0f
+            if(i==0 && cameraDistance > 400.0f)
             {
                 i++;
                 continue;
             }
+
             GL.PushMatrix();
             GLMat.SetPass(0);
             GL.Begin(GL.LINES);
 
-            GL.Color(Color.white * Mathf.Min((grid._cellSize / Vector3.Distance(cam.transform.position, lookPosition) + 0.3f), 1.0f));
+            // Set line colour
+            GL.Color(Color.white * Mathf.Min((grid._cellSize / cameraDistance + 0.3f), 1.0f));
+
+            // Render grid vertices
             foreach (Vector3 vertex in grid._grid)
             {
-                GL.Vertex(vertex + lookPosition);
+                GL.Vertex(vertex + origin);
             }
 
             GL.End();
