@@ -14,8 +14,8 @@ PlayerSettings:
   accelerometerFrequency: 60
   companyName: Significant Gravitas
   productName: Newtonian Physics Sandbox
-  defaultCursor: {fileID: 0}
-  cursorHotspot: {x: 0, y: 0}
+  defaultCursor: {fileID: 2800000, guid: e50f4644d254cce4591c555dbe60c1ef, type: 3}
+  cursorHotspot: {x: 33, y: 15}
   m_SplashScreenBackgroundColor: {r: 0.18039216, g: 0.35686275, b: 0.39215687, a: 1}
   m_ShowUnitySplashScreen: 1
   m_ShowUnitySplashLogo: 1
