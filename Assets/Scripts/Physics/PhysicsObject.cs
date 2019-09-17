@@ -97,9 +97,9 @@ public class PhysicsObject : MonoBehaviour
         if (trailRenderer == null)
             Debug.Log("Trail renderer not found on object " + this.name + "!");
 
-        contextMenu = GameObject.FindObjectOfType<ContextMenu>();
+        contextMenu = Resources.FindObjectsOfTypeAll<ContextMenu>()[0];
         if (contextMenu == null)
-            Debug.Log("Context Menu not found!");
+            Debug.Log("Context Menu not found by " + this.name + "!");
 
         //Apply Random Spin around local Y axis
         Vector3 spinVector = transform.up * Random.Range(0.1f, 2.0f) / rb.mass;

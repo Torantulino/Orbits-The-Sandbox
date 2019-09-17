@@ -8,7 +8,6 @@ using UnityEngine.EventSystems;
 public class ContextMenu : MonoBehaviour
 {
     private Transform targetObject;
-    private Canvas canvas;
     private float distance;
     private Vector3 targetPosition;
     private OrbitControls orbitControls;
@@ -27,7 +26,8 @@ public class ContextMenu : MonoBehaviour
     private InputField inptPosX;
     private InputField inptPosY;
     private InputField inptPosZ;
-    
+    private Canvas canvas;
+    private CUIColorPicker colourPicker;
 
     // Start is called before the first frame update
     void Start()
@@ -36,20 +36,20 @@ public class ContextMenu : MonoBehaviour
         if (previewCamCtrlr == null)
             Debug.Log("Preview Cam Controller not found by " + this.name + "!");
             
-        objectTitle = transform.Find("panContext/TitleObj").GetComponent<Text>(); 
+        objectTitle = transform.Find("TitleObj").GetComponent<Text>(); 
 
-        inptPosX = transform.Find("panContext/txtPosX/inptPosX").GetComponent<InputField>();
-        inptPosY = transform.Find("panContext/txtPosY/inptPosY").GetComponent<InputField>();
-        inptPosZ = transform.Find("panContext/txtPosZ/inptPosZ").GetComponent<InputField>();
-        inptMassVal = transform.Find("panContext/txtMass/inptMassVal").GetComponent<InputField>();
-        inptRadiusVal = transform.Find("panContext/txtRadius/inptRadiusVal").GetComponent<InputField>();
-        inptDensityVal = transform.Find("panContext/txtDensity/inptDensityVal").GetComponent<InputField>();
-
-
-
-        canvas = GetComponent<Canvas>();
+        inptPosX = transform.Find("txtPosX/inptPosX").GetComponent<InputField>();
+        inptPosY = transform.Find("txtPosY/inptPosY").GetComponent<InputField>();
+        inptPosZ = transform.Find("txtPosZ/inptPosZ").GetComponent<InputField>();
+        inptMassVal = transform.Find("txtMass/inptMassVal").GetComponent<InputField>();
+        inptRadiusVal = transform.Find("txtRadius/inptRadiusVal").GetComponent<InputField>();
+        inptDensityVal = transform.Find("txtDensity/inptDensityVal").GetComponent<InputField>();
+        canvas = FindObjectOfType<Canvas>();
         orbitControls = GameObject.FindObjectOfType<OrbitControls>();
         lineRenderer = GetComponent<LineRenderer>();
+        colourPicker = FindObjectOfType<CUIColorPicker>();
+
+        colourPicker.SetOnValueChangeCallback(SetTrailColour);
     }
 
 
@@ -67,7 +67,7 @@ public class ContextMenu : MonoBehaviour
         }
 
 
-        if (targetObject != null && canvas.enabled)
+        if (targetObject != null && gameObject.activeInHierarchy)
         {
             // Enable line renderer
             lineRenderer.enabled = true;
@@ -76,19 +76,22 @@ public class ContextMenu : MonoBehaviour
             Vector3 direction = Vector3.Normalize(Vector3.Normalize(Camera.main.transform.position - targetObject.transform.position) + Camera.main.transform.up);
             // Set target posiiton
             targetPosition = targetObject.position + direction * (targetObject.lossyScale.y * 0.75f);
+            
             // Scale and rotate
-            transform.localScale = new Vector3(orbitControls._Distance / 2000.0f, orbitControls._Distance / 2000.0f, 1.0f);
-            transform.rotation = Camera.main.transform.rotation;
+            //transform.localScale = new Vector3(orbitControls._Distance / 2000.0f, orbitControls._Distance / 2000.0f, 1.0f) * (canvas.scaleFactor * 1000.0f);
+            //transform.rotation = Camera.main.transform.rotation;
             // Move
-            if (Time.realtimeSinceStartup - targetTime < 0.5f)
-            {
-                spdx = Mathf.Lerp(spdx, (targetPosition.x - transform.position.x) * 0.7f, 0.4f);
-                spdy = Mathf.Lerp(spdx, (targetPosition.y - transform.position.y) * 0.7f, 0.4f);
-                spdz = Mathf.Lerp(spdx, (targetPosition.z - transform.position.z) * 0.7f, 0.4f);
-                transform.position = new Vector3(transform.position.x + spdx, transform.position.y + spdy, transform.position.z + spdz);
-            }
-            else
-                transform.position = targetPosition;
+            // if (Time.realtimeSinceStartup - targetTime < 0.5f)
+            // {
+            //     spdx = Mathf.Lerp(spdx, (targetPosition.x - transform.position.x) * 0.7f, 0.4f);
+            //     spdy = Mathf.Lerp(spdx, (targetPosition.y - transform.position.y) * 0.7f, 0.4f);
+            //     spdz = Mathf.Lerp(spdx, (targetPosition.z - transform.position.z) * 0.7f, 0.4f);
+            //     transform.position = Camera.main.WorldToScreenPoint(new Vector3(transform.position.x + spdx, transform.position.y + spdy, transform.position.z + spdz));
+            // }
+            // else
+                transform.position = Camera.main.WorldToScreenPoint(targetPosition);
+
+            transform.position = new Vector3(transform.position.x, transform.position.y, 0.0f);
 
             // Draw line to planet
             lineRenderer.SetPosition(0, targetObject.position);
@@ -117,7 +120,7 @@ public class ContextMenu : MonoBehaviour
         }
         else
         {
-            canvas.enabled = false;
+            gameObject.SetActive(false);
             lineRenderer.enabled = false;
         }
     }
@@ -200,7 +203,6 @@ public class ContextMenu : MonoBehaviour
     public void SetTarget(GameObject _obj)
     {
         gameObject.SetActive(true);
-        canvas.enabled = true;
         targetObject = _obj.transform;
 
         spdx = 0;
@@ -219,11 +221,11 @@ public class ContextMenu : MonoBehaviour
         transposer.m_FollowOffset = new Vector3(0.0f, 0.0f, Mathf.Max(targetObject.transform.localScale.z * 10.0f, 1.5f + targetObject.transform.localScale.z)); ;
 
     }
-    public void SetTrailColour(Image img)
+    public void SetTrailColour(Color color)
     {
         TrailRenderer trailRenderer = targetObject.GetComponentInChildren<TrailRenderer>();
-        trailRenderer.startColor = img.color;
-        trailRenderer.endColor = img.color;
+        trailRenderer.startColor = color;
+        trailRenderer.endColor = color;
         // Ensure alpha value is 0
         trailRenderer.endColor = new Vector4(trailRenderer.endColor.r, trailRenderer.endColor.g, trailRenderer.endColor.b, 0.0f);
     }
