@@ -51,6 +51,12 @@ public class UIManager : MonoBehaviour
     private OrbitControls mainCamController;
     private Canvas canvas;
 
+    private Texture2D cursor_default;
+    private Texture2D cursor_hand;
+    private Texture2D cursor_hand_click;
+    private Texture2D cursor_drag;
+
+    private Dictionary<string, Tuple<Texture2D, Vector2>> cursors;
 
     InfiniteGrids placementGrid;
 
@@ -66,6 +72,35 @@ public class UIManager : MonoBehaviour
         panObjects = transform.Find("panObjects").gameObject;
         panEntities = transform.Find("panEntities").gameObject;
         contentEntites = panEntities.transform.Find("panel/Scroll View/Viewport/Content");
+    
+        // Load cursors
+        cursor_default = Resources.Load<Texture2D>("Textures/UI/cursors/cursor");
+        if (cursor_default == null)
+            Debug.LogError("Default cursor not found");
+        cursor_hand = Resources.Load<Texture2D>("Textures/UI/cursors/hand");
+        if (cursor_hand == null)
+            Debug.LogError("Hand cursor not found");
+        cursor_hand_click = Resources.Load<Texture2D>("Textures/UI/cursors/hand-click");
+        if (cursor_hand_click == null)
+            Debug.LogError("Hand click cursor not found");
+        cursor_drag = Resources.Load<Texture2D>("Textures/UI/cursors/drag");
+        if (cursor_drag == null)
+            Debug.LogError("Drag cursor not found");
+
+        cursors = new Dictionary<string, Tuple<Texture2D, Vector2>>{
+            {
+                "default", new Tuple<Texture2D, Vector2>(cursor_default, new Vector2(33.0f, 15.0f))
+            },
+            {
+                "hand", new Tuple<Texture2D, Vector2>(cursor_hand, new Vector2(33.0f, 15.0f))
+            },
+            {
+                "hand-click", new Tuple<Texture2D, Vector2>(cursor_hand_click, new Vector2(33.0f, 15.0f))
+            },
+            {
+                "drag", new Tuple<Texture2D, Vector2>(cursor_drag, new Vector2(33.0f, 15.0f))
+            }
+        };
     }
 
     // Use this for initialization
@@ -123,20 +158,6 @@ public class UIManager : MonoBehaviour
         if (!inptTime.isFocused)
         inptTime.text = (Time.timeScale / PhysicsEngine.TIMESCALER).ToString();
 
-        //Select object
-        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
-        {
-            RaycastHit hit;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (!Physics.Raycast(ray, out hit, 10000))
-            {
-                SpawnObject();
-            }
-            else
-            {
-                Debug.Log("Object Clicked!");
-            }
-        }
         //Show/Hide UI
         if (Input.GetKeyDown(KeyCode.F1))
         {
@@ -174,6 +195,59 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    /// This function is called every fixed framerate frame, if the MonoBehaviour is enabled.
+    void LateUpdate()
+    {
+        //Raycast under mouse
+        RaycastHit raycastHit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        // If Ray hits physics object (Phsycis object under mouse).
+        if (Physics.Raycast(ray, out raycastHit, 10000) && raycastHit.transform.gameObject.GetComponent<PhysicsObject>() != null)
+        {
+            // Object Click
+            if(Input.GetMouseButton(0))
+                SwitchCursor(2);
+            // Pan
+            else if (Input.GetMouseButton(2))
+                SwitchCursor(3);
+            // Hover
+            else
+                SwitchCursor(1);
+        }
+        // Else no physics object under mouse
+        else
+        {
+            // Pan
+            if (Input.GetMouseButton(2))
+                SwitchCursor(3);
+            // Default Cursor
+            else
+            SwitchCursor(0);
+
+            // Select if no other object (such as UI) under mouse.
+            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+                SpawnObject();
+        }
+    }
+    public void SwitchCursor(uint i)
+    {
+        switch(i)
+        {
+            case 0:
+                Cursor.SetCursor(cursors["default"].Item1, cursors["default"].Item2, CursorMode.Auto);
+            break;
+            case 1:
+                Cursor.SetCursor(cursors["hand"].Item1, cursors["default"].Item2, CursorMode.Auto);
+            break;
+            case 2:
+                Cursor.SetCursor(cursors["hand-click"].Item1, cursors["default"].Item2, CursorMode.Auto);
+            break;
+            case 3:
+                Cursor.SetCursor(cursors["drag"].Item1, cursors["default"].Item2, CursorMode.Auto);
+            break;        
+        }
+    }
     public void AddToEntitiesPanel(GameObject _obj)
     {
         GameObject sampleButton = contentEntites.Find("SampleButton").gameObject;
