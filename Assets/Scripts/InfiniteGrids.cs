@@ -81,7 +81,7 @@ public class InfiniteGrids : MonoBehaviour
     void OnPostRender () 
     {   
         // Calculate new plane
-        //origin = orbitControls.FocalObject.position; //This essentially should be the same thing as below. The plane is used elsewhere in the game so is necessary.
+        origin = orbitControls.FocalObject.position; //This essentially should be the same thing as below. The plane is used elsewhere in the game so is necessary.
         plane = new Plane( Vector3.up, origin );
 
         // Get grid origin position
