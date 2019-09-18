@@ -195,7 +195,8 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    /// This function is called every fixed framerate frame, if the MonoBehaviour is enabled.
+    /// LateUpdate is called every frame, if the Behaviour is enabled.
+    /// It is called after all Update functions have been called.
     void LateUpdate()
     {
         //Raycast under mouse
