@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using Cinemachine;
@@ -289,6 +289,8 @@ public class PhysicsObject : MonoBehaviour
             lineRenderer.useWorldSpace = true;
 
             uint segments = 100;
+
+            uint segments = 500;
 
             Vector3[] positions = PredictOrbit(biggestGravitationalInfluencer, segments);
 
