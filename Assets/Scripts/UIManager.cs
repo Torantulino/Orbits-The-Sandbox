@@ -56,6 +56,9 @@ public class UIManager : MonoBehaviour
     private Texture2D cursor_hand_click;
     private Texture2D cursor_drag;
 
+    public bool displayFuturePath;
+    public bool displayPastPath;
+
     private Dictionary<string, Tuple<Texture2D, Vector2>> cursors;
 
     InfiniteGrids placementGrid;
@@ -420,6 +423,15 @@ public class UIManager : MonoBehaviour
             Camera.main.cullingMask = Camera.main.cullingMask | (1 << 8);
         else
             Camera.main.cullingMask = Camera.main.cullingMask & ~(1 << 8);
+    }
+
+    public void futurePathToggled(bool state)
+    {
+        displayFuturePath = state;
+    }
+    public void pastPathToggled(bool state)
+    {
+        displayPastPath = state;
     }
 
     public void ManipModeToggled(int mode)

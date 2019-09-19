@@ -62,8 +62,8 @@ public class PhysicsObject : MonoBehaviour
 
     public int ID;
 
-    public bool predictOrbit = false;
-    public bool drawRelativeOrbitTrail = false;
+    public bool _drawFuturePath = false;
+    public bool _drawPastPath = false;
     private float timeSinceLastPosition =0.0f;
 
     private FixedSizedQueue<Vector3> relativeTrailPositions = new FixedSizedQueue<Vector3>(150);
@@ -273,7 +273,7 @@ public class PhysicsObject : MonoBehaviour
         // If new influencer
         if(newInfluencer != biggestGravitationalInfluencer)
         {
-            if (drawRelativeOrbitTrail)
+            if (_drawPastPath)
                 // Clear previous trail if in new orbit
                 relativeTrailPositions.Clear();
         }
@@ -284,17 +284,20 @@ public class PhysicsObject : MonoBehaviour
         //Temp: Change to adaptive thickness, similar to trailrenderer
         lineRenderer.SetWidth(0.1f, 0.1f);        
 
-
-        if(predictOrbit)
-        {
-            //Temp: Move to OnSwtich
+        // Future relative predicted path
+        if(UiManager.displayFuturePath)
+        {   
+            // First frame setup
+            if(_drawFuturePath != true)
             {
+                // Setup colour keys
                 GradientColorKey[] colorKeys = new GradientColorKey[2];
                 colorKeys[0].color = Color.blue;
                 colorKeys[0].time = 0.0f;
                 colorKeys[1].color = Color.blue;
                 colorKeys[1].time = 0.0f;
 
+                // Setup alpha keys
                 GradientAlphaKey[] alphaKeys = new GradientAlphaKey[3];
                 alphaKeys[0].alpha = 1.0f;
                 alphaKeys[0].time = 0.0f;
@@ -303,9 +306,13 @@ public class PhysicsObject : MonoBehaviour
                 alphaKeys[2].alpha = 0.0f;
                 alphaKeys[2].time = 1.0f;
 
-                Gradient predictGradient = new Gradient();
-                predictGradient.SetKeys(colorKeys, alphaKeys);
-                lineRenderer.colorGradient = predictGradient;
+                // Set colour gradient
+                Gradient gradient = new Gradient();
+                gradient.SetKeys(colorKeys, alphaKeys);
+                lineRenderer.colorGradient = gradient;
+
+                // Set flag
+                _drawFuturePath = true;
             }
 
             lineRenderer.useWorldSpace = true;
@@ -318,16 +325,20 @@ public class PhysicsObject : MonoBehaviour
             lineRenderer.positionCount = (int)segments;
             lineRenderer.SetPositions(positions);
         }
-        else if(drawRelativeOrbitTrail)
+        // Past Drawn relative path
+        else if(UiManager.displayPastPath)
         {
-            //Temp: Move to OnSwtich
+            // First frame setup
+            if(_drawPastPath != true)
             {
+                // Setup colour keys
                 GradientColorKey[] colorKeys = new GradientColorKey[2];
                 colorKeys[0].color = Color.cyan;
                 colorKeys[0].time = 0.0f;
                 colorKeys[1].color = Color.cyan;
                 colorKeys[1].time = 0.0f;
 
+                // Setup alpha keys
                 GradientAlphaKey[] alphaKeys = new GradientAlphaKey[3];
                 alphaKeys[0].alpha = 0.0f;
                 alphaKeys[0].time = 0.0f;
@@ -336,11 +347,14 @@ public class PhysicsObject : MonoBehaviour
                 alphaKeys[2].alpha = 1.0f;
                 alphaKeys[2].time = 1.0f;
 
-                Gradient predictGradient = new Gradient();
-                predictGradient.SetKeys(colorKeys, alphaKeys);
-                lineRenderer.colorGradient = predictGradient;
-            }
+                // Set colour gradient
+                Gradient gradient = new Gradient();
+                gradient.SetKeys(colorKeys, alphaKeys);
+                lineRenderer.colorGradient = gradient;
 
+                // Set flag
+                _drawPastPath = true;
+            }
 
             // Update trail vertex count
             lineRenderer.positionCount = relativeTrailPositions.Count;
@@ -370,9 +384,30 @@ public class PhysicsObject : MonoBehaviour
                 timeSinceLastPosition += Time.deltaTime * 100.0f;
             }
         }
-        //else
-            //lineRenderer.positionCount = 0;
+
+        // If flag is true but realtime value false:
+        // Turn off future path
+        if(_drawFuturePath && !UiManager.displayFuturePath)
+        {
+            // Reset flag
+            _drawFuturePath = false;
+            // Clear path
+            lineRenderer.positionCount = 0;
+        }
+
+        // If flag is true but realtime value false:
+        // Turn off past path
+        if(_drawPastPath && !UiManager.displayPastPath)
+        {
+            // Reset flag
+            _drawPastPath = false;
+            // Clear path
+            lineRenderer.positionCount = 0;
+            relativeTrailPositions.Clear();
+        }
     }
+
+
 
     Vector3[] PredictOrbit(PhysicsObject _strongestObject, uint steps)
     {

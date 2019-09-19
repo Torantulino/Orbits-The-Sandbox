@@ -14719,6 +14719,8 @@ MonoBehaviour:
   spawnSymetry: 0
   symDivs: 5
   orbVMultiplier: 0
+  displayFuturePath: 0
+  displayPastPath: 0
 --- !u!225 &225891627504762174
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -22592,7 +22594,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114907374780347506}
-        m_MethodName: trailsToggled
+        m_MethodName: pastPathToggled
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -25005,7 +25007,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114907374780347506}
-        m_MethodName: trailsToggled
+        m_MethodName: futurePathToggled
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -25017,7 +25019,7 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Toggle+ToggleEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  m_IsOn: 1
+  m_IsOn: 0
 --- !u!1 &8294965786558136291
 GameObject:
   m_ObjectHideFlags: 0
