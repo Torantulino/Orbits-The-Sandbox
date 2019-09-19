@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using Cinemachine;
@@ -108,6 +108,8 @@ public class PhysicsObject : MonoBehaviour
         //Clear Bugged Trail
         trailRenderer.Clear();
 
+        lineRenderer.positionCount = 0;
+
         // Set uniquie name
         name = name.Replace("(Clone)", "");
         if(name.StartsWith("["))
@@ -130,47 +132,26 @@ public class PhysicsObject : MonoBehaviour
         // Add to entities list
         UiManager.AddToEntitiesPanel(this.gameObject);
 
-        PhysicsObject strongestObj = null;
+        // Spawn in orbit around strongest influencer
+        biggestGravitationalInfluencer = null;
         if (spawnWithOrbit)
         {
-            float strongestForce = 0.0f;
-            strongestObj = null;
-            // Sort PhysicsObjects by Mass
-            physicsObjects.Sort((y, x) => x.rb.mass.CompareTo(y.rb.mass));
-            //Find Object with highest gravitational influence
-            foreach (PhysicsObject obj in physicsObjects)
-            {
-                //Obtain Direction Vector
-                Vector3 dir = rb.position - obj.rb.position;
-                //Obtain Distance, return if 0
-                float dist = dir.magnitude;
-                if (dist != 0)
-                {
-                    //Calculate Magnitude of force
-                    float magnitude = G * (rb.mass * obj.rb.mass) / Mathf.Pow(dist, 2);
-                    //Calculate force
-                    Vector3 force = dir.normalized * magnitude;
-                    if (force.magnitude >= strongestForce)
-                    {
-                        strongestObj = obj;
-                        strongestForce = force.magnitude;
-                    }
-                }
-            }
+            //Find object with highest gravitational influence
+            biggestGravitationalInfluencer = GetBiggestGravitationalInfluencer();
+
             //Attempt to achive stable orbit
-            if (strongestObj != null)
+            if (biggestGravitationalInfluencer != null)
             {
                 //Obtain Oblique vector along y plane
-                Vector3 dir = rb.position - strongestObj.rb.position;
+                Vector3 dir = rb.position - biggestGravitationalInfluencer.rb.position;
                 float dist = dir.magnitude;
                 Vector3 requiredV = new Vector3(dir.z, dir.y, -dir.x);
-                float vMag = Mathf.Sqrt(G * strongestObj.rb.mass / dist);
+                float vMag = Mathf.Sqrt(G * biggestGravitationalInfluencer.rb.mass / dist);
                 requiredV = requiredV.normalized * (vMag + (UiManager.orbVMultiplier * vMag / 5));
-                rb.velocity = requiredV + strongestObj.rb.velocity;
-
+                rb.velocity = requiredV + biggestGravitationalInfluencer.rb.velocity;
             }
         }
-        if (strongestObj != null)
+        if (biggestGravitationalInfluencer != null)
         {
             //Symetrical Spawning
             if (UiManager.spawnSymetry && !spawnee)
@@ -186,15 +167,15 @@ public class PhysicsObject : MonoBehaviour
                     GameObject spawnedObj = Instantiate(this.gameObject);
                     //- Rotate object about object of largest gravitational influence -
                     //Translate coordinate system so that OLGI is at center
-                    Vector2 pos = new Vector2(rb.position.x - strongestObj.rb.position.x,
-                        rb.position.z - strongestObj.rb.position.z);
+                    Vector2 pos = new Vector2(rb.position.x - biggestGravitationalInfluencer.rb.position.x,
+                        rb.position.z - biggestGravitationalInfluencer.rb.position.z);
                     //Perform Rotation
                     Vector2 newPos = new Vector2(pos.x * Mathf.Cos(theta) - pos.y * Mathf.Sin(theta),
                         pos.y * Mathf.Cos(theta) + pos.x * Mathf.Sin(theta));
                     //Translate coordinate system back to its original state
-                    newPos = new Vector2(newPos.x + strongestObj.rb.position.x, newPos.y + strongestObj.rb.position.z);
+                    newPos = new Vector2(newPos.x + biggestGravitationalInfluencer.rb.position.x, newPos.y + biggestGravitationalInfluencer.rb.position.z);
                     //Apply position
-                    spawnedObj.transform.position = new Vector3(newPos.x, strongestObj.rb.position.y, newPos.y);
+                    spawnedObj.transform.position = new Vector3(newPos.x, biggestGravitationalInfluencer.rb.position.y, newPos.y);
                     //Set spawnee flag to prevent spawning loop
                     spawnedObj.GetComponent<PhysicsObject>().spawnee = true;
                     //Reset velocity
@@ -204,7 +185,38 @@ public class PhysicsObject : MonoBehaviour
         }
     }
 
+    //Finds and returns object with highest gravitational influence or null
+    PhysicsObject GetBiggestGravitationalInfluencer()
+    {
+        PhysicsObject _strongestObj = null;
+        float strongestForce = 0.0f;
 
+        // Sort PhysicsObjects by Mass
+        physicsObjects.Sort((y, x) => x.rb.mass.CompareTo(y.rb.mass));
+
+        //Find Object with highest gravitational influence
+        foreach (PhysicsObject obj in physicsObjects)
+        {
+            //Obtain Direction Vector
+            Vector3 dir = rb.position - obj.rb.position;
+            //Obtain Distance, return if 0
+            float dist = dir.magnitude;
+            if (dist != 0)
+            {
+                //Calculate Magnitude of force
+                float magnitude = G * (rb.mass * obj.rb.mass) / Mathf.Pow(dist, 2);
+                //Calculate force
+                Vector3 force = dir.normalized * magnitude;
+                if (force.magnitude >= strongestForce)
+                {
+                    _strongestObj = obj;
+                    strongestForce = force.magnitude;
+                }
+            }
+        }
+
+        return _strongestObj;
+    }
 
     void OnEnable()
     {
