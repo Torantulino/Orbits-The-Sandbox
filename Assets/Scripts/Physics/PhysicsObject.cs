@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using Cinemachine;
@@ -281,25 +281,67 @@ public class PhysicsObject : MonoBehaviour
         // Update
         biggestGravitationalInfluencer = newInfluencer;
 
-        //Temp: move to start
+        //Temp: Change to adaptive thickness, similar to trailrenderer
         lineRenderer.SetWidth(0.1f, 0.1f);        
+
 
         if(predictOrbit)
         {
+            //Temp: Move to OnSwtich
+            {
+                GradientColorKey[] colorKeys = new GradientColorKey[2];
+                colorKeys[0].color = Color.blue;
+                colorKeys[0].time = 0.0f;
+                colorKeys[1].color = Color.blue;
+                colorKeys[1].time = 0.0f;
+
+                GradientAlphaKey[] alphaKeys = new GradientAlphaKey[3];
+                alphaKeys[0].alpha = 1.0f;
+                alphaKeys[0].time = 0.0f;
+                alphaKeys[1].alpha = 1.0f;
+                alphaKeys[1].time = 0.5f;
+                alphaKeys[2].alpha = 0.0f;
+                alphaKeys[2].time = 1.0f;
+
+                Gradient predictGradient = new Gradient();
+                predictGradient.SetKeys(colorKeys, alphaKeys);
+                lineRenderer.colorGradient = predictGradient;
+            }
+
             lineRenderer.useWorldSpace = true;
-
-            uint segments = 100;
-
             uint segments = 500;
 
+            // Predict future path
             Vector3[] positions = PredictOrbit(biggestGravitationalInfluencer, segments);
-
+            
+            // Set positions
             lineRenderer.positionCount = (int)segments;
             lineRenderer.SetPositions(positions);
-
         }
         else if(drawRelativeOrbitTrail)
         {
+            //Temp: Move to OnSwtich
+            {
+                GradientColorKey[] colorKeys = new GradientColorKey[2];
+                colorKeys[0].color = Color.cyan;
+                colorKeys[0].time = 0.0f;
+                colorKeys[1].color = Color.cyan;
+                colorKeys[1].time = 0.0f;
+
+                GradientAlphaKey[] alphaKeys = new GradientAlphaKey[3];
+                alphaKeys[0].alpha = 0.0f;
+                alphaKeys[0].time = 0.0f;
+                alphaKeys[1].alpha = 1.0f;
+                alphaKeys[1].time = 0.5f;
+                alphaKeys[2].alpha = 1.0f;
+                alphaKeys[2].time = 1.0f;
+
+                Gradient predictGradient = new Gradient();
+                predictGradient.SetKeys(colorKeys, alphaKeys);
+                lineRenderer.colorGradient = predictGradient;
+            }
+
+
             // Update trail vertex count
             lineRenderer.positionCount = relativeTrailPositions.Count;
 
@@ -351,8 +393,10 @@ public class PhysicsObject : MonoBehaviour
 
         Vector3 velocity1 = this.rb.velocity - _strongestObject.rb.velocity;
         //Vector3 velocity2 = _strongestObject.rb.velocity;
-        Vector3 velocity2 = -velocity1;
-        //Vector3 velocity2 = Vector3.zero;
+        //Vector3 velocity2 = -velocity1;
+        Vector3 velocity2 = Vector3.zero;
+        //Vector3 velocity2 = _strongestObject.rb.velocity - this.rb.velocity;
+
 
         float mass1 = this.rb.mass;
         float mass2 = _strongestObject.rb.mass;
@@ -381,15 +425,15 @@ public class PhysicsObject : MonoBehaviour
 
             // Calculate accelerations
             Vector3 a1 = -force / mass1;
-            //Vector3 a2 = force / mass2;
+            Vector3 a2 = force / mass2;
 
             // Update positions
             position1 += velocity1 * timestep + 0.5f * a1 * timestep * timestep;
-            //position2 += velocity2 * timestep + 0.5f * a2 * timestep * timestep;
+            position2 += velocity2 * timestep + 0.5f * a2 * timestep * timestep;
 
             // Update velocities
             velocity1 += a1 * timestep;
-            //velocity2 += a2 * timestep;
+            velocity2 += a2 * timestep;
 
         }
 
