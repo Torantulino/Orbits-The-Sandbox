@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PhysicsEngine : MonoBehaviour
 {
-    public static List<Pair> ObjectPairs;
+    public static List<PhysicsObjectPair> ObjectPairs;
     private float timeAtPause;
     private bool paused;
     private float G = 667.408f;
@@ -29,40 +29,49 @@ public class PhysicsEngine : MonoBehaviour
     // Simulate
     void FixedUpdate()
     {
-        foreach (Pair objectPair in ObjectPairs.ToList())
+        foreach (PhysicsObjectPair objectPair in ObjectPairs.ToList())
         {
-            //Obtain Direction Vector
-            Vector3 dir = objectPair.O1.rb.position - objectPair.O2.rb.position;
-            //Obtain Distance, return if 0
-            float dist = dir.magnitude;
-            if (dist == 0)
-                return;
-            //Calculate Magnitude of force
-            float magnitude = G * (objectPair.O1.rb.mass * objectPair.O2.rb.mass) / Mathf.Pow(dist, 2);
-            //Calculate force
-            Vector3 force = dir.normalized * magnitude;
+            Vector3 force = CalculateGravitationalForce(objectPair);
             //Excert force on both objects, due to Newton's Third Law of motion
             objectPair.O2.rb.AddForce(force);
             objectPair.O1.rb.AddForce(force * -1); //in opositite direction
         } 
     }
 
+    public Vector3 CalculateGravitationalForce (PhysicsObjectPair pair)
+    {
+            //Obtain Direction Vector
+            Vector3 dir = pair.O1.rb.position - pair.O2.rb.position;
+
+            //Obtain Distance, return if 0
+            float dist = dir.magnitude;
+            if (dist == 0)
+                return Vector3.zero;
+
+            //Calculate Magnitude of force
+            float magnitude = G * (pair.O1.rb.mass * pair.O2.rb.mass) / Mathf.Pow(dist, 2);
+
+            //Calculate force
+            Vector3 force = dir.normalized * magnitude;
+            return force;
+    }
+
     public void AddObject(PhysicsObject physicsObject)
     {
         if(ObjectPairs == null)
-            ObjectPairs = new List<Pair>();
+            ObjectPairs = new List<PhysicsObjectPair>();
 
         foreach (PhysicsObject obj in PhysicsObject.physicsObjects)
         {
             //For every other object
             if (obj != physicsObject)
             {
-                Pair pair = new Pair();
+                PhysicsObjectPair pair = new PhysicsObjectPair();
                 pair.O1 = physicsObject;
                 pair.O2 = obj;
                 //Check if list already contains pair
                 bool alreadyInList = false;
-                foreach (Pair objectPair in ObjectPairs.ToList())
+                foreach (PhysicsObjectPair objectPair in ObjectPairs.ToList())
                 {
                     //If pair already exists
                     if ((objectPair.O1 == pair.O1 && objectPair.O2 == pair.O2) ||
@@ -80,7 +89,7 @@ public class PhysicsEngine : MonoBehaviour
 
     public void RemoveObject(PhysicsObject physicsObject)
     {
-        foreach (Pair objectPair in ObjectPairs.ToList())
+        foreach (PhysicsObjectPair objectPair in ObjectPairs.ToList())
         {
             if (objectPair.O1 == physicsObject || objectPair.O2 == physicsObject)
                 ObjectPairs.Remove(objectPair);
@@ -112,7 +121,7 @@ public class PhysicsEngine : MonoBehaviour
     }
 }
 
-public class Pair
+public class PhysicsObjectPair
 {
     public PhysicsObject O1, O2;
 }
