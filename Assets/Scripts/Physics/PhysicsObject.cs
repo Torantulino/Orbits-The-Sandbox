@@ -579,15 +579,35 @@ public class PhysicsObject : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         PhysicsObject theirPhysObj = collision.transform.GetComponent<PhysicsObject>();
-        if (theirPhysObj.rb.mass > rb.mass)
-        {
-            //If Smaller, Destroy
-            Destroy(transform.gameObject);
-        }
-        else if (theirPhysObj.rb.mass < rb.mass)
+
+        // Check for larger object
+        if (theirPhysObj.rb.mass < rb.mass)
         {
             //If Bigger, Absorb
             setMass(rb.mass + theirPhysObj.rb.mass);
+            Destroy(collision.gameObject);
+        }
+        // If Equal...
+        else if (theirPhysObj.rb.mass == rb.mass)
+        {
+            // Higher X value wins
+            if(transform.position.x > collision.transform.position.x)
+            {
+                // Absorb
+                setMass(rb.mass + theirPhysObj.rb.mass);
+                Destroy(collision.gameObject);
+            }
+            // Else if equal again...
+            else if (transform.position.x == collision.transform.position.x)
+            {
+                //Higher y value wins
+                if (transform.position.y > collision.transform.position.y)
+                {
+                    // Absorb
+                    setMass(rb.mass + theirPhysObj.rb.mass);
+                    Destroy(collision.gameObject);
+                }
+            }
         }
     }
 
