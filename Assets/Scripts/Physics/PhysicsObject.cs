@@ -1,8 +1,9 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using Cinemachine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class PhysicsObject : MonoBehaviour
 {
@@ -41,6 +42,7 @@ public class PhysicsObject : MonoBehaviour
     private PhysicsEngine physicsEngine;
     private bool spawnee = false;
     private ContextMenu contextMenu;
+    private PhysicsObject biggestGravitationalInfluencer;
     public float Density
     {
         get { return density; }
@@ -60,8 +62,20 @@ public class PhysicsObject : MonoBehaviour
 
     public int ID;
 
+    public bool predictOrbit = false;
+    public bool drawRelativeOrbitTrail = false;
+    private float timeSinceLastPosition =0.0f;
+
+    private FixedSizedQueue<Vector3> relativeTrailPositions = new FixedSizedQueue<Vector3>(150);
+
+    
+
     void Awake()
     {
+        rb = GetComponent<Rigidbody>();
+        if (rb == null)
+            Debug.Log("Rigidbody not found by " + this.name + "!");
+        
         //Set properties
         radius = transform.localScale.x;
         calculateVolume(radius);
@@ -184,7 +198,7 @@ public class PhysicsObject : MonoBehaviour
             }
         }
     }
-
+    
     //Finds and returns object with highest gravitational influence or null
     PhysicsObject GetBiggestGravitationalInfluencer()
     {
@@ -249,6 +263,135 @@ public class PhysicsObject : MonoBehaviour
         {
             Debug.Log(this.name + " has no trail renderer!");
         }
+    }
+
+    /// LateUpdate is called every frame, if the Behaviour is enabled.
+    /// It is called after all Update functions have been called.
+    void LateUpdate()
+    {
+        PhysicsObject newInfluencer = GetBiggestGravitationalInfluencer();
+        // If new influencer
+        if(newInfluencer != biggestGravitationalInfluencer)
+        {
+            if (drawRelativeOrbitTrail)
+                // Clear previous trail if in new orbit
+                relativeTrailPositions.Clear();
+        }
+
+        // Update
+        biggestGravitationalInfluencer = newInfluencer;
+
+        //Temp: move to start
+        lineRenderer.SetWidth(0.1f, 0.1f);        
+
+        if(predictOrbit)
+        {
+            lineRenderer.useWorldSpace = true;
+
+            uint segments = 100;
+
+            Vector3[] positions = PredictOrbit(biggestGravitationalInfluencer, segments);
+
+            lineRenderer.positionCount = (int)segments;
+            lineRenderer.SetPositions(positions);
+
+        }
+        else if(drawRelativeOrbitTrail)
+        {
+            // Update trail vertex count
+            lineRenderer.positionCount = relativeTrailPositions.Count;
+
+            // Manually translate all positions to acheive local space without rotation or scale
+            lineRenderer.useWorldSpace = true;
+            // for each position
+            for (int i = 0; i < lineRenderer.positionCount; i++)
+            {
+                Vector3 relativePos = relativeTrailPositions.ElementAt(i);
+                lineRenderer.SetPosition(i, relativePos + biggestGravitationalInfluencer.transform.position);
+            }
+
+            // Track position
+            if(timeSinceLastPosition > 1.0f)
+            {
+                // Add to relative positions queue
+                relativeTrailPositions.Enqueue(transform.position - 
+                    biggestGravitationalInfluencer.transform.position);
+
+                // Reset timer
+                timeSinceLastPosition = 0.0f;
+            }
+            // Increment timer
+            else
+            {
+                timeSinceLastPosition += Time.deltaTime * 100.0f;
+            }
+        }
+        //else
+            //lineRenderer.positionCount = 0;
+    }
+
+    Vector3[] PredictOrbit(PhysicsObject _strongestObject, uint steps)
+    {
+        Vector3[] positions = new Vector3[steps];
+
+        PhysicsObjectPair pair = new PhysicsObjectPair();
+        pair.O1 = this;
+        pair.O2 = _strongestObject;
+        
+
+        // Calculate Orbital Period for this
+        //float period = (2.0f * Mathf.PI) * Mathf.Sqrt( Mathf.Pow(Vector3.Distance(pair.O1.transform.position, pair.O2.transform.position),3.0f) / G * ( pair.O1.rb.mass + pair.O2.rb.mass)  );
+        
+
+        
+        Vector3 position1 = this.transform.position;
+        Vector3 position2 = _strongestObject.transform.position;
+
+        Vector3 velocity1 = this.rb.velocity - _strongestObject.rb.velocity;
+        //Vector3 velocity2 = _strongestObject.rb.velocity;
+        Vector3 velocity2 = -velocity1;
+        //Vector3 velocity2 = Vector3.zero;
+
+        float mass1 = this.rb.mass;
+        float mass2 = _strongestObject.rb.mass;
+
+        // Note, this is flawed as it assumes circular orbit
+        float period = (Mathf.PI * 2.0f) * Vector3.Distance(pair.O1.transform.position, pair.O2.transform.position) 
+                        / velocity1.magnitude;
+                        
+        float timestep = period / steps;
+
+        for (int i = 0; i < steps; i++)
+        {
+            positions[i] = position1;
+
+            // Calculate force
+            Vector3 force = new Vector3();
+            //Obtain Direction Vector
+            Vector3 dir = position1 - position2;
+            //Obtain Distance, return if 0
+            float dist = dir.magnitude;
+            if (dist == 0)
+                force = Vector3.zero;
+            //Calculate Magnitude of force
+            float magnitude = G * (mass1 * mass2) / Mathf.Pow(dist, 2);
+            force = dir.normalized * magnitude;
+
+            // Calculate accelerations
+            Vector3 a1 = -force / mass1;
+            //Vector3 a2 = force / mass2;
+
+            // Update positions
+            position1 += velocity1 * timestep + 0.5f * a1 * timestep * timestep;
+            //position2 += velocity2 * timestep + 0.5f * a2 * timestep * timestep;
+
+            // Update velocities
+            velocity1 += a1 * timestep;
+            //velocity2 += a2 * timestep;
+
+        }
+
+        return positions;
     }
 
     void calculateVolume(float rad)
