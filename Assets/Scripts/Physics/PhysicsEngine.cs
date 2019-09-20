@@ -119,6 +119,16 @@ public class PhysicsEngine : MonoBehaviour
             Time.fixedDeltaTime = scale * 0.02f;
         }
     }
+
+    public void AddjustTimeScale(float ammount)
+    {
+        ammount *= TIMESCALER;
+
+        ammount = Mathf.Clamp(Time.timeScale + ammount, 0.0f, 100.0f) - Time.timeScale;
+
+        Time.timeScale += ammount;
+        Time.fixedDeltaTime = Time.timeScale * 0.02f;
+    }
 }
 
 public class PhysicsObjectPair

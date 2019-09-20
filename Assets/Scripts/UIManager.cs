@@ -58,6 +58,9 @@ public class UIManager : MonoBehaviour
 
     public bool displayFuturePath;
     public bool displayPastPath;
+    private bool scalingTime;
+    private int scalingTimeDirection;
+    private float scalingTimeStart;
 
     private Dictionary<string, Tuple<Texture2D, Vector2>> cursors;
 
@@ -114,9 +117,9 @@ public class UIManager : MonoBehaviour
             Debug.Log("Main Cam Controller fot found by " + this.name + "!");
 
         //objectName = transform.Find("panObjects/panObject/TitleObj").GetComponent<Text>();
-        playButton = transform.Find("panBottom/btnPlay").gameObject;
-        pauseButton = transform.Find("panBottom/btnPause").gameObject;
-        inptTime = transform.Find("panBottom/txtTimeScale/inptTime").GetComponent<InputField>();
+        playButton = transform.Find("panBottom/timescale/btnPlay").gameObject;
+        pauseButton = transform.Find("panBottom/timescale/btnPause").gameObject;
+        inptTime = transform.Find("panBottom/timescale/inptTime").GetComponent<InputField>();
         inptDivs = transform.Find("panObjects/panel/panSpawn/txtSym/inptDivs").GetComponent<InputField>();
         planetPanel = transform.Find("panObjects/panel/panLeft/panPlanets").gameObject;
         starPanel = transform.Find("panObjects/panel/panLeft/panStars").gameObject;
@@ -159,7 +162,11 @@ public class UIManager : MonoBehaviour
 
         //Update timescale based on UI
         if (!inptTime.isFocused)
-        inptTime.text = (Time.timeScale / PhysicsEngine.TIMESCALER).ToString();
+        {
+            float roundedTime = (Time.timeScale / PhysicsEngine.TIMESCALER) * 100.0f;
+            roundedTime = Mathf.Round(roundedTime) / 100.0f;
+            inptTime.text = (roundedTime).ToString();
+        }
 
         //Show/Hide UI
         if (Input.GetKeyDown(KeyCode.F1))
@@ -195,6 +202,18 @@ public class UIManager : MonoBehaviour
             {
                 Destroy(_obj);
             }
+        }
+
+        // Adjust timescale
+        if(scalingTime)
+        {
+            float timeSpentScaling = Time.realtimeSinceStartup - scalingTimeStart;
+
+            float ammount = 0.5f * timeSpentScaling;
+
+            ammount *= scalingTimeDirection;
+            
+            physicsEngine.AddjustTimeScale(ammount);
         }
     }
 
@@ -234,6 +253,7 @@ public class UIManager : MonoBehaviour
                 SpawnObject();
         }
     }
+
     public void SwitchCursor(uint i)
     {
         switch(i)
@@ -373,7 +393,6 @@ public class UIManager : MonoBehaviour
     //     imgSpawnObj.sprite = btnImage.sprite;
     // }
 
-
     public void ReloadScene()
     {
         Application.LoadLevel(Application.loadedLevel);
@@ -395,11 +414,35 @@ public class UIManager : MonoBehaviour
         pauseButton.SetActive(true);
     }
 
-    public void timeScaled(string scale)
+    //Slow
+    //Click start
+    public void TimeManipStart(int _direction)
     {
+        if (Time.timeScale == 0)
+            playPressed();
+
+        scalingTime = true;
+        scalingTimeStart = Time.realtimeSinceStartup;
+        scalingTimeDirection = _direction;
+    }
+    //Click end
+    public void TimeManipEnd()
+    {
+        scalingTime = false;
+    }
+
+
+    public void timeScaled(string _scale)
+    {
+        
         try
         {
-            physicsEngine.ScaleTime(int.Parse(scale));
+            int scale = int.Parse(_scale);
+
+            if(Time.timeScale == 0 && scale != 0)
+                playPressed();
+
+            physicsEngine.ScaleTime(scale);
         }
         catch (ArgumentNullException)
         {
