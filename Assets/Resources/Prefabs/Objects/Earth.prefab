@@ -456,6 +456,9 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   isTrailRenderer: 1
   spawnWithOrbit: 1
+  ID: 0
+  _drawFuturePath: 0
+  _drawPastPath: 0
 --- !u!54 &54472792345134392
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -479,7 +482,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1532271489571154}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
