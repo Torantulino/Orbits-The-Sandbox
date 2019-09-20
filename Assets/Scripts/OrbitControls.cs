@@ -62,7 +62,7 @@ public class OrbitControls : MonoBehaviour
             nearClippingCurve.SmoothTangents(i, -1.0f);
         }
     }
-    
+
     private void Update()
     {
 #if UNITY_EDITOR
@@ -96,10 +96,13 @@ public class OrbitControls : MonoBehaviour
             Input.mousePosition.x >= 0 && Input.mousePosition.x <= Screen.width &&
             Input.mousePosition.y >= 0 && Input.mousePosition.y <= Screen.height)
         {
-            _Distance *= 1 + zoom;
+            if((_Distance * 1 + zoom) >= _FocalObject.transform.localScale.x / 1.1f || zoom > 0.0f)
+            {
+                _Distance *= 1 + zoom;
+                Camera.main.nearClipPlane = nearClippingCurve.Evaluate(_Distance);
+                Camera.main.farClipPlane = farClippingCurve.Evaluate(_Distance);
+            }
             
-            Camera.main.nearClipPlane = nearClippingCurve.Evaluate(_Distance);
-            Camera.main.farClipPlane = farClippingCurve.Evaluate(_Distance);
         }
 
         // Always update position even with no input in case the target is moving.
