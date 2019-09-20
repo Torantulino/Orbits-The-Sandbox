@@ -21,6 +21,10 @@ public class OrbitControls : MonoBehaviour
     private Vector3 _Sensitivity = new Vector3(15, -10, -0.1f);
 
     public float _Distance;
+
+    public AnimationCurve nearClippingCurve = new AnimationCurve();
+    public AnimationCurve farClippingCurve = new AnimationCurve();
+
     private void Awake()
     {
     }
@@ -33,7 +37,32 @@ public class OrbitControls : MonoBehaviour
 
         transform.LookAt(_FocalObject.position);
 
+        // Set-up animation curves
+        // t = 0
+        Keyframe key = new Keyframe(0.0f, 0.01f);
+
+        nearClippingCurve.AddKey(0.0f, 0.01f);
+        farClippingCurve.AddKey(0.0f, 10.0f);
+        // t = 3
+        nearClippingCurve.AddKey(3.0f, 1.0f);
+        farClippingCurve.AddKey(3.0f, 20000.0f);
+        // t = 100
+        nearClippingCurve.AddKey(100.0f, 1.5f);
+        farClippingCurve.AddKey(100.0f, 25000.0f);
+        // t = 1000
+        nearClippingCurve.AddKey(1000.0f, 10.0f);
+        farClippingCurve.AddKey(1000.0f, 200000.0f);
+        // t = 100000
+        nearClippingCurve.AddKey(100000.0f, 200.0f);
+        farClippingCurve.AddKey(100000.0f, 2000000.0f);
+
+        for (int i = 0; i < 5; i++)
+        {
+            farClippingCurve.SmoothTangents(i, -1.0f);
+            nearClippingCurve.SmoothTangents(i, -1.0f);
+        }
     }
+    
     private void Update()
     {
 #if UNITY_EDITOR
@@ -68,6 +97,9 @@ public class OrbitControls : MonoBehaviour
             Input.mousePosition.y >= 0 && Input.mousePosition.y <= Screen.height)
         {
             _Distance *= 1 + zoom;
+            
+            Camera.main.nearClipPlane = nearClippingCurve.Evaluate(_Distance);
+            Camera.main.farClipPlane = farClippingCurve.Evaluate(_Distance);
         }
 
         // Always update position even with no input in case the target is moving.
