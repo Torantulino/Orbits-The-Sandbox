@@ -22514,7 +22514,7 @@ GameObject:
   - component: {fileID: 6205236366558731719}
   - component: {fileID: 9144586097786441983}
   m_Layer: 5
-  m_Name: tglPast
+  m_Name: tglGrid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22582,12 +22582,12 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4623547909918182022}
   toggleTransition: 1
   graphic: {fileID: 4623547909918182022}
-  m_Group: {fileID: 1094558905688320020}
+  m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114907374780347506}
-        m_MethodName: pastPathToggled
+        m_MethodName: gridToggled
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -22732,7 +22732,6 @@ GameObject:
   - component: {fileID: 8470483211017959034}
   - component: {fileID: 5103626053004332569}
   - component: {fileID: 9173093674339080429}
-  - component: {fileID: 1094558905688320020}
   m_Layer: 5
   m_Name: txtGrid
   m_TagString: Untagged
@@ -22802,19 +22801,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: SHOW GRID
---- !u!114 &1094558905688320020
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2963218589948448769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2fafe2cfe61f6974895a912c3755e8f1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AllowSwitchOff: 1
 --- !u!1 &3338186244771551805
 GameObject:
   m_ObjectHideFlags: 0

@@ -22,6 +22,8 @@ public class InfiniteGrids : MonoBehaviour
 
     private OrbitControls orbitControls;
 
+    public bool render = true;
+
     struct Grid
     {
         public List<Vector3> _grid;
@@ -93,32 +95,36 @@ public class InfiniteGrids : MonoBehaviour
         // Get distance from origin to camera
         float cameraDistance = Vector3.Distance(cam.transform.position, origin);
 
-        int i = 0;
-        foreach (Grid grid in grids)
+        // Render
+        if(render)
         {
-            // Don't render grid 0 when cam is further than 400.0f
-            if(i==0 && cameraDistance > 400.0f)
+            int i = 0;
+            foreach (Grid grid in grids)
             {
+                // Don't render grid 0 when cam is further than 400.0f
+                if (i == 0 && cameraDistance > 400.0f)
+                {
+                    i++;
+                    continue;
+                }
+
+                GL.PushMatrix();
+                GLMat.SetPass(0);
+                GL.Begin(GL.LINES);
+
+                // Set line colour
+                GL.Color(Color.white * Mathf.Min((grid._cellSize / cameraDistance + 0.3f), 1.0f));
+
+                // Render grid vertices
+                foreach (Vector3 vertex in grid._grid)
+                {
+                    GL.Vertex(vertex + origin);
+                }
+
+                GL.End();
+                GL.PopMatrix();
                 i++;
-                continue;
             }
-
-            GL.PushMatrix();
-            GLMat.SetPass(0);
-            GL.Begin(GL.LINES);
-
-            // Set line colour
-            GL.Color(Color.white * Mathf.Min((grid._cellSize / cameraDistance + 0.3f), 1.0f));
-
-            // Render grid vertices
-            foreach (Vector3 vertex in grid._grid)
-            {
-                GL.Vertex(vertex + origin);
-            }
-
-            GL.End();
-            GL.PopMatrix();
-            i++;
         }
     }
     

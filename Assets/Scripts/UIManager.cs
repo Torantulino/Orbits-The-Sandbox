@@ -425,6 +425,11 @@ public class UIManager : MonoBehaviour
             Camera.main.cullingMask = Camera.main.cullingMask & ~(1 << 8);
     }
 
+    public void gridToggled(bool state)
+    {
+        placementGrid.render = state;
+    }
+
     public void futurePathToggled(bool state)
     {
         displayFuturePath = state;

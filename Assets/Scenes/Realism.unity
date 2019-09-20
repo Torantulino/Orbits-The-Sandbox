@@ -142,6 +142,18 @@ MonoBehaviour:
   _MouseButton: 2
   _Sensitivity: {x: 15, y: -10, z: -0.1}
   _Distance: 0
+  nearClippingCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  farClippingCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &63817799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,6 +170,7 @@ MonoBehaviour:
   gridCount: 100
   gridSize: 1
   gridBrightness: 1
+  render: 1
 --- !u!4 &63817804 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4869953532238596, guid: 9b61bf4e9ee242749af789447a7d8c0a,
@@ -832,12 +845,21 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 1399231552, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 0.00012207031
       objectReference: {fileID: 0}
-    - target: {fileID: 9144586097786441983, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b,
+    - target: {fileID: 8670607453653787857, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b,
         type: 3}
-      propertyPath: m_IsOn
-      value: 0
+      propertyPath: m_AnchoredPosition.y
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7095514505036450597, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2058922182, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b, type: 3}
+      propertyPath: m_Value
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b, type: 3}
