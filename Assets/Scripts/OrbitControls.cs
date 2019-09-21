@@ -110,7 +110,14 @@ public class OrbitControls : MonoBehaviour
     }
     private void UpdatePosition()
     {
-        transform.position = _FocalObject.position - transform.forward * _Distance;
+        try
+        {
+            transform.position = _FocalObject.position - transform.forward * _Distance;
+        }
+        catch
+        {
+
+        }
     }
     private void OnDrawGizmosSelected()
     {

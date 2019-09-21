@@ -82,49 +82,56 @@ public class InfiniteGrids : MonoBehaviour
     
     void OnPostRender () 
     {   
-        // Calculate new plane
-        origin = orbitControls.FocalObject.position; //This essentially should be the same thing as below. The plane is used elsewhere in the game so is necessary.
-        plane = new Plane( Vector3.up, origin );
-
-        // Get grid origin position
-        ray = cam.ScreenPointToRay( new Vector3( Screen.width / 2.0f, Screen.height / 2.0f, 0.0f ) );
-        plane.Raycast( ray, out rayDist );
-        origin = ray.GetPoint( rayDist );
-
-
-        // Get distance from origin to camera
-        float cameraDistance = Vector3.Distance(cam.transform.position, origin);
-
-        // Render
-        if(render)
+        try
         {
-            int i = 0;
-            foreach (Grid grid in grids)
+            // Calculate new plane
+            origin = orbitControls.FocalObject.position; //This essentially should be the same thing as below. The plane is used elsewhere in the game so is necessary.
+            plane = new Plane(Vector3.up, origin);
+
+            // Get grid origin position
+            ray = cam.ScreenPointToRay(new Vector3(Screen.width / 2.0f, Screen.height / 2.0f, 0.0f));
+            plane.Raycast(ray, out rayDist);
+            origin = ray.GetPoint(rayDist);
+
+
+            // Get distance from origin to camera
+            float cameraDistance = Vector3.Distance(cam.transform.position, origin);
+
+            // Render
+            if (render)
             {
-                // Don't render grid 0 when cam is further than 400.0f
-                if (i == 0 && cameraDistance > 400.0f)
+                int i = 0;
+                foreach (Grid grid in grids)
                 {
+                    // Don't render grid 0 when cam is further than 400.0f
+                    if (i == 0 && cameraDistance > 400.0f)
+                    {
+                        i++;
+                        continue;
+                    }
+
+                    GL.PushMatrix();
+                    GLMat.SetPass(0);
+                    GL.Begin(GL.LINES);
+
+                    // Set line colour
+                    GL.Color(Color.white * Mathf.Min((grid._cellSize / cameraDistance + 0.3f), 1.0f));
+
+                    // Render grid vertices
+                    foreach (Vector3 vertex in grid._grid)
+                    {
+                        GL.Vertex(vertex + origin);
+                    }
+
+                    GL.End();
+                    GL.PopMatrix();
                     i++;
-                    continue;
                 }
-
-                GL.PushMatrix();
-                GLMat.SetPass(0);
-                GL.Begin(GL.LINES);
-
-                // Set line colour
-                GL.Color(Color.white * Mathf.Min((grid._cellSize / cameraDistance + 0.3f), 1.0f));
-
-                // Render grid vertices
-                foreach (Vector3 vertex in grid._grid)
-                {
-                    GL.Vertex(vertex + origin);
-                }
-
-                GL.End();
-                GL.PopMatrix();
-                i++;
             }
+        }
+        catch
+        {
+
         }
     }
     

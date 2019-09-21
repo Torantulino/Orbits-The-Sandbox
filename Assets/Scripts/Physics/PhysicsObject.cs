@@ -324,9 +324,12 @@ public class PhysicsObject : MonoBehaviour
             // Predict future path
             Vector3[] positions = PredictOrbit(biggestGravitationalInfluencer, segments);
             
-            // Set positions
-            lineRenderer.positionCount = (int)segments;
-            lineRenderer.SetPositions(positions);
+            if(positions != null)
+            {
+                // Set positions
+                lineRenderer.positionCount = (int)segments;
+                lineRenderer.SetPositions(positions);
+            }
         }
         // Past Drawn relative path
         else if(UiManager.displayPastPath)
@@ -414,68 +417,76 @@ public class PhysicsObject : MonoBehaviour
 
     Vector3[] PredictOrbit(PhysicsObject _strongestObject, uint steps)
     {
-        Vector3[] positions = new Vector3[steps];
-
-        PhysicsObjectPair pair = new PhysicsObjectPair();
-        pair.O1 = this;
-        pair.O2 = _strongestObject;
-        
-
-        // Calculate Orbital Period for this
-        //float period = (2.0f * Mathf.PI) * Mathf.Sqrt( Mathf.Pow(Vector3.Distance(pair.O1.transform.position, pair.O2.transform.position),3.0f) / G * ( pair.O1.rb.mass + pair.O2.rb.mass)  );
-        
-
-        
-        Vector3 position1 = this.transform.position;
-        Vector3 position2 = _strongestObject.transform.position;
-
-        Vector3 velocity1 = this.rb.velocity - _strongestObject.rb.velocity;
-        //Vector3 velocity2 = _strongestObject.rb.velocity;
-        //Vector3 velocity2 = -velocity1;
-        Vector3 velocity2 = Vector3.zero;
-        //Vector3 velocity2 = _strongestObject.rb.velocity - this.rb.velocity;
-
-
-        float mass1 = this.rb.mass;
-        float mass2 = _strongestObject.rb.mass;
-
-        // Note, this is flawed as it assumes circular orbit
-        float period = (Mathf.PI * 2.0f) * Vector3.Distance(pair.O1.transform.position, pair.O2.transform.position) 
-                        / velocity1.magnitude;
-                        
-        float timestep = period / steps;
-
-        for (int i = 0; i < steps; i++)
+        try
         {
-            positions[i] = position1;
+            Vector3[] positions = new Vector3[steps];
 
-            // Calculate force
-            Vector3 force = new Vector3();
-            //Obtain Direction Vector
-            Vector3 dir = position1 - position2;
-            //Obtain Distance, return if 0
-            float dist = dir.magnitude;
-            if (dist == 0)
-                force = Vector3.zero;
-            //Calculate Magnitude of force
-            float magnitude = G * (mass1 * mass2) / Mathf.Pow(dist, 2);
-            force = dir.normalized * magnitude;
+            PhysicsObjectPair pair = new PhysicsObjectPair();
+            pair.O1 = this;
+            pair.O2 = _strongestObject;
 
-            // Calculate accelerations
-            Vector3 a1 = -force / mass1;
-            Vector3 a2 = force / mass2;
 
-            // Update positions
-            position1 += velocity1 * timestep + 0.5f * a1 * timestep * timestep;
-            position2 += velocity2 * timestep + 0.5f * a2 * timestep * timestep;
+            // Calculate Orbital Period for this
+            //float period = (2.0f * Mathf.PI) * Mathf.Sqrt( Mathf.Pow(Vector3.Distance(pair.O1.transform.position, pair.O2.transform.position),3.0f) / G * ( pair.O1.rb.mass + pair.O2.rb.mass)  );
 
-            // Update velocities
-            velocity1 += a1 * timestep;
-            velocity2 += a2 * timestep;
 
+
+            Vector3 position1 = this.transform.position;
+            Vector3 position2 = _strongestObject.transform.position;
+
+            Vector3 velocity1 = this.rb.velocity - _strongestObject.rb.velocity;
+            //Vector3 velocity2 = _strongestObject.rb.velocity;
+            //Vector3 velocity2 = -velocity1;
+            Vector3 velocity2 = Vector3.zero;
+            //Vector3 velocity2 = _strongestObject.rb.velocity - this.rb.velocity;
+
+
+            float mass1 = this.rb.mass;
+            float mass2 = _strongestObject.rb.mass;
+
+            // Note, this is flawed as it assumes circular orbit
+            float period = (Mathf.PI * 2.0f) * Vector3.Distance(pair.O1.transform.position, pair.O2.transform.position)
+                            / velocity1.magnitude;
+
+            float timestep = period / steps;
+
+            for (int i = 0; i < steps; i++)
+            {
+                positions[i] = position1;
+
+                // Calculate force
+                Vector3 force = new Vector3();
+                //Obtain Direction Vector
+                Vector3 dir = position1 - position2;
+                //Obtain Distance, return if 0
+                float dist = dir.magnitude;
+                if (dist == 0)
+                    force = Vector3.zero;
+                //Calculate Magnitude of force
+                float magnitude = G * (mass1 * mass2) / Mathf.Pow(dist, 2);
+                force = dir.normalized * magnitude;
+
+                // Calculate accelerations
+                Vector3 a1 = -force / mass1;
+                Vector3 a2 = force / mass2;
+
+                // Update positions
+                position1 += velocity1 * timestep + 0.5f * a1 * timestep * timestep;
+                position2 += velocity2 * timestep + 0.5f * a2 * timestep * timestep;
+
+                // Update velocities
+                velocity1 += a1 * timestep;
+                velocity2 += a2 * timestep;
+
+            }
+
+            return positions;
         }
-
-        return positions;
+        catch
+        {
+            lineRenderer.positionCount = 0;
+            return default;
+        }
     }
 
     void calculateVolume(float rad)
