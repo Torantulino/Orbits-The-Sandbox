@@ -398,6 +398,13 @@ public class UIManager : MonoBehaviour
         Application.LoadLevel(Application.loadedLevel);
     }
 
+    public void ToggleMute()
+    {
+        MusicManagaer musicMan = FindObjectOfType<MusicManagaer>();
+        musicMan.gameObject.GetComponentInChildren<AudioSource>().mute = 
+            !musicMan.gameObject.GetComponentInChildren<AudioSource>().mute;
+    }
+
     //Pause
     public void pausePressed()
     {
@@ -414,7 +421,7 @@ public class UIManager : MonoBehaviour
         pauseButton.SetActive(true);
     }
 
-    //Slow
+    // Time manupulation
     //Click start
     public void TimeManipStart(int _direction)
     {
