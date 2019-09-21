@@ -122,7 +122,11 @@ public class PhysicsObject : MonoBehaviour
         //Clear Bugged Trail
         trailRenderer.Clear();
 
+        // Setup linerenderer
         lineRenderer.positionCount = 0;
+        lineRenderer.widthMultiplier = 1.0f;
+        lineRenderer.startWidth = 1.0f;
+        lineRenderer.endWidth = 1.0f;
 
         // Set uniquie name
         name = name.Replace("(Clone)", "");
@@ -257,7 +261,9 @@ public class PhysicsObject : MonoBehaviour
         //Set trail renderer thickness to scale with camera distance
         if (trailRenderer != null)
         {
-            trailRenderer.widthMultiplier = mainCamController._Distance / 500.0f;
+            float widthMultiplier = mainCamController._Distance / 500.0f;
+            trailRenderer.widthMultiplier = widthMultiplier;
+            lineRenderer.widthMultiplier = widthMultiplier;
         }
         else
         {
@@ -280,9 +286,6 @@ public class PhysicsObject : MonoBehaviour
 
         // Update
         biggestGravitationalInfluencer = newInfluencer;
-
-        //Temp: Change to adaptive thickness, similar to trailrenderer
-        lineRenderer.SetWidth(0.1f, 0.1f);        
 
         // Future relative predicted path
         if(UiManager.displayFuturePath)
