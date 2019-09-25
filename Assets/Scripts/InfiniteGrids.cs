@@ -6,7 +6,6 @@ public class InfiniteGrids : MonoBehaviour
 {
   public Material GLMat;
     public int gridCount = 100; //number of grids to draw on each side of the look position (half size)
-    public float gridSize = 1.0f; //spacing between gridlines
  
     Ray ray;
     float rayDist;
@@ -14,28 +13,54 @@ public class InfiniteGrids : MonoBehaviour
     public Plane plane = new Plane( Vector3.up, Vector3.zero ); //world plane to draw the grid on
     Camera cam;
 
-    public float gridBrightness = 1.0f; 
-    Color highWhite;
-    Color medWhite;
-    Color lowWhite;
-    private List<Grid> grids = new List<Grid>();
+    private SortedList<float, Grid> grids = new SortedList<float, Grid>();  // <Focus Point, grid>
 
     private OrbitControls orbitControls;
 
     public bool render = true;
 
+    //Dictionary<char, GradientAlphaKey[]> alphaKeys = new Dictionary<char, GradientAlphaKey[]>();
+
     struct Grid
     {
         public List<Vector3> _grid;
         public float _cellSize;
+        public AnimationCurve _alphaCurve;
     }
 
     private Grid CreateGrid(float _cellSize)
     {
+        //float _focalPoint = _cellSize / 10.0f;
+        float _focalPoint = _cellSize;
+
         Grid _Grid = new Grid();
         _Grid._cellSize = _cellSize;
         List<Vector3> _grid = new List<Vector3>();
 
+        // Setup alpha keys (time = distance, value = alpha)
+        {
+            //ALPHA
+            Keyframe[] alphaKeys = new Keyframe[3];
+            //Start
+            alphaKeys[0].time = _focalPoint / 2.0f;
+            alphaKeys[0].value = 0.0f;
+            //Focal Point
+            alphaKeys[1].time = _focalPoint * 2.0f;
+            alphaKeys[1].value = 0.5f;
+            //End 
+            alphaKeys[2].time = _focalPoint * 100.0f;
+            alphaKeys[2].value = 0.0f;
+            // Set
+            AnimationCurve curve = new AnimationCurve();
+            
+            for (int i = 0; i < 3; i++)
+                curve.AddKey(alphaKeys[i]);
+            
+            //Set
+            _Grid._alphaCurve = curve;
+        }
+
+        // Create Grid Structure
         //Major x line
         _grid.Add(new Vector3( gridCount * _cellSize, 0, 0 ));
         _grid.Add(new Vector3( -gridCount * _cellSize, 0, 0 ));
@@ -63,17 +88,15 @@ public class InfiniteGrids : MonoBehaviour
     }
 
     void Start () {
-        highWhite = new Color(1.0f, 1.0f, 1.0f, 0.8f);
-        medWhite = new Color(1.0f, 1.0f, 1.0f, 0.3f);
-        lowWhite = new Color(1.0f, 1.0f, 1.0f, 0.05f);
-        
+
         cam = GetComponent<Camera>();
         orbitControls = GetComponent<OrbitControls>();
 
-        grids.Add(CreateGrid(1.0f));
-        grids.Add(CreateGrid(10.0f));
-        //grids.Add(CreateGrid(100.0f));
-        //grids.Add(CreateGrid(1000));
+        // Create and add grids
+        grids.Add(0.0f, CreateGrid(1.0f));
+        grids.Add(1.0f, CreateGrid(10.0f));
+        grids.Add(10.0f, CreateGrid(100.0f));
+        grids.Add(100.0f, CreateGrid(1000.0f));
     }
  
     void LateUpdate () {
@@ -101,8 +124,11 @@ public class InfiniteGrids : MonoBehaviour
             if (render)
             {
                 int i = 0;
-                foreach (Grid grid in grids)
+                foreach (KeyValuePair<float, Grid> pair in grids)
                 {
+                    // Get grid from pair
+                    Grid grid = pair.Value;
+
                     // Don't render grid 0 when cam is further than 400.0f
                     if (i == 0 && cameraDistance > 400.0f)
                     {
@@ -115,7 +141,7 @@ public class InfiniteGrids : MonoBehaviour
                     GL.Begin(GL.LINES);
 
                     // Set line colour
-                    GL.Color(Color.white * Mathf.Min((grid._cellSize / cameraDistance + 0.3f), 1.0f));
+                    GL.Color(new Color(Color.white.r, Color.white.g, Color.white.b, grid._alphaCurve.Evaluate(orbitControls._Distance)));
 
                     // Render grid vertices
                     foreach (Vector3 vertex in grid._grid)
@@ -133,9 +159,5 @@ public class InfiniteGrids : MonoBehaviour
         {
 
         }
-    }
-    
-    float Round ( float x ) {
-        return Mathf.Round( x / gridSize ) * gridSize;
     }
 }
