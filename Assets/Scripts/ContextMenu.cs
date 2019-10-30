@@ -36,14 +36,28 @@ public class ContextMenu : MonoBehaviour
         if (previewCamCtrlr == null)
             Debug.Log("Preview Cam Controller not found by " + this.name + "!");
             
-        objectTitle = transform.Find("TitleObj").GetComponent<Text>(); 
-
+        objectTitle = transform.Find("TitleObj").GetComponent<Text>();
+        if(!objectTitle)
+            Debug.LogError("Context Menu's 'TitleObj' not found!");
         inptPosX = transform.Find("txtPosX/inptPosX").GetComponent<InputField>();
+        if(!inptPosX)
+            Debug.LogError("Context Menu's 'inptPosX' not found!");
         inptPosY = transform.Find("txtPosY/inptPosY").GetComponent<InputField>();
+        if (!inptPosY)
+            Debug.LogError("Context Menu's 'inptPosY' not found!");
         inptPosZ = transform.Find("txtPosZ/inptPosZ").GetComponent<InputField>();
+        if (!inptPosZ)
+            Debug.LogError("Context Menu's 'inptPosZ' not found!");
         inptMassVal = transform.Find("txtMass/inptMassVal").GetComponent<InputField>();
+        if (!inptMassVal)
+            Debug.LogError("Context Menu's 'inptMassVal' not found!");
         inptRadiusVal = transform.Find("txtRadius/inptRadiusVal").GetComponent<InputField>();
+        if (!inptRadiusVal)
+            Debug.LogError("Context Menu's 'inptRadiusVal' not found!");
         inptDensityVal = transform.Find("txtDensity/inptDensityVal").GetComponent<InputField>();
+        if (!inptDensityVal)
+            Debug.LogError("Context Menu's 'inptDensityVal' not found!");
+            
         canvas = FindObjectOfType<Canvas>();
         orbitControls = GameObject.FindObjectOfType<OrbitControls>();
         lineRenderer = GetComponent<LineRenderer>();
