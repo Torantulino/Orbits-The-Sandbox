@@ -46,7 +46,8 @@ public class UIManager : MonoBehaviour
     private GameObject panEntities;
     private Transform contentEntites;
     private Button lastEntityBtnSelected;
-    private bool uiAnimating = false;
+    private bool uiLeftAnimating = false;
+    private bool uiRightAnimating = false;
     private List<GameObject> selectedEntites = new List<GameObject>();
     private OrbitControls mainCamController;
     private Canvas canvas;
@@ -66,6 +67,13 @@ public class UIManager : MonoBehaviour
 
     InfiniteGrids placementGrid;
 
+    GameObject tutorialCursor;
+    public ParticleSystem tutorialParticleSystem;
+    Animator tutorialCursorAnimator;
+    bool tutorial = false;
+    float middleMouseHoldTime = 0.0f;
+    float mouseScroll;
+
     void Awake()
     {
         manipMode = 1;
@@ -78,7 +86,9 @@ public class UIManager : MonoBehaviour
         panObjects = transform.Find("panObjects").gameObject;
         panEntities = transform.Find("panEntities").gameObject;
         contentEntites = panEntities.transform.Find("panel/Scroll View/Viewport/Content");
-    
+        tutorialCursor = GameObject.Find("tutorialCursor");
+        tutorialCursorAnimator = tutorialCursor.GetComponent<Animator>();
+
         // Load cursors
         cursor_default = Resources.Load<Texture2D>("Textures/UI/cursors/cursor");
         if (cursor_default == null)
@@ -135,7 +145,6 @@ public class UIManager : MonoBehaviour
         
         inptDivs.text = symDivs.ToString();
 
-
         // colPicker.SetOnValueChangeCallback(TrailColChanged);
 
         //Load Celestial Objects
@@ -153,13 +162,13 @@ public class UIManager : MonoBehaviour
         }
 
         SetSelectedObject(GameObject.FindGameObjectWithTag("host").GetComponent<PhysicsObject>());
+
     }
 
 
     // Update is called once per frame
     void Update()
     {
-
         //Update timescale based on UI
         if (!inptTime.isFocused)
         {
@@ -215,7 +224,88 @@ public class UIManager : MonoBehaviour
             
             physicsEngine.AddjustTimeScale(ammount);
         }
+
+
+        // Track middle mouse hold time
+        if (Input.GetMouseButton(2))
+            middleMouseHoldTime += Time.unscaledDeltaTime;
+        else
+            middleMouseHoldTime = 0.0f;
+
+        // Track mouse scrolling
+        mouseScroll = Input.mouseScrollDelta.y; 
     }
+
+    IEnumerator Tutorial()
+    {
+        while (tutorial)
+        {
+            //Tutorial
+            int phase = tutorialCursorAnimator.GetInteger("tutorialPhase");
+
+            switch (phase)
+            {
+                // Teach: PAN
+                case 1:
+                    if (Input.GetMouseButton(2) && middleMouseHoldTime > 0.5f)
+                    {
+                        // Dissolve
+                        ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 0.0f;
+                        tutorialParticleSystem.gameObject.SetActive(true);
+
+                        yield return new WaitForSecondsRealtime(1.0f);
+
+                        tutorialCursorAnimator.SetInteger("tutorialPhase", phase + 1);
+
+                        // Un-Dissolve
+                        ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 1.0f;
+                        tutorialParticleSystem.gameObject.SetActive(false);
+
+                    }
+                    break;
+                // Teach: ZOOM OUT
+                case 2:
+                    if(mouseScroll < 0.0f)
+                    {
+                        // Dissolve
+                        ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 0.0f;
+                        tutorialParticleSystem.gameObject.SetActive(true);
+
+                        yield return new WaitForSecondsRealtime(1.0f);
+
+                        tutorialCursorAnimator.SetInteger("tutorialPhase", phase + 1);
+
+                        // Un-Dissolve
+                        ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 1.0f;
+                        tutorialParticleSystem.gameObject.SetActive(false);
+                    }
+                    break;                
+                // Teach: ZOOM IN
+                case 3:
+                    if(mouseScroll > 0.0f)
+                    {
+                        // Dissolve
+                        ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 0.0f;
+                        tutorialParticleSystem.gameObject.SetActive(true);
+
+                        yield return new WaitForSecondsRealtime(1.0f);
+
+                        tutorialCursorAnimator.SetInteger("tutorialPhase", phase + 1);
+
+                        // Un-Dissolve
+                        ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 1.0f;
+                        tutorialParticleSystem.gameObject.SetActive(false);
+                    }
+                    break;
+            }
+
+            yield return new WaitForSecondsRealtime(0.2f);
+        }
+
+        yield return new WaitForEndOfFrame();
+    }
+
+    
 
     /// LateUpdate is called every frame, if the Behaviour is enabled.
     /// It is called after all Update functions have been called.
@@ -252,6 +342,18 @@ public class UIManager : MonoBehaviour
             if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
                 SpawnObject();
         }
+    }
+    
+    public void PlayTutorial()
+    {
+        SwitchTab(0);
+        SwitchTab(1);
+
+        tutorial = true;
+        StartCoroutine(Tutorial());
+
+        // Teach: Pan
+        tutorialCursorAnimator.SetInteger("tutorialPhase", 1);
     }
 
     public void SwitchCursor(uint i)
@@ -570,10 +672,22 @@ public class UIManager : MonoBehaviour
     // Toggles the visibility of the given UI panel
     // 0: Objects, 1: Entities
     IEnumerator SwitchActivePanel(int val)
-    {
-        if(uiAnimating)
-            yield break;
-        uiAnimating = true;
+    {   
+        if(val == 0)
+        {
+            if (uiLeftAnimating)
+                yield break;
+            else
+                uiLeftAnimating = true;
+        }
+        else if (val == 1)
+        {
+            if (uiRightAnimating)
+                yield break;
+            else
+                uiRightAnimating = true;
+        }
+        
         GameObject parent = null;
         GameObject panel = null;
         GameObject maximiser = null;
@@ -662,7 +776,11 @@ public class UIManager : MonoBehaviour
             Debug.Log("Expander End pos: " + parent.transform.position);
         }
 
-        uiAnimating = false;
+        if(val == 0)
+                uiLeftAnimating = false;
+        else if (val == 1)
+                uiRightAnimating = false;
+
         yield return new WaitForSeconds(0.0f);
     }
 
