@@ -653,7 +653,7 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 801017129}
         m_MethodName: finEditingPosZ
         m_Mode: 0
         m_Arguments:
@@ -4508,7 +4508,7 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 801017129}
         m_MethodName: finEditingPosY
         m_Mode: 0
         m_Arguments:
@@ -4618,7 +4618,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 801017129}
         m_MethodName: LockToggled
         m_Mode: 2
         m_Arguments:
@@ -6379,7 +6379,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 801017129}
         m_MethodName: LockToggled
         m_Mode: 2
         m_Arguments:
@@ -7445,7 +7445,7 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 801017129}
         m_MethodName: finEditingMass
         m_Mode: 0
         m_Arguments:
@@ -8656,7 +8656,7 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 801017129}
         m_MethodName: finEditingDensity
         m_Mode: 0
         m_Arguments:
@@ -10282,7 +10282,7 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 801017129}
         m_MethodName: finEditingPosX
         m_Mode: 0
         m_Arguments:
@@ -10391,7 +10391,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 801017129}
         m_MethodName: LockToggled
         m_Mode: 2
         m_Arguments:
@@ -11349,7 +11349,7 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 801017129}
         m_MethodName: finEditingRadius
         m_Mode: 0
         m_Arguments:
@@ -15025,7 +15025,11 @@ MonoBehaviour:
   orbVMultiplier: 0
   displayFuturePath: 0
   displayPastPath: 0
+  tutorialCursor: {fileID: 0}
   tutorialParticleSystem: {fileID: 0}
+  tutorialCursorAnimator: {fileID: 0}
+  tutorial: 0
+  tutorialTrigger: 0
 --- !u!225 &225891627504762174
 CanvasGroup:
   m_ObjectHideFlags: 0
