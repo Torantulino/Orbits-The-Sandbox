@@ -8,6 +8,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Sandbox.unity
     guid: 71a9337a11d4e144b987f46463ac1e5d
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Darkness.unity
     guid: 2b9ca6d5925f184498c705c70290708e
+  - enabled: 1
+    path: Assets/Scenes/Realism.unity
+    guid: 1091431a65559e04b85544ba02e2da1f
+  m_configObjects: {}
