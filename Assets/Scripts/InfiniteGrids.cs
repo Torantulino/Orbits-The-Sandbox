@@ -141,7 +141,7 @@ public class InfiniteGrids : MonoBehaviour
                     GL.Begin(GL.LINES);
 
                     // Set line colour
-                    GL.Color(new Color(Color.white.r, Color.white.g, Color.white.b, grid._alphaCurve.Evaluate(orbitControls._Distance)));
+                    GL.Color(new Color(Color.white.r, Color.white.g, Color.white.b, grid._alphaCurve.Evaluate(orbitControls._TargetDistance)));
 
                     // Render grid vertices
                     foreach (Vector3 vertex in grid._grid)

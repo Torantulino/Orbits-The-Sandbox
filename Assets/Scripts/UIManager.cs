@@ -519,7 +519,7 @@ public class UIManager : MonoBehaviour
 
         //Focus cameras
         mainCamController.SetFocalObject(obj.gameObject);
-        mainCamController._Distance = Mathf.Max(obj.transform.localScale.z * 3.0f, 1.5f + obj.transform.localScale.z);
+        mainCamController._TargetDistance = Mathf.Max(obj.transform.localScale.z * 3.0f, 1.5f + obj.transform.localScale.z);
     }
     // Called when upon selection of object from entites panel
     public void SetObjectToSpawn(string name)

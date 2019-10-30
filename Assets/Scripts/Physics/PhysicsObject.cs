@@ -261,7 +261,7 @@ public class PhysicsObject : MonoBehaviour
         //Set trail renderer thickness to scale with camera distance
         if (trailRenderer != null)
         {
-            float widthMultiplier = mainCamController._Distance / 500.0f;
+            float widthMultiplier = mainCamController._TargetDistance / 500.0f;
             trailRenderer.widthMultiplier = widthMultiplier;
             lineRenderer.widthMultiplier = widthMultiplier;
         }

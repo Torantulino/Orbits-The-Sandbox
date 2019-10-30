@@ -20,10 +20,14 @@ public class OrbitControls : MonoBehaviour
     [SerializeField]
     private Vector3 _Sensitivity = new Vector3(15, -10, -0.1f);
 
-    public float _Distance;
+    public float _TargetDistance;
+    float _StartDistance;
+    float _LerpTime;
 
     public AnimationCurve nearClippingCurve = new AnimationCurve();
     public AnimationCurve farClippingCurve = new AnimationCurve();
+
+    float ZoomSpeed = 3.0f;
     
     UIManager uIManager;
     private void Awake()
@@ -36,7 +40,7 @@ public class OrbitControls : MonoBehaviour
 
         _FocalObject = GameObject.FindGameObjectWithTag("host").transform;
 
-        _Distance = Vector3.Distance(_FocalObject.position, transform.position);
+        _TargetDistance = Vector3.Distance(_FocalObject.position, transform.position);
 
         transform.LookAt(_FocalObject.position);
 
@@ -94,17 +98,23 @@ public class OrbitControls : MonoBehaviour
             }
         }
 
+        // Smooth Zoom
+
+
         var zoom = Input.mouseScrollDelta.y * _Sensitivity.z;
         if (zoom != 0 &&
             Input.mousePosition.x >= 0 && Input.mousePosition.x <= Screen.width &&
             Input.mousePosition.y >= 0 && Input.mousePosition.y <= Screen.height)
         {
-            if((_Distance * 1 + zoom) >= _FocalObject.transform.localScale.x / 1.1f || zoom > 0.0f)
+            if((_TargetDistance * 1 + zoom) >= _FocalObject.transform.localScale.x / 1.1f || zoom > 0.0f)
             {
-                _Distance *= 1 + zoom;
-                Camera.main.nearClipPlane = nearClippingCurve.Evaluate(_Distance);
-                Camera.main.farClipPlane = farClippingCurve.Evaluate(_Distance);
+                _TargetDistance *= 1 + zoom;
+                Camera.main.nearClipPlane = nearClippingCurve.Evaluate(_TargetDistance);
+                Camera.main.farClipPlane = farClippingCurve.Evaluate(_TargetDistance);
             }
+
+            _StartDistance = Vector3.Distance(transform.position, _FocalObject.position);
+            _LerpTime = 0.0f;
 
             // Tutorial Trigger
             if (uIManager.tutorial)
@@ -130,7 +140,12 @@ public class OrbitControls : MonoBehaviour
     {
         try
         {
-            transform.position = _FocalObject.position - transform.forward * _Distance;
+            _LerpTime += Time.unscaledDeltaTime * ZoomSpeed;
+
+            //float _CurrentDisatance = Vector3.Distance(_FocalObject.transform.position, transform.position);
+            float _Disatance = Mathf.Lerp(_StartDistance, _TargetDistance, _LerpTime);
+
+            transform.position = _FocalObject.position - transform.forward * _Disatance;
         }
         catch
         {
