@@ -14,7 +14,6 @@ using Toggle = UnityEngine.UI.Toggle;
 
 public class UIManager : MonoBehaviour
 {
-
     public Transform contentPanel;
     public Transform viewPort;
     public PhysicsEngine physicsEngine;
@@ -22,7 +21,6 @@ public class UIManager : MonoBehaviour
     public bool spawnSymetry;
     public int symDivs;
     public float orbVMultiplier;
-
     private AudioVisualTranslator audioVT;
     private PhysicsObject selectedObject;
     private CUIColorPicker colPicker;
@@ -51,22 +49,17 @@ public class UIManager : MonoBehaviour
     private List<GameObject> selectedEntites = new List<GameObject>();
     private OrbitControls mainCamController;
     private Canvas canvas;
-
     private Texture2D cursor_default;
     private Texture2D cursor_hand;
     private Texture2D cursor_hand_click;
     private Texture2D cursor_drag;
-
     public bool displayFuturePath;
     public bool displayPastPath;
     private bool scalingTime;
     private int scalingTimeDirection;
     private float scalingTimeStart;
-
     private Dictionary<string, Tuple<Texture2D, Vector2>> cursors;
-
     InfiniteGrids placementGrid;
-
     GameObject tutorialCursor;
     public ParticleSystem tutorialParticleSystem;
     Animator tutorialCursorAnimator;
@@ -162,10 +155,7 @@ public class UIManager : MonoBehaviour
         }
 
         SetSelectedObject(GameObject.FindGameObjectWithTag("host").GetComponent<PhysicsObject>());
-
     }
-
-
     // Update is called once per frame
     void Update()
     {
@@ -235,7 +225,43 @@ public class UIManager : MonoBehaviour
         // Track mouse scrolling
         mouseScroll = Input.mouseScrollDelta.y; 
     }
+    /// LateUpdate is called every frame, if the Behaviour is enabled.
+    /// It is called after all Update functions have been called.
+    void LateUpdate()
+    {
+        //Raycast under mouse
+        RaycastHit raycastHit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
+        // If Ray hits physics object (Phsycis object under mouse).
+        if (Physics.Raycast(ray, out raycastHit, 10000) && raycastHit.transform.gameObject.GetComponent<PhysicsObject>() != null)
+        {
+            // Object Click
+            if(Input.GetMouseButton(0))
+                SwitchCursor(2);
+            // Pan
+            else if (Input.GetMouseButton(2))
+                SwitchCursor(3);
+            // Hover
+            else
+                SwitchCursor(1);
+        }
+        // Else no physics object under mouse
+        else
+        {
+            // Pan
+            if (Input.GetMouseButton(2))
+                SwitchCursor(3);
+            // Default Cursor
+            else
+            SwitchCursor(0);
+
+            // Select if no other object (such as UI) under mouse.
+            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+                SpawnObject();
+        }
+    }
+    // Tutorial Coroutine
     IEnumerator Tutorial()
     {
         while (tutorial)
@@ -303,47 +329,8 @@ public class UIManager : MonoBehaviour
         }
 
         yield return new WaitForEndOfFrame();
-    }
-
-    
-
-    /// LateUpdate is called every frame, if the Behaviour is enabled.
-    /// It is called after all Update functions have been called.
-    void LateUpdate()
-    {
-        //Raycast under mouse
-        RaycastHit raycastHit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        // If Ray hits physics object (Phsycis object under mouse).
-        if (Physics.Raycast(ray, out raycastHit, 10000) && raycastHit.transform.gameObject.GetComponent<PhysicsObject>() != null)
-        {
-            // Object Click
-            if(Input.GetMouseButton(0))
-                SwitchCursor(2);
-            // Pan
-            else if (Input.GetMouseButton(2))
-                SwitchCursor(3);
-            // Hover
-            else
-                SwitchCursor(1);
-        }
-        // Else no physics object under mouse
-        else
-        {
-            // Pan
-            if (Input.GetMouseButton(2))
-                SwitchCursor(3);
-            // Default Cursor
-            else
-            SwitchCursor(0);
-
-            // Select if no other object (such as UI) under mouse.
-            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
-                SpawnObject();
-        }
-    }
-    
+    }   
+    // Initiates the Tutorial sequence
     public void PlayTutorial()
     {
         SwitchTab(0);
@@ -355,7 +342,7 @@ public class UIManager : MonoBehaviour
         // Teach: Pan
         tutorialCursorAnimator.SetInteger("tutorialPhase", 1);
     }
-
+    // Switches Cursor to the one specified and sets the appropriate hotspot
     public void SwitchCursor(uint i)
     {
         switch(i)
@@ -374,6 +361,7 @@ public class UIManager : MonoBehaviour
             break;        
         }
     }
+    // Adds specified object to the Entities panel at right-hand side of screen.
     public void AddToEntitiesPanel(GameObject _obj)
     {
         GameObject sampleButton = contentEntites.Find("SampleButton").gameObject;
@@ -382,13 +370,14 @@ public class UIManager : MonoBehaviour
         newButton.GetComponentInChildren<Text>().text = _obj.name;
         newButton.name = _obj.name;
         newButton.SetActive(true);
-    }    
+    }
+    // Removes specified object to the Entities panel at right-hand side of screen.
     public void RemoveFromEntitiesPanel(GameObject _obj)
     {
         GameObject toDestroy = contentEntites.Find(_obj.name).gameObject;
         Destroy(toDestroy);
     }
-
+    // Selects and Highlights an entity - or group of entities - from the entites panel in response to user action.
     public void SelectEntityFromPanel(Button _btn)
     {
         // Clear Selected Entites
@@ -437,13 +426,13 @@ public class UIManager : MonoBehaviour
             lastEntityBtnSelected = _btn;
         }
     }
-
+    // Sets and updates the skybox
     public void SetSkybox(string name)
     {
         if (Skyboxes[name] != null)
             RenderSettings.skybox = Skyboxes[name];
     }
-
+    // Changes the currently focused object to that specified
     public void SetSelectedObject(PhysicsObject obj)
     {
         selectedObject = obj;
@@ -452,79 +441,38 @@ public class UIManager : MonoBehaviour
         mainCamController.SetFocalObject(obj.gameObject);
         mainCamController._Distance = Mathf.Max(obj.transform.localScale.z * 3.0f, 1.5f + obj.transform.localScale.z);
     }
-
-    public void ToggleNeon(bool val)
-    {
-        Bloom bloomSettings = Camera.main.GetComponent<PostProcessLayer>().GetSettings<Bloom>();
-        if (val)
-        {
-            bloomSettings.intensity.value = 2.35f;
-            bloomSettings.threshold.value = 0.4f;
-            //bloomSettings.radius = 4.0f;
-            audioVT.isActivated = true;
-        }
-        else
-        {
-            audioVT.isActivated = false;
-            bloomSettings.intensity.value = 0.0f;
-            bloomSettings.threshold.value = 1.0f;
-            //bloomSettings.setRadius(0.0f);
-            //bloomSettings.lensDirt.intensity = 0;
-        }
-        //TODO: Do settings need to be set again?
-    }
-
+    // Called when upon selection of object from entites panel
     public void SetObjectToSpawn(string name)
     {
         objectToSpawn = (GameObject)CelestialObjects[name];
-
-        //Set colour picker UI to reflect trail colour
-        // colPicker.Color = objectToSpawn.GetComponentInChildren<TrailRenderer>().startColor;
-        //reset desired trail colour
-        // desiredTrailColor = colPicker.Color;
     }
-
-    public void TrailColChanged(Color col)
-    {
-        //Update desired trail colour based on user selection
-        desiredTrailColor = col;
-    }
-
-    // public void SetImgSpawnObj(Image btnImage)
-    // {
-    //     imgSpawnObj.sprite = btnImage.sprite;
-    // }
-
+    // Reloads the currently loaded scene
     public void ReloadScene()
     {
         Application.LoadLevel(Application.loadedLevel);
     }
-
+    // Toggles mute of the game audio
     public void ToggleMute()
     {
         MusicManagaer musicMan = FindObjectOfType<MusicManagaer>();
         musicMan.gameObject.GetComponentInChildren<AudioSource>().mute = 
             !musicMan.gameObject.GetComponentInChildren<AudioSource>().mute;
     }
-
-    //Pause
+    // Pauses simulation
     public void pausePressed()
     {
         physicsEngine.pauseSimulation();
         pauseButton.SetActive(false);
         playButton.SetActive(true);
     }
-
-    //Play
+    // Resumes simulation
     public void playPressed()
     {
         physicsEngine.resumeSimulation();
         playButton.SetActive(false);
         pauseButton.SetActive(true);
     }
-
-    // Time manupulation
-    //Click start
+    // Time manupulation Click start
     public void TimeManipStart(int _direction)
     {
         if (Time.timeScale == 0)
@@ -534,13 +482,12 @@ public class UIManager : MonoBehaviour
         scalingTimeStart = Time.realtimeSinceStartup;
         scalingTimeDirection = _direction;
     }
-    //Click end
+    // Time manupulation Click end
     public void TimeManipEnd()
     {
         scalingTime = false;
     }
-
-
+    // Called from Timescale text input box to scale time
     public void timeScaled(string _scale)
     {
         
@@ -563,12 +510,38 @@ public class UIManager : MonoBehaviour
         {
         }
     }
-
+    // Called from Spawn Velocity slider when changed
     public void OrbVMultiplierChanged(float val)
     {
         orbVMultiplier = val;
     }
-
+    // Called when Spawn Symmetry is toggled
+    public void toggleSymetry(bool state)
+    {
+        spawnSymetry = state;
+        inptDivs.interactable = state;
+    }
+    // Called when Spawn Symmetry No. Divisions input is changed
+    public void DivsChanged()
+    {
+        int result;
+        if (int.TryParse(inptDivs.text, out result))
+        {
+            if (result > 1 && result < 100)
+            {
+                symDivs = result;
+            }
+            else
+            {
+                inptDivs.text = symDivs.ToString();
+            }
+        }
+        else
+        {
+            inptDivs.text = symDivs.ToString();
+        }
+    }
+    // Called when Show Trails is toggled
     public void trailsToggled(bool state)
     {
         if (state)
@@ -576,26 +549,22 @@ public class UIManager : MonoBehaviour
         else
             Camera.main.cullingMask = Camera.main.cullingMask & ~(1 << 8);
     }
-
+    // Called when Show Grid is toggled
     public void gridToggled(bool state)
     {
         placementGrid.render = state;
     }
-
+    // Called when Relative Paths (Future) is toggled
     public void futurePathToggled(bool state)
     {
         displayFuturePath = state;
     }
+    // Called when Relative Paths (Past) is toggled
     public void pastPathToggled(bool state)
     {
         displayPastPath = state;
     }
-
-    public void ManipModeToggled(int mode)
-    {
-        manipMode = mode;
-    }
-
+    // NOT CURRENTLY IMPLEMENTED (Called when Spawn With Orbit is toggled)
     public void SpawnWithOrbitToggled(bool state)
     {
         foreach (Object item in CelestialObjects.Values)
@@ -603,8 +572,7 @@ public class UIManager : MonoBehaviour
             ((GameObject)item).GetComponent<PhysicsObject>().spawnWithOrbit = state;
         }
     }
-
-    // Called from Unity
+    // Called when Catagory (Stars, Planets, Moons) is selected in Object panel
     public void SwitchObjectPanel(int id)
     {
         if (id == 0)
@@ -635,6 +603,7 @@ public class UIManager : MonoBehaviour
             }
         }
     }
+    // Spawns the currently selected object at the current grid position under the mouse
     void SpawnObject()
     {
         if (objectToSpawn != null)
@@ -668,7 +637,6 @@ public class UIManager : MonoBehaviour
             TrailRenderer tR = SpawnedObj.GetComponentInChildren<TrailRenderer>();
         }
     }
-
     // Toggles the visibility of the given UI panel
     // 0: Objects, 1: Entities
     IEnumerator SwitchActivePanel(int val)
@@ -783,58 +751,29 @@ public class UIManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.0f);
     }
-
     //Called by unity when minimise UI button pressed
     public void SwitchTab(int val)
     {
         StartCoroutine(SwitchActivePanel(val));
     }
-
-
-    public void toggleSymetry(bool state)
-    {
-        spawnSymetry = state;
-        inptDivs.interactable = state;
-    }
-
-    public void DivsChanged()
-    {
-        int result;
-        if (int.TryParse(inptDivs.text, out result))
-        {
-            if (result > 1 && result < 100)
-            {
-                symDivs = result;
-            }
-            else
-            {
-                inptDivs.text = symDivs.ToString();
-            }
-        }
-        else
-        {
-            inptDivs.text = symDivs.ToString();
-        }
-    }
-
+    // Called when Settings and Back (from settings) buttons are called in pause menu
     public void ToggleSettings(bool state)
     {
         pausePanel.transform.Find("panSettings").gameObject.SetActive(state);
     }
+    // Pauses the game, bringing up the pause menu
     public void PauseGame()
     {
         pausePanel.SetActive(true);
         physicsEngine.pauseSimulation();
     }
-
+    // Resumes the game, hiding the pause menu
     public void ResumeGame()
     {
-        // if(pausePanel == null)
-        //    pausePanel = GameObject.Find("panPause").gameObject;
         pausePanel.SetActive(false);
         physicsEngine.resumeSimulation();
     }
-
+    // Quits the game, called by Quit button in pause menu
     public void Quit()
     {
         Application.Quit();
