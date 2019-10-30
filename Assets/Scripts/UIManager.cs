@@ -60,11 +60,11 @@ public class UIManager : MonoBehaviour
     private float scalingTimeStart;
     private Dictionary<string, Tuple<Texture2D, Vector2>> cursors;
     InfiniteGrids placementGrid;
-    GameObject tutorialCursor;
+    public GameObject tutorialCursor;
     public ParticleSystem tutorialParticleSystem;
-    Animator tutorialCursorAnimator;
-    bool tutorial = false;
-    bool tutorialTrigger = false;
+    public Animator tutorialCursorAnimator;
+    public bool tutorial = false;
+    public bool tutorialTrigger = false;
     float middleMouseHoldTime = 0.0f;
     float mouseScroll;
 
@@ -216,15 +216,14 @@ public class UIManager : MonoBehaviour
             physicsEngine.AddjustTimeScale(ammount);
         }
 
-
         // Track middle mouse hold time
         if (Input.GetMouseButton(2))
             middleMouseHoldTime += Time.unscaledDeltaTime;
         else
             middleMouseHoldTime = 0.0f;
 
-        // Track mouse scrolling
-        mouseScroll = Input.mouseScrollDelta.y; 
+        // // Track mouse scrolling
+        // mouseScroll = Input.mouseScrollDelta.y; 
     }
     /// LateUpdate is called every frame, if the Behaviour is enabled.
     /// It is called after all Update functions have been called.
@@ -293,12 +292,14 @@ public class UIManager : MonoBehaviour
                         // Un-Dissolve
                         ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 1.0f;
                         tutorialParticleSystem.gameObject.SetActive(false);
-
+                        
+                        //Reset trigger
+                        tutorialTrigger = false;
                     }
                     break;
                 // Teach: ZOOM OUT
                 case 2:
-                    if(mouseScroll < 0.0f)
+                    if(tutorialTrigger)
                     {
                         // Dissolve
                         ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 0.0f;
@@ -311,12 +312,16 @@ public class UIManager : MonoBehaviour
                         // Un-Dissolve
                         ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 1.0f;
                         tutorialParticleSystem.gameObject.SetActive(false);
+                        
+                        //Reset trigger
+                        tutorialTrigger = false;
                     }
                     break;                
                 // Teach: ZOOM IN
                 case 3:
-                    if(mouseScroll > 0.0f)
+                    if(tutorialTrigger)
                     {
+
                         // Dissolve
                         ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 0.0f;
                         tutorialParticleSystem.gameObject.SetActive(true);
@@ -328,14 +333,15 @@ public class UIManager : MonoBehaviour
                         // Un-Dissolve
                         ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 1.0f;
                         tutorialParticleSystem.gameObject.SetActive(false);
+                        
+                        //Reset trigger
+                        tutorialTrigger = false;
                     }
                     break;
                 // Teach: Open Left Panel
                 case 4:
                     if(tutorialTrigger)
                     {
-                        //Reset trigger
-                        tutorialTrigger = false;
 
                         // Dissolve
                         ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 0.0f;
@@ -348,14 +354,15 @@ public class UIManager : MonoBehaviour
                         // Un-Dissolve
                         ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 1.0f;
                         tutorialParticleSystem.gameObject.SetActive(false);
+
+                        //Reset trigger
+                        tutorialTrigger = false;
                     }
                     break;
                 // Teach: Spawn Object
                 case 5:
                     if(tutorialTrigger)
                     {
-                        //Reset trigger
-                        tutorialTrigger = false;
                         
                         // Dissolve
                         ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 0.0f;
@@ -364,6 +371,9 @@ public class UIManager : MonoBehaviour
                         yield return new WaitForSecondsRealtime(1.0f);
 
                         tutorialCursorAnimator.SetInteger("tutorialPhase", phase + 1);
+
+                        //Reset trigger
+                        tutorialTrigger = false;
 
                         // Un-Dissolve
                         //((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 1.0f;

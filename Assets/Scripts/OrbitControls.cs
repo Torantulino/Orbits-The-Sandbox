@@ -24,13 +24,16 @@ public class OrbitControls : MonoBehaviour
 
     public AnimationCurve nearClippingCurve = new AnimationCurve();
     public AnimationCurve farClippingCurve = new AnimationCurve();
-
+    
+    UIManager uIManager;
     private void Awake()
     {
     }
 
     void Start()
     {
+        uIManager = FindObjectOfType<UIManager>();
+
         _FocalObject = GameObject.FindGameObjectWithTag("host").transform;
 
         _Distance = Vector3.Distance(_FocalObject.position, transform.position);
@@ -102,7 +105,22 @@ public class OrbitControls : MonoBehaviour
                 Camera.main.nearClipPlane = nearClippingCurve.Evaluate(_Distance);
                 Camera.main.farClipPlane = farClippingCurve.Evaluate(_Distance);
             }
-            
+
+            // Tutorial Trigger
+            if (uIManager.tutorial)
+            {
+                Debug.Log("Zoom: " + zoom);
+                if (zoom < -0.075f)
+                {
+                    if (uIManager.tutorialCursorAnimator.GetInteger("tutorialPhase") == 3)
+                        uIManager.tutorialTrigger = true;
+                }
+                else if (zoom > 0.075f)
+                {
+                    if (uIManager.tutorialCursorAnimator.GetInteger("tutorialPhase") == 2)
+                        uIManager.tutorialTrigger = true;
+                }
+            }
         }
 
         // Always update position even with no input in case the target is moving.
