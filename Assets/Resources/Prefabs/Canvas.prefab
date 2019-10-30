@@ -4157,7 +4157,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &801017125
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13197,17 +13197,6 @@ MonoBehaviour:
           m_StringArgument: Earth
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114907374780347506}
-        m_MethodName: SetImgSpawnObj
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 114861395586655096}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Image, UnityEngine.UI
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!1 &1179913704565612
@@ -13650,17 +13639,6 @@ MonoBehaviour:
           m_StringArgument: Mercury
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114907374780347506}
-        m_MethodName: SetImgSpawnObj
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 114494762563609090}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Image, UnityEngine.UI
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!1 &1196187300868366
@@ -13792,17 +13770,6 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: Uranus
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 114907374780347506}
-        m_MethodName: SetImgSpawnObj
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 114510001123903976}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Image, UnityEngine.UI
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -14138,17 +14105,6 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: Mars
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 114907374780347506}
-        m_MethodName: SetImgSpawnObj
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 114339158102656290}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Image, UnityEngine.UI
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -15068,6 +15024,7 @@ MonoBehaviour:
   orbVMultiplier: 0
   displayFuturePath: 0
   displayPastPath: 0
+  tutorialParticleSystem: {fileID: 0}
 --- !u!225 &225891627504762174
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -16180,7 +16137,7 @@ GameObject:
   - component: {fileID: 114053538427973106}
   - component: {fileID: 114403488480604974}
   m_Layer: 5
-  m_Name: btnOptions
+  m_Name: btnSettings
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16429,17 +16386,6 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: Jupiter
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 114907374780347506}
-        m_MethodName: SetImgSpawnObj
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 114477701030071720}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Image, UnityEngine.UI
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -18539,17 +18485,6 @@ MonoBehaviour:
           m_StringArgument: Neptune
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114907374780347506}
-        m_MethodName: SetImgSpawnObj
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 114390095488840060}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Image, UnityEngine.UI
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!1 &1716660960280816
@@ -20441,17 +20376,6 @@ MonoBehaviour:
           m_StringArgument: Venus
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114907374780347506}
-        m_MethodName: SetImgSpawnObj
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 114026924282875010}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Image, UnityEngine.UI
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!1 &1867890621775544
@@ -21466,17 +21390,6 @@ MonoBehaviour:
           m_StringArgument: Pluto
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114907374780347506}
-        m_MethodName: SetImgSpawnObj
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 114131652030936690}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Image, UnityEngine.UI
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!1 &1962290088273692
@@ -21906,17 +21819,6 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: Saturn
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 114907374780347506}
-        m_MethodName: SetImgSpawnObj
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 114947378271604612}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Image, UnityEngine.UI
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -23500,7 +23402,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4207127194990968842
 RectTransform:
   m_ObjectHideFlags: 0
