@@ -265,11 +265,17 @@ public class UIManager : MonoBehaviour
     // Tutorial Coroutine
     IEnumerator Tutorial()
     {
+        tutorialCursorAnimator.SetInteger("tutorialPhase", 1);
+
+        // Un-Dissolve
+        tutorialParticleSystem.transform.parent.gameObject.SetActive(true);
+        ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 1.0f;
+        tutorialParticleSystem.gameObject.SetActive(false);
+
         while (tutorial)
         {
             //Tutorial
             int phase = tutorialCursorAnimator.GetInteger("tutorialPhase");
-
             switch (phase)
             {
                 // Teach: PAN
@@ -365,10 +371,10 @@ public class UIManager : MonoBehaviour
                     }
                     break;
                 case 6:
-                    tutorialCursorAnimator.SetInteger("tutorialPhase", -1);
-                    tutorialCursor.transform.parent.gameObject.SetActive(false);
-                    tutorial = false;
-                break;
+                    StopTutorial();
+                    transform.Find("panBottom/tutorial/btnStartTutorial").gameObject.SetActive(true);
+                    transform.Find("panBottom/tutorial/btnStopTutorial").gameObject.SetActive(false);
+                    break;
             }
 
             yield return new WaitForSecondsRealtime(0.2f);
@@ -377,16 +383,34 @@ public class UIManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
     }   
     // Initiates the Tutorial sequence
-    public void PlayTutorial()
+    public void StartTutorial()
     {
-        SwitchTab(0);
-        SwitchTab(1);
+        tutorialCursorAnimator.SetInteger("tutorialPhase", 1);
+        
+        SwitchTab(0, 0);
+        SwitchTab(1, 0);
 
+        // Set tutorial panel to active
+        tutorialCursor.transform.parent.gameObject.SetActive(true);
+        tutorialCursor.SetActive(true);
+
+        // Start
         tutorial = true;
         StartCoroutine(Tutorial());
-
-        // Teach: Pan
-        tutorialCursorAnimator.SetInteger("tutorialPhase", 1);
+    }
+    public void StopTutorial()
+    {
+        tutorialCursorAnimator.SetInteger("tutorialPhase", -1);
+        tutorialCursor.transform.parent.gameObject.SetActive(false);
+        tutorial = false;
+    }
+    // Toggles the tutorial
+    public void ToggleTuorial(bool start)
+    {
+        if(start)
+            StartTutorial();
+        else
+            StopTutorial();
     }
     // Switches Cursor to the one specified and sets the appropriate hotspot
     public void SwitchCursor(uint i)
@@ -690,7 +714,8 @@ public class UIManager : MonoBehaviour
     }
     // Toggles the visibility of the given UI panel
     // 0: Objects, 1: Entities
-    IEnumerator SwitchActivePanel(int val)
+    // expand: -1 = ignore, 0 = false, 1 = true
+    IEnumerator SwitchActivePanel(int val, int expand = -1)
     {   
         if(val == 0)
         {
@@ -741,6 +766,23 @@ public class UIManager : MonoBehaviour
             expanding = false;
         else
             expanding = true;
+
+        //Check specified direction
+        if(expand != -1)
+        {
+            if(expanding && expand == 0)
+            {
+                uiLeftAnimating = false;
+                uiRightAnimating = false;
+                yield break;
+            }
+            else if(!expanding && expand == 1)
+            {
+                uiLeftAnimating = false;
+                uiRightAnimating = false;
+                yield break;
+            }
+        }
 
         float spdx;
         float start_time;
@@ -804,7 +846,11 @@ public class UIManager : MonoBehaviour
     // 0 Left, 1 Right
     public void SwitchTab(int val)
     {
-        StartCoroutine(SwitchActivePanel(val));
+        SwitchTab(val, -1);
+    }
+    public void SwitchTab(int val, int _expand)
+    {
+        StartCoroutine(SwitchActivePanel(val, _expand));
 
         //Tutorial Trigger
         if(tutorial)
