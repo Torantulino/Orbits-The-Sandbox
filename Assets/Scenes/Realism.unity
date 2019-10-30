@@ -373,10 +373,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Earth
       objectReference: {fileID: 0}
-    - target: {fileID: 1532271489571154, guid: e86594fe907b29d49bcf26ab0dcda515, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4667850989093114, guid: e86594fe907b29d49bcf26ab0dcda515, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5000
@@ -420,16 +416,6 @@ PrefabInstance:
     - target: {fileID: 4667850989093114, guid: e86594fe907b29d49bcf26ab0dcda515, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 120767884331451988, guid: e86594fe907b29d49bcf26ab0dcda515,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 120767884331451988, guid: e86594fe907b29d49bcf26ab0dcda515,
-        type: 3}
-      propertyPath: m_Parameters.widthMultiplier
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e86594fe907b29d49bcf26ab0dcda515, type: 3}
@@ -5980,6 +5966,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
       value: Saturn
       objectReference: {fileID: 0}
+    - target: {fileID: 1495722904166058, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b, type: 3}
+      propertyPath: m_Name
+      value: btnSettings
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b, type: 3}
 --- !u!1 &998770652
@@ -6034,7 +6024,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []

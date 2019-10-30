@@ -64,6 +64,7 @@ public class UIManager : MonoBehaviour
     public ParticleSystem tutorialParticleSystem;
     Animator tutorialCursorAnimator;
     bool tutorial = false;
+    bool tutorialTrigger = false;
     float middleMouseHoldTime = 0.0f;
     float mouseScroll;
 
@@ -323,6 +324,51 @@ public class UIManager : MonoBehaviour
                         tutorialParticleSystem.gameObject.SetActive(false);
                     }
                     break;
+                // Teach: Open Left Panel
+                case 4:
+                    if(tutorialTrigger)
+                    {
+                        //Reset trigger
+                        tutorialTrigger = false;
+
+                        // Dissolve
+                        ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 0.0f;
+                        tutorialParticleSystem.gameObject.SetActive(true);
+
+                        yield return new WaitForSecondsRealtime(1.0f);
+
+                        tutorialCursorAnimator.SetInteger("tutorialPhase", phase + 1);
+
+                        // Un-Dissolve
+                        ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 1.0f;
+                        tutorialParticleSystem.gameObject.SetActive(false);
+                    }
+                    break;
+                // Teach: Spawn Object
+                case 5:
+                    if(tutorialTrigger)
+                    {
+                        //Reset trigger
+                        tutorialTrigger = false;
+                        
+                        // Dissolve
+                        ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 0.0f;
+                        tutorialParticleSystem.gameObject.SetActive(true);
+
+                        yield return new WaitForSecondsRealtime(1.0f);
+
+                        tutorialCursorAnimator.SetInteger("tutorialPhase", phase + 1);
+
+                        // Un-Dissolve
+                        //((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 1.0f;
+                        //tutorialParticleSystem.gameObject.SetActive(false);
+                    }
+                    break;
+                case 6:
+                    tutorialCursorAnimator.SetInteger("tutorialPhase", -1);
+                    tutorialCursor.transform.parent.gameObject.SetActive(false);
+                    tutorial = false;
+                break;
             }
 
             yield return new WaitForSecondsRealtime(0.2f);
@@ -608,8 +654,6 @@ public class UIManager : MonoBehaviour
     {
         if (objectToSpawn != null)
         {
-
-            Debug.Log("Object Spawn Start!");
             // Get mouse position on screen
             Vector3 screenPosition = Input.mousePosition;
 
@@ -635,6 +679,13 @@ public class UIManager : MonoBehaviour
 
             // Set Trail colour based on UI selection
             TrailRenderer tR = SpawnedObj.GetComponentInChildren<TrailRenderer>();
+
+            // Tutorial Trigger
+            if (tutorial)
+            {
+                if (tutorialCursorAnimator.GetInteger("tutorialPhase") == 5)
+                    tutorialTrigger = true;
+            }
         }
     }
     // Toggles the visibility of the given UI panel
@@ -697,7 +748,6 @@ public class UIManager : MonoBehaviour
         //##Contract##
         if (!expanding)
         {
-            Debug.Log("Contracter Start pos: " + parent.transform.position);
             Vector3 target_pos = new Vector3(parent.transform.position.x + dist * side, parent.transform.position.y, parent.transform.position.z);
             spdx = 0;
             start_time = Time.realtimeSinceStartup;
@@ -709,7 +759,6 @@ public class UIManager : MonoBehaviour
             }
             // Lock panel inplace
             parent.transform.position = target_pos;
-            Debug.Log("Contracter End pos: " + parent.transform.position);
         }
 
 
@@ -751,10 +800,18 @@ public class UIManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.0f);
     }
-    //Called by unity when minimise UI button pressed
+    // Called by unity when minimise/maximise panel UI button pressed
+    // 0 Left, 1 Right
     public void SwitchTab(int val)
     {
         StartCoroutine(SwitchActivePanel(val));
+
+        //Tutorial Trigger
+        if(tutorial)
+        {
+            if(tutorialCursorAnimator.GetInteger("tutorialPhase") == 4 && val == 0)
+                tutorialTrigger = true;
+        }
     }
     // Called when Settings and Back (from settings) buttons are called in pause menu
     public void ToggleSettings(bool state)
