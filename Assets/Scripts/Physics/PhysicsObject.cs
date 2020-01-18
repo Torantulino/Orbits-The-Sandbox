@@ -43,7 +43,7 @@ public class PhysicsObject : MonoBehaviour
     private ContextMenu contextMenu;
     private PhysicsObject biggestGravitationalInfluencer;
     private Dictionary<string, UnityEngine.Object> CelestialObjects = new Dictionary<string, UnityEngine.Object>();
-    public float heat = 0.0f;
+    public float temperature = 0.0f;
 
     public float Density
     {
@@ -280,19 +280,20 @@ public class PhysicsObject : MonoBehaviour
         }
 
         // Process Heat
-        if (heat != 0.0f)
+        if (temperature != 0.0f)
         {
-            heat -= Time.unscaledDeltaTime * PhysicsEngine.COOLING_SPEED;
+            temperature -= Time.unscaledDeltaTime * physicsEngine.coolingCurve.Evaluate(temperature);
+            //temperature -= Time.unscaledDeltaTime * PhysicsEngine.COOLING_SPEED;
             Material material = GetComponentInChildren<MeshRenderer>().material;
 
             material.EnableKeyword("_EMISSION");
-            material.SetColor("_EmissionColor", new Color(1.498039f, 0.2009804f, 0.0f) * heat);
+            material.SetColor("_EmissionColor", new Color(1.498039f, 0.2009804f, 0.0f) * temperature);
 
             // Cooled
-            if (heat <= 0.0f)
+            if (temperature <= 0.0f)
             {
                 material.DisableKeyword("_EMISSION");
-                heat = 0.0f;
+                temperature = 0.0f;
             }
         }
     }
@@ -652,6 +653,8 @@ public class PhysicsObject : MonoBehaviour
     {
         float their_mass = smallerObject.rb.mass;
 
+        temperature = Mathf.Min(temperature + their_mass / rb.mass, PhysicsEngine.MAX_TEMP);
+
         // Only absorb mass if won't fragment
         if (their_mass <= 0.01f || smallerObject.isShard)
             setMass(rb.mass + their_mass);
@@ -681,7 +684,7 @@ public class PhysicsObject : MonoBehaviour
                 shard.setMass(rb.mass / no_shards);
                 shard.rb.velocity = rb.velocity + offset;
                 shard.rb.angularVelocity = offset * 100.0f;
-                shard.heat = 2.0f;
+                shard.temperature = 2.0f;
             }
         }
 
