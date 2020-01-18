@@ -659,10 +659,10 @@ public class PhysicsObject : MonoBehaviour
         if (their_mass <= 0.01f || smallerObject.isShard)
             setMass(rb.mass + their_mass);
 
-        smallerObject.BeAbsorbed();
+        smallerObject.BeAbsorbed(this.gameObject);
     }
 
-    public void BeAbsorbed()
+    public void BeAbsorbed(GameObject _absorber)
     {
         // Shatter
         if (rb.mass > 0.01f && !isShard)
@@ -687,6 +687,10 @@ public class PhysicsObject : MonoBehaviour
                 shard.temperature = 2.0f;
             }
         }
+
+        // If camera is following this object, refocus
+        if (mainCamController.FocalObject == this.gameObject.transform)
+            mainCamController.SetFocalObject(_absorber);
 
         Destroy(this.gameObject);
     }
