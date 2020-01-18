@@ -413,7 +413,7 @@ public class PhysicsObject : MonoBehaviour
             // Increment timer
             else
             {
-                timeSinceLastPosition += Time.deltaTime * 100.0f;
+                timeSinceLastPosition += Time.unscaledDeltaTime * 100.0f;
             }
         }
 
