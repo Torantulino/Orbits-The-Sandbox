@@ -4,6 +4,7 @@ using UnityEngine;
 using Cinemachine;
 using UnityEngine.UI;
 using System.Linq;
+using System;
 
 public class PhysicsObject : MonoBehaviour
 {
@@ -16,9 +17,7 @@ public class PhysicsObject : MonoBehaviour
     public bool densityLocked;
     public bool radiusLocked;
     public Rigidbody rb;
-
-    private float G = 667.408f;
-    //private float G = 1.61803398875f;
+    private bool isShard = false;
 
     public Vector3 velocity = Vector3.zero;
     private Vector3 a = Vector3.zero;
@@ -43,6 +42,9 @@ public class PhysicsObject : MonoBehaviour
     private bool spawnee = false;
     private ContextMenu contextMenu;
     private PhysicsObject biggestGravitationalInfluencer;
+    private Dictionary<string, UnityEngine.Object> CelestialObjects = new Dictionary<string, UnityEngine.Object>();
+    public float heat = 0.0f;
+
     public float Density
     {
         get { return density; }
@@ -64,18 +66,18 @@ public class PhysicsObject : MonoBehaviour
 
     public bool _drawFuturePath = false;
     public bool _drawPastPath = false;
-    private float timeSinceLastPosition =0.0f;
+    private float timeSinceLastPosition = 0.0f;
 
     private FixedSizedQueue<Vector3> relativeTrailPositions = new FixedSizedQueue<Vector3>(150);
 
-    
+
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
         if (rb == null)
             Debug.Log("Rigidbody not found by " + this.name + "!");
-        
+
         //Set properties
         radius = transform.localScale.x;
         calculateVolume(radius);
@@ -115,8 +117,15 @@ public class PhysicsObject : MonoBehaviour
         if (contextMenu == null)
             Debug.Log("Context Menu not found by " + this.name + "!");
 
+        //Load Celestial Objects
+        UnityEngine.Object[] CelestialObj = Resources.LoadAll("Prefabs/Objects");
+        foreach (UnityEngine.Object obj in CelestialObj)
+        {
+            CelestialObjects.Add(obj.name, obj);
+        }
+
         //Apply Random Spin around local Y axis
-        Vector3 spinVector = transform.up * Random.Range(0.1f, 2.0f) / rb.mass;
+        Vector3 spinVector = transform.up * UnityEngine.Random.Range(0.1f, 2.0f) / rb.mass;
         rb.angularVelocity = spinVector;
 
         //Clear Bugged Trail
@@ -130,14 +139,14 @@ public class PhysicsObject : MonoBehaviour
 
         // Set uniquie name
         name = name.Replace("(Clone)", "");
-        if(name.StartsWith("["))
-            name = name.TrimStart('[','0','1','2','3','4','5','6','7','8','9',']', ' ');
+        if (name.StartsWith("["))
+            name = name.TrimStart('[', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ']', ' ');
         bool idFound = false;
 
         // Loop until free name is found
         for (int i = 0; !idFound; i++)
         {
-            if(!physicsEngine.objectIDs.Contains(i))
+            if (!physicsEngine.objectIDs.Contains(i))
             {
                 ID = i;
                 idFound = true;
@@ -164,7 +173,7 @@ public class PhysicsObject : MonoBehaviour
                 Vector3 dir = rb.position - biggestGravitationalInfluencer.rb.position;
                 float dist = dir.magnitude;
                 Vector3 requiredV = new Vector3(dir.z, dir.y, -dir.x);
-                float vMag = Mathf.Sqrt(G * biggestGravitationalInfluencer.rb.mass / dist);
+                float vMag = Mathf.Sqrt(PhysicsEngine.G * biggestGravitationalInfluencer.rb.mass / dist);
                 requiredV = requiredV.normalized * (vMag + (UiManager.orbVMultiplier * vMag / 5));
                 rb.velocity = requiredV + biggestGravitationalInfluencer.rb.velocity;
             }
@@ -202,7 +211,7 @@ public class PhysicsObject : MonoBehaviour
             }
         }
     }
-    
+
     //Finds and returns object with highest gravitational influence or null
     PhysicsObject GetBiggestGravitationalInfluencer()
     {
@@ -222,7 +231,7 @@ public class PhysicsObject : MonoBehaviour
             if (dist != 0)
             {
                 //Calculate Magnitude of force
-                float magnitude = G * (rb.mass * obj.rb.mass) / Mathf.Pow(dist, 2);
+                float magnitude = PhysicsEngine.G * (rb.mass * obj.rb.mass) / Mathf.Pow(dist, 2);
                 //Calculate force
                 Vector3 force = dir.normalized * magnitude;
                 if (force.magnitude >= strongestForce)
@@ -269,6 +278,23 @@ public class PhysicsObject : MonoBehaviour
         {
             Debug.Log(this.name + " has no trail renderer!");
         }
+
+        // Process Heat
+        if (heat != 0.0f)
+        {
+            heat -= Time.unscaledDeltaTime * PhysicsEngine.COOLING_SPEED;
+            Material material = GetComponentInChildren<MeshRenderer>().material;
+
+            material.EnableKeyword("_EMISSION");
+            material.SetColor("_EmissionColor", new Color(1.498039f, 0.2009804f, 0.0f) * heat);
+
+            // Cooled
+            if (heat <= 0.0f)
+            {
+                material.DisableKeyword("_EMISSION");
+                heat = 0.0f;
+            }
+        }
     }
 
     /// LateUpdate is called every frame, if the Behaviour is enabled.
@@ -277,7 +303,7 @@ public class PhysicsObject : MonoBehaviour
     {
         PhysicsObject newInfluencer = GetBiggestGravitationalInfluencer();
         // If new influencer
-        if(newInfluencer != biggestGravitationalInfluencer)
+        if (newInfluencer != biggestGravitationalInfluencer)
         {
             if (_drawPastPath)
                 // Clear previous trail if in new orbit
@@ -288,10 +314,10 @@ public class PhysicsObject : MonoBehaviour
         biggestGravitationalInfluencer = newInfluencer;
 
         // Future relative predicted path
-        if(UiManager.displayFuturePath)
-        {   
+        if (UiManager.displayFuturePath)
+        {
             // First frame setup
-            if(_drawFuturePath != true)
+            if (_drawFuturePath != true)
             {
                 // Setup colour keys
                 GradientColorKey[] colorKeys = new GradientColorKey[2];
@@ -323,8 +349,8 @@ public class PhysicsObject : MonoBehaviour
 
             // Predict future path
             Vector3[] positions = PredictOrbit(biggestGravitationalInfluencer, segments);
-            
-            if(positions != null)
+
+            if (positions != null)
             {
                 // Set positions
                 lineRenderer.positionCount = (int)segments;
@@ -332,10 +358,10 @@ public class PhysicsObject : MonoBehaviour
             }
         }
         // Past Drawn relative path
-        else if(UiManager.displayPastPath)
+        else if (UiManager.displayPastPath)
         {
             // First frame setup
-            if(_drawPastPath != true)
+            if (_drawPastPath != true)
             {
                 // Setup colour keys
                 GradientColorKey[] colorKeys = new GradientColorKey[2];
@@ -375,10 +401,10 @@ public class PhysicsObject : MonoBehaviour
             }
 
             // Track position
-            if(timeSinceLastPosition > 1.0f)
+            if (timeSinceLastPosition > 1.0f)
             {
                 // Add to relative positions queue
-                relativeTrailPositions.Enqueue(transform.position - 
+                relativeTrailPositions.Enqueue(transform.position -
                     biggestGravitationalInfluencer.transform.position);
 
                 // Reset timer
@@ -393,7 +419,7 @@ public class PhysicsObject : MonoBehaviour
 
         // If flag is true but realtime value false:
         // Turn off future path
-        if(_drawFuturePath && !UiManager.displayFuturePath)
+        if (_drawFuturePath && !UiManager.displayFuturePath)
         {
             // Reset flag
             _drawFuturePath = false;
@@ -403,7 +429,7 @@ public class PhysicsObject : MonoBehaviour
 
         // If flag is true but realtime value false:
         // Turn off past path
-        if(_drawPastPath && !UiManager.displayPastPath)
+        if (_drawPastPath && !UiManager.displayPastPath)
         {
             // Reset flag
             _drawPastPath = false;
@@ -463,7 +489,7 @@ public class PhysicsObject : MonoBehaviour
                 if (dist == 0)
                     force = Vector3.zero;
                 //Calculate Magnitude of force
-                float magnitude = G * (mass1 * mass2) / Mathf.Pow(dist, 2);
+                float magnitude = PhysicsEngine.G * (mass1 * mass2) / Mathf.Pow(dist, 2);
                 force = dir.normalized * magnitude;
 
                 // Calculate accelerations
@@ -598,18 +624,16 @@ public class PhysicsObject : MonoBehaviour
         if (theirPhysObj.rb.mass < rb.mass)
         {
             //If Bigger, Absorb
-            setMass(rb.mass + theirPhysObj.rb.mass);
-            Destroy(collision.gameObject);
+            Absorb(theirPhysObj);
         }
         // If Equal...
         else if (theirPhysObj.rb.mass == rb.mass)
         {
             // Higher X value wins
-            if(transform.position.x > collision.transform.position.x)
+            if (transform.position.x > collision.transform.position.x)
             {
                 // Absorb
-                setMass(rb.mass + theirPhysObj.rb.mass);
-                Destroy(collision.gameObject);
+                Absorb(theirPhysObj);
             }
             // Else if equal again...
             else if (transform.position.x == collision.transform.position.x)
@@ -618,11 +642,50 @@ public class PhysicsObject : MonoBehaviour
                 if (transform.position.y > collision.transform.position.y)
                 {
                     // Absorb
-                    setMass(rb.mass + theirPhysObj.rb.mass);
-                    Destroy(collision.gameObject);
+                    Absorb(theirPhysObj);
                 }
             }
         }
+    }
+
+    private void Absorb(PhysicsObject smallerObject)
+    {
+        float their_mass = smallerObject.rb.mass;
+
+        // Only absorb mass if won't fragment
+        if (their_mass <= 0.01f || smallerObject.isShard)
+            setMass(rb.mass + their_mass);
+
+        smallerObject.BeAbsorbed();
+    }
+
+    public void BeAbsorbed()
+    {
+        // Shatter
+        if (rb.mass > 0.01f && !isShard)
+        {
+            float no_shards = 10.0f;
+            for (int i = 0; i < no_shards; i++)
+            {
+                // Calculate offset
+                Vector3 offset = new Vector3(UnityEngine.Random.Range(-10f, 10f), UnityEngine.Random.Range(-10f, 10f), UnityEngine.Random.Range(-10f, 10f));
+
+                // Instantiate
+                Vector3 pos = transform.position + UnityEngine.Random.insideUnitSphere * GetComponentInChildren<Collider>().bounds.extents.x;
+                PhysicsObject shard = Instantiate((GameObject)CelestialObjects["Shard1"], pos, Quaternion.Euler(offset * 32.0f)).GetComponent<PhysicsObject>();
+
+                // Set physical properties
+                //shard.transform.localScale = Vector3.one * rb.mass / no_shards;
+                shard.isShard = true;
+                shard.density = 1.0f;
+                shard.setMass(rb.mass / no_shards);
+                shard.rb.velocity = rb.velocity + offset;
+                shard.rb.angularVelocity = offset * 100.0f;
+                shard.heat = 2.0f;
+            }
+        }
+
+        Destroy(this.gameObject);
     }
 
     void OnMouseDown()
@@ -701,5 +764,6 @@ public class PhysicsObject : MonoBehaviour
     {
         UiManager.RemoveFromEntitiesPanel(this.gameObject);
         physicsEngine.objectIDs.Remove(ID);
+
     }
 }

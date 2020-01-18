@@ -5,10 +5,12 @@ using UnityEngine;
 
 public class PhysicsEngine : MonoBehaviour
 {
+    public static float COOLING_SPEED = 0.05f;
+    public static Color HEAT_COLOR = new Color(1.0f, 0.09f, 0.09f);
     public static List<PhysicsObjectPair> ObjectPairs;
     private float timeAtPause;
     private bool paused;
-    private float G = 667.408f;
+    public static float G = 667.408f;
 
     public const float TIMESCALER = 0.01f;
     
