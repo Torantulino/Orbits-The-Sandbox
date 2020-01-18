@@ -136,7 +136,7 @@ public class UIManager : MonoBehaviour
         canvasGroup = transform.GetComponent<CanvasGroup>();
         placementGrid = FindObjectOfType<InfiniteGrids>();
         canvas = GetComponent<Canvas>();
-        
+
         inptDivs.text = symDivs.ToString();
 
         // colPicker.SetOnValueChangeCallback(TrailColChanged);
@@ -205,14 +205,14 @@ public class UIManager : MonoBehaviour
         }
 
         // Adjust timescale
-        if(scalingTime)
+        if (scalingTime)
         {
             float timeSpentScaling = Time.realtimeSinceStartup - scalingTimeStart;
 
             float ammount = 0.5f * timeSpentScaling;
 
             ammount *= scalingTimeDirection;
-            
+
             physicsEngine.AddjustTimeScale(ammount);
         }
 
@@ -237,7 +237,7 @@ public class UIManager : MonoBehaviour
         if (Physics.Raycast(ray, out raycastHit, 10000) && raycastHit.transform.gameObject.GetComponent<PhysicsObject>() != null)
         {
             // Object Click
-            if(Input.GetMouseButton(0))
+            if (Input.GetMouseButton(0))
                 SwitchCursor(2);
             // Pan
             else if (Input.GetMouseButton(2))
@@ -254,7 +254,7 @@ public class UIManager : MonoBehaviour
                 SwitchCursor(3);
             // Default Cursor
             else
-            SwitchCursor(0);
+                SwitchCursor(0);
 
             // Select if no other object (such as UI) under mouse.
             if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
@@ -292,14 +292,14 @@ public class UIManager : MonoBehaviour
                         // Un-Dissolve
                         ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 1.0f;
                         tutorialParticleSystem.gameObject.SetActive(false);
-                        
+
                         //Reset trigger
                         tutorialTrigger = false;
                     }
                     break;
                 // Teach: ZOOM OUT
                 case 2:
-                    if(tutorialTrigger)
+                    if (tutorialTrigger)
                     {
                         // Dissolve
                         ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 0.0f;
@@ -312,14 +312,14 @@ public class UIManager : MonoBehaviour
                         // Un-Dissolve
                         ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 1.0f;
                         tutorialParticleSystem.gameObject.SetActive(false);
-                        
+
                         //Reset trigger
                         tutorialTrigger = false;
                     }
-                    break;                
+                    break;
                 // Teach: ZOOM IN
                 case 3:
-                    if(tutorialTrigger)
+                    if (tutorialTrigger)
                     {
 
                         // Dissolve
@@ -333,14 +333,14 @@ public class UIManager : MonoBehaviour
                         // Un-Dissolve
                         ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 1.0f;
                         tutorialParticleSystem.gameObject.SetActive(false);
-                        
+
                         //Reset trigger
                         tutorialTrigger = false;
                     }
                     break;
                 // Teach: Open Left Panel
                 case 4:
-                    if(tutorialTrigger)
+                    if (tutorialTrigger)
                     {
 
                         // Dissolve
@@ -361,9 +361,9 @@ public class UIManager : MonoBehaviour
                     break;
                 // Teach: Spawn Object
                 case 5:
-                    if(tutorialTrigger)
+                    if (tutorialTrigger)
                     {
-                        
+
                         // Dissolve
                         ((Image)tutorialParticleSystem.GetComponentInParent<Image>()).fillAmount = 0.0f;
                         tutorialParticleSystem.gameObject.SetActive(true);
@@ -391,12 +391,12 @@ public class UIManager : MonoBehaviour
         }
 
         yield return new WaitForEndOfFrame();
-    }   
+    }
     // Initiates the Tutorial sequence
     public void StartTutorial()
     {
         tutorialCursorAnimator.SetInteger("tutorialPhase", 1);
-        
+
         SwitchTab(0, 0);
         SwitchTab(1, 0);
 
@@ -417,7 +417,7 @@ public class UIManager : MonoBehaviour
     // Toggles the tutorial
     public void ToggleTuorial(bool start)
     {
-        if(start)
+        if (start)
             StartTutorial();
         else
             StopTutorial();
@@ -425,20 +425,20 @@ public class UIManager : MonoBehaviour
     // Switches Cursor to the one specified and sets the appropriate hotspot
     public void SwitchCursor(uint i)
     {
-        switch(i)
+        switch (i)
         {
             case 0:
                 Cursor.SetCursor(cursors["default"].Item1, cursors["default"].Item2, CursorMode.Auto);
-            break;
+                break;
             case 1:
                 Cursor.SetCursor(cursors["hand"].Item1, cursors["default"].Item2, CursorMode.Auto);
-            break;
+                break;
             case 2:
                 Cursor.SetCursor(cursors["hand-click"].Item1, cursors["default"].Item2, CursorMode.Auto);
-            break;
+                break;
             case 3:
                 Cursor.SetCursor(cursors["drag"].Item1, cursors["default"].Item2, CursorMode.Auto);
-            break;        
+                break;
         }
     }
     // Adds specified object to the Entities panel at right-hand side of screen.
@@ -455,7 +455,8 @@ public class UIManager : MonoBehaviour
     public void RemoveFromEntitiesPanel(GameObject _obj)
     {
         GameObject toDestroy = contentEntites.Find(_obj.name).gameObject;
-        Destroy(toDestroy);
+        if (toDestroy != null)
+            Destroy(toDestroy);
     }
     // Selects and Highlights an entity - or group of entities - from the entites panel in response to user action.
     public void SelectEntityFromPanel(Button _btn)
@@ -467,16 +468,16 @@ public class UIManager : MonoBehaviour
         // Remove old highlighting
         foreach (Button button in childButtons)
         {
-                ColorBlock normalColour = contentEntites.Find("SampleButton").GetComponent<Button>().colors;
-                button.colors = normalColour;
+            ColorBlock normalColour = contentEntites.Find("SampleButton").GetComponent<Button>().colors;
+            button.colors = normalColour;
         }
 
 
         if (_btn.name != "SampleButton")
         {
             ColorBlock redTint = _btn.colors;
-            redTint.normalColor = new Color(0.00392f,  0.10196f,  0.12157f, 0.75f);
-            redTint.selectedColor = new Color(0.00392f,  0.10196f,  0.12157f, 0.75f);
+            redTint.normalColor = new Color(0.00392f, 0.10196f, 0.12157f, 0.75f);
+            redTint.selectedColor = new Color(0.00392f, 0.10196f, 0.12157f, 0.75f);
 
             // If shift button is down
             if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && lastEntityBtnSelected != null)
@@ -535,7 +536,7 @@ public class UIManager : MonoBehaviour
     public void ToggleMute()
     {
         MusicManagaer musicMan = FindObjectOfType<MusicManagaer>();
-        musicMan.gameObject.GetComponentInChildren<AudioSource>().mute = 
+        musicMan.gameObject.GetComponentInChildren<AudioSource>().mute =
             !musicMan.gameObject.GetComponentInChildren<AudioSource>().mute;
     }
     // Pauses simulation
@@ -570,12 +571,12 @@ public class UIManager : MonoBehaviour
     // Called from Timescale text input box to scale time
     public void timeScaled(string _scale)
     {
-        
+
         try
         {
             int scale = int.Parse(_scale);
 
-            if(Time.timeScale == 0 && scale != 0)
+            if (Time.timeScale == 0 && scale != 0)
                 playPressed();
 
             physicsEngine.ScaleTime(scale);
@@ -726,8 +727,8 @@ public class UIManager : MonoBehaviour
     // 0: Objects, 1: Entities
     // expand: -1 = ignore, 0 = false, 1 = true
     IEnumerator SwitchActivePanel(int val, int expand = -1)
-    {   
-        if(val == 0)
+    {
+        if (val == 0)
         {
             if (uiLeftAnimating)
                 yield break;
@@ -741,7 +742,7 @@ public class UIManager : MonoBehaviour
             else
                 uiRightAnimating = true;
         }
-        
+
         GameObject parent = null;
         GameObject panel = null;
         GameObject maximiser = null;
@@ -778,15 +779,15 @@ public class UIManager : MonoBehaviour
             expanding = true;
 
         //Check specified direction
-        if(expand != -1)
+        if (expand != -1)
         {
-            if(expanding && expand == 0)
+            if (expanding && expand == 0)
             {
                 uiLeftAnimating = false;
                 uiRightAnimating = false;
                 yield break;
             }
-            else if(!expanding && expand == 1)
+            else if (!expanding && expand == 1)
             {
                 uiLeftAnimating = false;
                 uiRightAnimating = false;
@@ -838,17 +839,17 @@ public class UIManager : MonoBehaviour
             while (Time.realtimeSinceStartup - start_time < 0.5f)
             {
                 spdx = Mathf.Lerp(spdx, (target_pos.x - parent.transform.position.x) * 0.7f, 0.4f);
-                parent.transform.position = new Vector3(parent.transform.position.x  + spdx, parent.transform.position.y, parent.transform.position.z);
+                parent.transform.position = new Vector3(parent.transform.position.x + spdx, parent.transform.position.y, parent.transform.position.z);
                 yield return new WaitForEndOfFrame();
             }
             parent.transform.position = target_pos;
             Debug.Log("Expander End pos: " + parent.transform.position);
         }
 
-        if(val == 0)
-                uiLeftAnimating = false;
+        if (val == 0)
+            uiLeftAnimating = false;
         else if (val == 1)
-                uiRightAnimating = false;
+            uiRightAnimating = false;
 
         yield return new WaitForSeconds(0.0f);
     }
@@ -863,9 +864,9 @@ public class UIManager : MonoBehaviour
         StartCoroutine(SwitchActivePanel(val, _expand));
 
         //Tutorial Trigger
-        if(tutorial)
+        if (tutorial)
         {
-            if(tutorialCursorAnimator.GetInteger("tutorialPhase") == 4 && val == 0)
+            if (tutorialCursorAnimator.GetInteger("tutorialPhase") == 4 && val == 0)
                 tutorialTrigger = true;
         }
     }
