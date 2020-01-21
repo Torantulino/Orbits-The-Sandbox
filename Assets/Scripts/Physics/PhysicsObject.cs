@@ -287,7 +287,8 @@ public class PhysicsObject : MonoBehaviour
             Material material = GetComponentInChildren<MeshRenderer>().material;
 
             material.EnableKeyword("_EMISSION");
-            material.SetColor("_EmissionColor", new Color(1.498039f, 0.2009804f, 0.0f) * temperature);
+            //material.SetColor("_EmissionColor", new Color(1.498039f, 0.2009804f, 0.0f) * temperature);
+            material.SetColor("_EmissionColor", PhysicsEngine.HEAT_COLOR * temperature);
 
             // Cooled
             if (temperature <= 0.0f)
@@ -664,33 +665,44 @@ public class PhysicsObject : MonoBehaviour
 
     public void BeAbsorbed(GameObject _absorber)
     {
-        // Shatter
-        if (rb.mass > 0.01f && !isShard)
-        {
-            float no_shards = 10.0f;
-            for (int i = 0; i < no_shards; i++)
-            {
-                // Calculate offset
-                Vector3 offset = new Vector3(UnityEngine.Random.Range(-10f, 10f), UnityEngine.Random.Range(-10f, 10f), UnityEngine.Random.Range(-10f, 10f));
-
-                // Instantiate
-                Vector3 pos = transform.position + UnityEngine.Random.insideUnitSphere * GetComponentInChildren<Collider>().bounds.extents.x;
-                PhysicsObject shard = Instantiate((GameObject)CelestialObjects["Shard1"], pos, Quaternion.Euler(offset * 32.0f)).GetComponent<PhysicsObject>();
-
-                // Set physical properties
-                //shard.transform.localScale = Vector3.one * rb.mass / no_shards;
-                shard.isShard = true;
-                shard.density = 1.0f;
-                shard.setMass(rb.mass / no_shards);
-                shard.rb.velocity = rb.velocity + offset;
-                shard.rb.angularVelocity = offset * 100.0f;
-                shard.temperature = 2.0f;
-            }
-        }
-
         // If camera is following this object, refocus
         if (mainCamController.FocalObject == this.gameObject.transform)
             mainCamController.SetFocalObject(_absorber);
+        
+        // Particle Effect
+        GameObject emitter = Instantiate(physicsEngine.particleEffects["ShatterEffect"], transform.position, transform.rotation);
+        emitter.transform.localScale = transform.localScale;
+        Destroy(emitter, 0.5f);
+        
+        // Shatter
+        if (rb.mass > 0.01f && !isShard)
+            Shatter(10.0f);
+        else
+            Destroy(this.gameObject);
+    }
+
+    // Shatter this object into the specified number of hot shards
+    // This game object is destroyed in the process
+    private void Shatter(float _shards, float _intensity = 1.0f)
+    {
+        for (int i = 0; i < _shards; i++)
+        {
+            // Calculate offset
+            Vector3 offset = new Vector3(UnityEngine.Random.Range(-10f, 10f), UnityEngine.Random.Range(-10f, 10f), UnityEngine.Random.Range(-10f, 10f));
+
+            // Instantiate
+            Vector3 pos = transform.position + UnityEngine.Random.insideUnitSphere * GetComponentInChildren<Collider>().bounds.extents.x;
+            PhysicsObject shard = Instantiate((GameObject)CelestialObjects["Shard1"], pos, Quaternion.Euler(offset * 32.0f)).GetComponent<PhysicsObject>();
+
+            // Set physical properties
+            //shard.transform.localScale = Vector3.one * rb.mass / no_shards;
+            shard.isShard = true;
+            shard.density = 2.0f;
+            shard.setMass(rb.mass / _shards);
+            shard.rb.velocity = rb.velocity + offset.normalized * 0.8f * Mathf.Sqrt( (2.0f * PhysicsEngine.G * rb.mass) / (pos - transform.position).magnitude );
+            shard.rb.angularVelocity = offset * 100.0f;
+            shard.temperature = PhysicsEngine.MAX_TEMP;
+        }
 
         Destroy(this.gameObject);
     }
@@ -746,8 +758,15 @@ public class PhysicsObject : MonoBehaviour
 
         if (dragtime < 0.3f)
         {
-            //Send selected object to Ui Manager
-            UiManager.SetSelectedObject(this);
+            if (UiManager.laser)
+            {
+                Shatter(10.0f, 2.0f);
+            }
+            else
+            {
+                //Send selected object to Ui Manager
+                UiManager.SetSelectedObject(this);
+            }
         }
         // else if (UiManager.manipMode == 0)
         // {

@@ -6,18 +6,16 @@ using UnityEngine;
 public class PhysicsEngine : MonoBehaviour
 {
     public static float COOLING_SPEED = 0.05f;
-    public static Color HEAT_COLOR = new Color(1.0f, 0.09f, 0.09f);
-    public static float MAX_TEMP = 2.0f;
+    public static Color HEAT_COLOR = new Color(1.498f, 0.1411f, 0.0549f);
+    public static float MAX_TEMP = 4.0f;
     public static List<PhysicsObjectPair> ObjectPairs;
     private float timeAtPause;
     private bool paused;
     public static float G = 667.408f;
     public AnimationCurve coolingCurve;
-
     public const float TIMESCALER = 0.01f;
-
     public HashSet<int> objectIDs = new HashSet<int>();
-
+    public Dictionary<string, GameObject> particleEffects = new Dictionary<string, GameObject>();
 
     // Initialize
     void Start()
@@ -27,7 +25,7 @@ public class PhysicsEngine : MonoBehaviour
         // Setup cooling keys (time = current temperature, value = coolingspeed)
         {
             //ALPHA
-            Keyframe[] tempKeys = new Keyframe[3];
+            Keyframe[] tempKeys = new Keyframe[5];
             // Coolest
             tempKeys[0].time = 0.0f;
             tempKeys[0].value = 0.00001f;
@@ -37,16 +35,26 @@ public class PhysicsEngine : MonoBehaviour
             // Hottest
             tempKeys[2].time = 2.0f;
             tempKeys[2].value = COOLING_SPEED;
+            // Initial Flash!
+            tempKeys[3].time = 3.0f;
+            tempKeys[3].value = COOLING_SPEED * 10.0f;
+            tempKeys[4].time = 4.0f;
+            tempKeys[4].value = COOLING_SPEED * 300.0f;
             // Set
             AnimationCurve curve = new AnimationCurve();
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < tempKeys.Length; i++)
                 curve.AddKey(tempKeys[i]);
 
             //Set
             coolingCurve = curve;
-
         }
+
+        // Load particle prefabs
+        UnityEngine.Object[] objs = Resources.LoadAll("Prefabs/Particles");
+        foreach (UnityEngine.Object obj in objs)
+            particleEffects.Add(obj.name, (GameObject)obj);
+
     }
 
         void Update()
