@@ -24,11 +24,11 @@ public class MainMenuButton : MonoBehaviour
     void Update()
 
     {
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Normal"))
-        {
-            Vector3 offset = new Vector3(Mathf.PerlinNoise(Time.realtimeSinceStartup/7.5f, Time.realtimeSinceStartup / 7.5f), Mathf.PerlinNoise(Time.realtimeSinceStartup/7.5f + 0.33f, Time.realtimeSinceStartup / 7.5f), 0.0f);
-            transform.position = initial_position + offset * 10.0f;
-        }
+        // if (animator.GetCurrentAnimatorStateInfo(0).IsName("Normal"))
+        // {
+        //     Vector3 offset = new Vector3(Mathf.PerlinNoise(Time.realtimeSinceStartup/7.5f, Time.realtimeSinceStartup / 7.5f), Mathf.PerlinNoise(Time.realtimeSinceStartup/7.5f + 0.33f, Time.realtimeSinceStartup / 7.5f), 0.0f);
+        //     transform.position = initial_position + offset * 10.0f;
+        // }
         
     }
 }
