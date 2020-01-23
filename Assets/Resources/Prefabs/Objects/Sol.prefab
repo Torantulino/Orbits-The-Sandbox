@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4279085795547590}
   - component: {fileID: 198178863686299272}
   - component: {fileID: 199108633094433754}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: corona
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4845,7 +4845,7 @@ GameObject:
   - component: {fileID: 4260955314552216}
   - component: {fileID: 198403684199339780}
   - component: {fileID: 199866579853708042}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Flairs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9805,6 +9805,7 @@ GameObject:
   - component: {fileID: 114797170467834124}
   - component: {fileID: 54829433555896014}
   - component: {fileID: 120601861573441252}
+  - component: {fileID: 1789481539}
   m_Layer: 0
   m_Name: Sol
   m_TagString: Untagged
@@ -9863,6 +9864,7 @@ MonoBehaviour:
   isTrailRenderer: 0
   spawnWithOrbit: 1
   temperature: 0
+  isStar: 1
   ID: 0
   _drawFuturePath: 0
   _drawPastPath: 0
@@ -9978,6 +9980,18 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!114 &1789481539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1780368068488432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ae586aac049a9945802a353c31018c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1889909173398116
 GameObject:
   m_ObjectHideFlags: 0
@@ -9989,7 +10003,7 @@ GameObject:
   - component: {fileID: 4827280155155184}
   - component: {fileID: 198350417269360920}
   - component: {fileID: 199010564157358560}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: surfaceglow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14774,7 +14788,7 @@ Light:
   m_Type: 2
   m_Color: {r: 0.9918417, g: 0.99264705, b: 0.9780493, a: 1}
   m_Intensity: 1
-  m_Range: 1e+13
+  m_Range: 1000000
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10

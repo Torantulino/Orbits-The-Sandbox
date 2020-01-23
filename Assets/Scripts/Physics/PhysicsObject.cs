@@ -44,7 +44,7 @@ public class PhysicsObject : MonoBehaviour
     private PhysicsObject biggestGravitationalInfluencer;
     private Dictionary<string, UnityEngine.Object> CelestialObjects = new Dictionary<string, UnityEngine.Object>();
     public float temperature = 0.0f;
-
+    public bool isStar = false;
     public float Density
     {
         get { return density; }
@@ -280,12 +280,12 @@ public class PhysicsObject : MonoBehaviour
         }
 
         // Process Heat
-        if (temperature != 0.0f)
+        if (!isStar && temperature != 0.0f)
         {
             temperature -= Time.unscaledDeltaTime * physicsEngine.coolingCurve.Evaluate(temperature);
-            //temperature -= Time.unscaledDeltaTime * PhysicsEngine.COOLING_SPEED;
-            Material material = GetComponentInChildren<MeshRenderer>().material;
 
+            // Change colour based on heat
+            Material material = GetComponentInChildren<MeshRenderer>().material;
             material.EnableKeyword("_EMISSION");
             //material.SetColor("_EmissionColor", new Color(1.498039f, 0.2009804f, 0.0f) * temperature);
             material.SetColor("_EmissionColor", PhysicsEngine.HEAT_COLOR * temperature);
