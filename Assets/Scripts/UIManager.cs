@@ -151,8 +151,6 @@ public class UIManager : MonoBehaviour
 
         inptDivs.text = symDivs.ToString();
 
-        // colPicker.SetOnValueChangeCallback(TrailColChanged);
-
         //Load Celestial Objects
         Object[] CelestialObj = Resources.LoadAll("Prefabs/Objects");
         foreach (Object obj in CelestialObj)
@@ -178,7 +176,11 @@ public class UIManager : MonoBehaviour
             welcomePanel.SetActive(true);
         }
         else
+        {
+            SwitchTab(0, 0);
+            SwitchTab(1, 0);
             welcomePanel.SetActive(false);
+        }
 
     }
     // Update is called once per frame
