@@ -38,7 +38,7 @@ public class UIManager : MonoBehaviour
     private InputField inptDivs;
     private Text objectName;
     private CanvasGroup canvasGroup;
-    private GameObject pausePanel;
+    public GameObject pausePanel;
     private Image imgSpawnObj;
     private Color desiredTrailColor;
     private GameObject panObjects;
@@ -958,6 +958,7 @@ public class UIManager : MonoBehaviour
     public void ToggleSettings(bool state)
     {
         pausePanel.transform.Find("panSettings").gameObject.SetActive(state);
+        pausePanel.transform.Find("panPauseMain").gameObject.SetActive(!state);
     }
     // Pauses the game, bringing up the pause menu
     public void PauseGame()

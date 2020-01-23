@@ -79,6 +79,8 @@ public class OrbitControls : MonoBehaviour
                 return;
             }
 #endif
+        if (uIManager.pausePanel.activeSelf)
+            return;
 
         if (_MouseButton < 0 || Input.GetMouseButton(_MouseButton))
         {
@@ -99,8 +101,6 @@ public class OrbitControls : MonoBehaviour
         }
 
         // Smooth Zoom
-
-
         var zoom = Input.mouseScrollDelta.y * _Sensitivity.z;
         if (zoom != 0 &&
             Input.mousePosition.x >= 0 && Input.mousePosition.x <= Screen.width &&
