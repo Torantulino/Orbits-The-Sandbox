@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4418619749492156}
   - component: {fileID: 33567601075689894}
   - component: {fileID: 23238178388104038}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: default
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -149,6 +149,10 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   isTrailRenderer: 1
   spawnWithOrbit: 1
+  temperature: 0
+  ID: 0
+  _drawFuturePath: 0
+  _drawPastPath: 0
 --- !u!120 &120164302749459972
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -384,7 +388,7 @@ GameObject:
   - component: {fileID: 33390975690728186}
   - component: {fileID: 135550523828144616}
   - component: {fileID: 23922737420550580}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}

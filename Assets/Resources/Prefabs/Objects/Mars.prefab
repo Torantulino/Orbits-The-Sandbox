@@ -55,6 +55,10 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   isTrailRenderer: 1
   spawnWithOrbit: 1
+  temperature: 0
+  ID: 0
+  _drawFuturePath: 0
+  _drawPastPath: 0
 --- !u!54 &54462981976594908
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -318,7 +322,7 @@ GameObject:
   - component: {fileID: 4171141115762310}
   - component: {fileID: 33373965169320316}
   - component: {fileID: 23170623790263034}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: default
   m_TagString: Untagged
   m_Icon: {fileID: 0}
