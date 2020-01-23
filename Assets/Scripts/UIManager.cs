@@ -69,6 +69,7 @@ public class UIManager : MonoBehaviour
     public bool tutorialTrigger = false;
     float middleMouseHoldTime = 0.0f;
     float mouseScroll;
+    private bool showUI = true;
 
     void Awake()
     {
@@ -180,9 +181,12 @@ public class UIManager : MonoBehaviour
         //Show/Hide UI
         if (Input.GetKeyDown(KeyCode.F1))
         {
-            if (canvasGroup.alpha == 1.0f)
-            {
+            // Disable this control in pause menu
+            if(pausePanel.activeSelf)
+                return;
 
+            if (showUI)
+            {
                 canvasGroup.alpha = 0.0f;
                 canvasGroup.blocksRaycasts = false;
             }
@@ -191,6 +195,7 @@ public class UIManager : MonoBehaviour
                 canvasGroup.alpha = 1.0f;
                 canvasGroup.blocksRaycasts = true;
             }
+            showUI = !showUI;
         }
         //Pause
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -241,7 +246,9 @@ public class UIManager : MonoBehaviour
         // Ignore objects under mouse when UI is in the way
         if (!EventSystem.current.IsPointerOverGameObject())
             AdaptCursor();
-
+        else
+            SwitchCursor(0);
+            
         //TODO: TEMP
         {
             // LineRenderer lr = Camera.main.GetComponent<LineRenderer>();
@@ -939,12 +946,26 @@ public class UIManager : MonoBehaviour
     // Pauses the game, bringing up the pause menu
     public void PauseGame()
     {
+        // Temporarily show UI
+        if (!showUI)
+        {
+            canvasGroup.alpha = 1.0f;
+            canvasGroup.blocksRaycasts = true;
+        }
+
         pausePanel.SetActive(true);
         physicsEngine.pauseSimulation();
     }
     // Resumes the game, hiding the pause menu
     public void ResumeGame()
     {
+        // Re-hide UI if desired
+        if (!showUI)
+        {
+            canvasGroup.alpha = 0.0f;
+            canvasGroup.blocksRaycasts = false;
+        }
+
         pausePanel.SetActive(false);
         physicsEngine.resumeSimulation();
     }
