@@ -6,6 +6,7 @@ TagManager:
   tags:
   - pFab
   - host
+  - BloomCam
   layers:
   - Default
   - TransparentFX

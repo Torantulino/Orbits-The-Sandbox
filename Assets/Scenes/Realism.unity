@@ -137,7 +137,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1400944073797308, guid: 9b61bf4e9ee242749af789447a7d8c0a, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: BloomCam
       objectReference: {fileID: 0}
     - target: {fileID: 20142590665225422, guid: 9b61bf4e9ee242749af789447a7d8c0a,
         type: 3}

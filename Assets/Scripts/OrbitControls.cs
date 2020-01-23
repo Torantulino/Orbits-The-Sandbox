@@ -30,12 +30,12 @@ public class OrbitControls : MonoBehaviour
     float ZoomSpeed = 3.0f;
     
     UIManager uIManager;
-    private void Awake()
-    {
-    }
+
+    private Camera bloomCam;
 
     void Start()
     {
+        bloomCam = GameObject.FindGameObjectWithTag("BloomCam").GetComponent<Camera>();
         uIManager = FindObjectOfType<UIManager>();
 
         _FocalObject = GameObject.FindGameObjectWithTag("host").transform;
@@ -110,7 +110,9 @@ public class OrbitControls : MonoBehaviour
             {
                 _TargetDistance *= 1 + zoom;
                 Camera.main.nearClipPlane = nearClippingCurve.Evaluate(_TargetDistance);
+                bloomCam.nearClipPlane = nearClippingCurve.Evaluate(_TargetDistance);
                 Camera.main.farClipPlane = farClippingCurve.Evaluate(_TargetDistance);
+                bloomCam.farClipPlane = farClippingCurve.Evaluate(_TargetDistance);
             }
 
             _StartDistance = Vector3.Distance(transform.position, _FocalObject.position);
