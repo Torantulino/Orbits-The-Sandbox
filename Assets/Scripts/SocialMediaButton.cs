@@ -5,8 +5,6 @@ using UnityEngine;
 public class SocialMediaButton : MonoBehaviour
 {
     public string url;
-
-    public bool disableOnce;
     AudioSource audioSource;
 
     void Start()
@@ -16,15 +14,7 @@ public class SocialMediaButton : MonoBehaviour
 
     void PlaySound(AudioClip _sound)
     {
-
-        if (!disableOnce)
-        {
-            audioSource.PlayOneShot(_sound);
-        }
-        else
-        {
-            disableOnce = false;
-        }
+        audioSource.PlayOneShot(_sound);
     }
 
     void VistWebsite()
