@@ -33,6 +33,7 @@ public class UIManager : MonoBehaviour
     private GameObject othersPanel;
     private GameObject pauseButton;
     private GameObject playButton;
+    private GameObject welcomePanel;
     private InputField inptTime;
     private InputField inptDivs;
     private Text objectName;
@@ -139,6 +140,7 @@ public class UIManager : MonoBehaviour
         starPanel = transform.Find("panObjects/panel/panLeft/panStars").gameObject;
         othersPanel = transform.Find("panObjects/panel/panLeft/panOthers").gameObject;
         pausePanel = transform.Find("panPause").gameObject;
+        welcomePanel = transform.Find("panWelcome").gameObject;
         // imgSpawnObj = transform.Find("panObjects/panBrush/imgSpawnObj").GetComponent<Image>();
         audioVT = GameObject.FindObjectOfType<AudioVisualTranslator>();
         // colPicker = GameObject.FindObjectOfType<CUIColorPicker>();
@@ -166,6 +168,18 @@ public class UIManager : MonoBehaviour
         }
 
         SetSelectedObject(GameObject.FindGameObjectWithTag("host").GetComponent<PhysicsObject>());
+
+        // If first time playing
+        if (PlayerPrefs.GetInt("FirstTime", 1) == 1)
+        {
+            PlayerPrefs.SetInt("FirstTime", 0);
+            PlayerPrefs.Save();
+
+            welcomePanel.SetActive(true);
+        }
+        else
+            welcomePanel.SetActive(false);
+
     }
     // Update is called once per frame
     void Update()
@@ -182,7 +196,7 @@ public class UIManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F1))
         {
             // Disable this control in pause menu
-            if(pausePanel.activeSelf)
+            if (pausePanel.activeSelf)
                 return;
 
             if (showUI)
@@ -248,7 +262,7 @@ public class UIManager : MonoBehaviour
             AdaptCursor();
         else
             SwitchCursor(0);
-            
+
         //TODO: TEMP
         {
             // LineRenderer lr = Camera.main.GetComponent<LineRenderer>();

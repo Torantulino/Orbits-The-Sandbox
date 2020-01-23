@@ -26852,7 +26852,7 @@ GameObject:
   - component: {fileID: 3519718503337391796}
   - component: {fileID: 1972166462227325427}
   m_Layer: 5
-  m_Name: panTutoralIntro
+  m_Name: panWelcome
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
