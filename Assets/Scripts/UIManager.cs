@@ -53,6 +53,7 @@ public class UIManager : MonoBehaviour
     private Texture2D cursor_hand;
     private Texture2D cursor_hand_click;
     private Texture2D cursor_drag;
+    private Texture2D cursor_explode;
     public bool displayFuturePath;
     public bool displayPastPath;
     public bool laser = false;
@@ -97,6 +98,10 @@ public class UIManager : MonoBehaviour
         cursor_drag = Resources.Load<Texture2D>("Textures/UI/cursors/drag");
         if (cursor_drag == null)
             Debug.LogError("Drag cursor not found");
+        cursor_explode = Resources.Load<Texture2D>("Textures/UI/cursors/dynamite");
+        if (cursor_explode == null)
+            Debug.LogError("Drag cursor not found");
+
 
         cursors = new Dictionary<string, Tuple<Texture2D, Vector2>>{
             {
@@ -110,6 +115,9 @@ public class UIManager : MonoBehaviour
             },
             {
                 "drag", new Tuple<Texture2D, Vector2>(cursor_drag, new Vector2(33.0f, 15.0f))
+            },
+            {
+                "explode", new Tuple<Texture2D, Vector2>(cursor_explode, new Vector2(33.0f, 15.0f))
             }
         };
     }
@@ -245,7 +253,14 @@ public class UIManager : MonoBehaviour
                 SwitchCursor(3);
             // Hover
             else
-                SwitchCursor(1);
+            {
+                // Explode Hover
+                if(laser)
+                    SwitchCursor(4);
+                // Normal Hover
+                else
+                    SwitchCursor(1);
+            }
         }
         // Else no physics object under mouse
         else
@@ -460,13 +475,16 @@ public class UIManager : MonoBehaviour
                 Cursor.SetCursor(cursors["default"].Item1, cursors["default"].Item2, CursorMode.Auto);
                 break;
             case 1:
-                Cursor.SetCursor(cursors["hand"].Item1, cursors["default"].Item2, CursorMode.Auto);
+                Cursor.SetCursor(cursors["hand"].Item1, cursors["hand"].Item2, CursorMode.Auto);
                 break;
             case 2:
-                Cursor.SetCursor(cursors["hand-click"].Item1, cursors["default"].Item2, CursorMode.Auto);
+                Cursor.SetCursor(cursors["hand-click"].Item1, cursors["hand-click"].Item2, CursorMode.Auto);
                 break;
             case 3:
-                Cursor.SetCursor(cursors["drag"].Item1, cursors["default"].Item2, CursorMode.Auto);
+                Cursor.SetCursor(cursors["drag"].Item1, cursors["drag"].Item2, CursorMode.Auto);
+                break;
+            case 4:
+                Cursor.SetCursor(cursors["explode"].Item1, cursors["default"].Item2, CursorMode.Auto);
                 break;
         }
     }
