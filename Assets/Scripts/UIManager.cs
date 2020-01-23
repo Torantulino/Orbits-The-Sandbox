@@ -238,6 +238,41 @@ public class UIManager : MonoBehaviour
     /// It is called after all Update functions have been called.
     void LateUpdate()
     {
+        // Ignore objects under mouse when UI is in the way
+        if (!EventSystem.current.IsPointerOverGameObject())
+            AdaptCursor();
+
+        //TODO: TEMP
+        {
+            // LineRenderer lr = Camera.main.GetComponent<LineRenderer>();
+            // if (lr == null)
+            // {
+            //     lr = Camera.main.gameObject.AddComponent<LineRenderer>();
+            //     lr.enabled = true;
+            //     lr.positionCount = 5;
+            //     lr.startWidth = 0.1f;
+            //     lr.endWidth = 0.1f;
+            //     lr.alignment = LineAlignment.TransformZ;
+            // }
+
+            // lr.SetPosition(0, Camera.main.ViewportToWorldPoint(new Vector3(0.25f, 0.25f, Camera.main.nearClipPlane*2.0f)));
+            // lr.SetPosition(1, mainCamController.FocalObject.transform.position);
+            // lr.SetPosition(2, Camera.main.ViewportToWorldPoint(new Vector3(0.75f, 0.25f, Camera.main.nearClipPlane*2.0f)));
+            // lr.SetPosition(3, mainCamController.FocalObject.transform.position);
+            // lr.SetPosition(4, Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.9f, Camera.main.nearClipPlane*2.0f)));
+
+
+            // Debug.DrawRay(Camera.main.ViewportToWorldPoint(new Vector3(0.25f, 0.25f, Camera.main.nearClipPlane)),
+            //     Camera.main.transform.forward * mainCamController._TargetDistance, Color.yellow);
+            // Debug.DrawRay(Camera.main.ViewportToWorldPoint(new Vector3(0.75f, 0.25f, Camera.main.nearClipPlane)),
+            //     Camera.main.transform.forward * mainCamController._TargetDistance, Color.yellow);
+            // Debug.DrawRay(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.9f, Camera.main.nearClipPlane)),
+            //     Camera.main.transform.forward * mainCamController._TargetDistance, Color.yellow);
+        }
+    }
+
+    private void AdaptCursor()
+    {
         //Raycast under mouse
         RaycastHit raycastHit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -255,7 +290,7 @@ public class UIManager : MonoBehaviour
             else
             {
                 // Explode Hover
-                if(laser)
+                if (laser)
                     SwitchCursor(4);
                 // Normal Hover
                 else
@@ -276,35 +311,8 @@ public class UIManager : MonoBehaviour
             if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
                 SpawnObject();
         }
-
-        //TODO: TEMP
-
-        // LineRenderer lr = Camera.main.GetComponent<LineRenderer>();
-        // if (lr == null)
-        // {
-        //     lr = Camera.main.gameObject.AddComponent<LineRenderer>();
-        //     lr.enabled = true;
-        //     lr.positionCount = 5;
-        //     lr.startWidth = 0.1f;
-        //     lr.endWidth = 0.1f;
-        //     lr.alignment = LineAlignment.TransformZ;
-        // }
-
-        // lr.SetPosition(0, Camera.main.ViewportToWorldPoint(new Vector3(0.25f, 0.25f, Camera.main.nearClipPlane*2.0f)));
-        // lr.SetPosition(1, mainCamController.FocalObject.transform.position);
-        // lr.SetPosition(2, Camera.main.ViewportToWorldPoint(new Vector3(0.75f, 0.25f, Camera.main.nearClipPlane*2.0f)));
-        // lr.SetPosition(3, mainCamController.FocalObject.transform.position);
-        // lr.SetPosition(4, Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.9f, Camera.main.nearClipPlane*2.0f)));
-
-
-        // Debug.DrawRay(Camera.main.ViewportToWorldPoint(new Vector3(0.25f, 0.25f, Camera.main.nearClipPlane)),
-        //     Camera.main.transform.forward * mainCamController._TargetDistance, Color.yellow);
-        // Debug.DrawRay(Camera.main.ViewportToWorldPoint(new Vector3(0.75f, 0.25f, Camera.main.nearClipPlane)),
-        //     Camera.main.transform.forward * mainCamController._TargetDistance, Color.yellow);
-        // Debug.DrawRay(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.9f, Camera.main.nearClipPlane)),
-        //     Camera.main.transform.forward * mainCamController._TargetDistance, Color.yellow);
-
     }
+
     // Tutorial Coroutine
     IEnumerator Tutorial()
     {

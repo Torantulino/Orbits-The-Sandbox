@@ -5,6 +5,7 @@ using Cinemachine;
 using UnityEngine.UI;
 using System.Linq;
 using System;
+using UnityEngine.EventSystems;
 
 public class PhysicsObject : MonoBehaviour
 {
@@ -441,8 +442,6 @@ public class PhysicsObject : MonoBehaviour
         }
     }
 
-
-
     Vector3[] PredictOrbit(PhysicsObject _strongestObject, uint steps)
     {
         try
@@ -668,12 +667,12 @@ public class PhysicsObject : MonoBehaviour
         // If camera is following this object, refocus
         if (mainCamController.FocalObject == this.gameObject.transform)
             mainCamController.SetFocalObject(_absorber);
-        
+
         // Particle Effect
         GameObject emitter = Instantiate(physicsEngine.particleEffects["ShatterEffect"], transform.position, transform.rotation);
         emitter.transform.localScale = transform.localScale;
         Destroy(emitter, 0.5f);
-        
+
         // Shatter
         if (rb.mass > 0.01f && !isShard)
             Shatter(10.0f);
@@ -699,7 +698,7 @@ public class PhysicsObject : MonoBehaviour
             shard.isShard = true;
             shard.density = 2.0f;
             shard.setMass(rb.mass / _shards);
-            shard.rb.velocity = rb.velocity + offset.normalized * 0.8f * Mathf.Sqrt( (2.0f * PhysicsEngine.G * rb.mass) / (pos - transform.position).magnitude );
+            shard.rb.velocity = rb.velocity + offset.normalized * 0.8f * Mathf.Sqrt((2.0f * PhysicsEngine.G * rb.mass) / (pos - transform.position).magnitude);
             shard.rb.angularVelocity = offset * 100.0f;
             shard.temperature = PhysicsEngine.MAX_TEMP;
         }
@@ -709,6 +708,9 @@ public class PhysicsObject : MonoBehaviour
 
     void OnMouseDown()
     {
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+
         dragtime = 0.0f;
 
         //Get mouse position on screen
@@ -718,6 +720,9 @@ public class PhysicsObject : MonoBehaviour
 
     void OnMouseDrag()
     {
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+
         dragtime += Time.unscaledDeltaTime;
 
         //Differentite click from drag
@@ -755,6 +760,8 @@ public class PhysicsObject : MonoBehaviour
 
     void OnMouseUp()
     {
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
 
         if (dragtime < 0.3f)
         {
@@ -776,10 +783,12 @@ public class PhysicsObject : MonoBehaviour
         // }
     }
 
-
     // Called every frame while the mouse is over the GUIElement or Collider.
     void OnMouseOver()
     {
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+
         //Right click
         if (Input.GetMouseButtonDown(1))
         {
