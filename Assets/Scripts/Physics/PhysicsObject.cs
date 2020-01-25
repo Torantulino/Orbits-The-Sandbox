@@ -24,7 +24,7 @@ public class PhysicsObject : MonoBehaviour
     private Vector3 a = Vector3.zero;
     private Vector3 F = Vector3.zero;
 
-    public static List<PhysicsObject> physicsObjects;
+    public static Dictionary<int, PhysicsObject> physicsObjects;    //Key = ID
     public bool isTrailRenderer;
 
     public bool spawnWithOrbit;
@@ -43,7 +43,7 @@ public class PhysicsObject : MonoBehaviour
     private bool spawnee = false;
     private ContextMenu contextMenu;
     private PhysicsObject biggestGravitationalInfluencer;
-    private Dictionary<string, UnityEngine.Object> CelestialObjects = new Dictionary<string, UnityEngine.Object>();
+    private Dictionary<string, UnityEngine.Object> CelestialObjects = new Dictionary<string, UnityEngine.Object>(); //Prefabs
     public float temperature = 0.0f;
     public bool isStar = false;
     public float Density
@@ -88,6 +88,36 @@ public class PhysicsObject : MonoBehaviour
         massLocked = false;
         radiusLocked = false;
         physicsEngine = FindObjectOfType<PhysicsEngine>();
+
+        // Set uniquie name
+        name = name.Replace("(Clone)", "");
+        if (name.StartsWith("["))
+            name = name.TrimStart('[', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ']', ' ');
+        bool idFound = false;
+
+        // Loop until free name is found
+        for (int i = 0; !idFound; i++)
+        {
+            if (!physicsEngine.objectIDs.Contains(i))
+            {
+                ID = i;
+                idFound = true;
+            }
+        }
+        // Set name
+        name = "[" + ID + "] " + name;
+        physicsEngine.objectIDs.Add(ID);
+
+    }
+
+    void OnEnable()
+    {
+        if (physicsObjects == null)
+            physicsObjects = new Dictionary<int, PhysicsObject>();
+
+        physicsObjects.Add(ID, this);
+
+        physicsEngine.AddObject(this);
     }
 
     // Use this for initialization
@@ -138,25 +168,6 @@ public class PhysicsObject : MonoBehaviour
         lineRenderer.startWidth = 1.0f;
         lineRenderer.endWidth = 1.0f;
 
-        // Set uniquie name
-        name = name.Replace("(Clone)", "");
-        if (name.StartsWith("["))
-            name = name.TrimStart('[', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ']', ' ');
-        bool idFound = false;
-
-        // Loop until free name is found
-        for (int i = 0; !idFound; i++)
-        {
-            if (!physicsEngine.objectIDs.Contains(i))
-            {
-                ID = i;
-                idFound = true;
-            }
-        }
-        // Set name
-        name = "[" + ID + "] " + name;
-        physicsEngine.objectIDs.Add(ID);
-
         // Add to entities list
         UiManager.AddToEntitiesPanel(this.gameObject);
 
@@ -164,7 +175,7 @@ public class PhysicsObject : MonoBehaviour
         biggestGravitationalInfluencer = null;
         if (spawnWithOrbit)
         {
-            //Find object with highest gravitational influence
+            //Find object with highest gravitational influence (As physics engine won't have calculated this yet)
             biggestGravitationalInfluencer = GetBiggestGravitationalInfluencer();
 
             //Attempt to achive stable orbit
@@ -219,50 +230,34 @@ public class PhysicsObject : MonoBehaviour
         PhysicsObject _strongestObj = null;
         float strongestForce = 0.0f;
 
-        // Sort PhysicsObjects by Mass
-        physicsObjects.Sort((y, x) => x.rb.mass.CompareTo(y.rb.mass));
-
         //Find Object with highest gravitational influence
-        foreach (PhysicsObject obj in physicsObjects)
+        foreach (KeyValuePair<int, PhysicsObject> pair in physicsObjects)
         {
             //Obtain Direction Vector
-            Vector3 dir = rb.position - obj.rb.position;
+            Vector3 dir = rb.position - pair.Value.rb.position;
             //Obtain Distance, return if 0
-            float dist = dir.magnitude;
-            if (dist != 0)
+            float distSqr = dir.sqrMagnitude;
+            if (distSqr != 0)
             {
                 //Calculate Magnitude of force
-                float magnitude = PhysicsEngine.G * (rb.mass * obj.rb.mass) / Mathf.Pow(dist, 2);
+                float magnitude = PhysicsEngine.G * (rb.mass * pair.Value.rb.mass) / distSqr;
                 //Calculate force
                 Vector3 force = dir.normalized * magnitude;
                 if (force.magnitude >= strongestForce)
                 {
-                    _strongestObj = obj;
+                    _strongestObj = pair.Value;
                     strongestForce = force.magnitude;
                 }
             }
         }
-
         return _strongestObj;
-    }
-
-    void OnEnable()
-    {
-        if (physicsObjects == null)
-            physicsObjects = new List<PhysicsObject>();
-
-        physicsObjects.Add(this);
-
-        physicsEngine.AddObject(this);
-
     }
 
     void OnDisable()
     {
         physicsEngine.RemoveObject(this);
-        physicsObjects.Remove(this);
+        physicsObjects.Remove(ID);
     }
-
 
     void Update()
     {
@@ -304,23 +299,29 @@ public class PhysicsObject : MonoBehaviour
     /// It is called after all Update functions have been called.
     void LateUpdate()
     {
-        PhysicsObject newInfluencer = GetBiggestGravitationalInfluencer();
-        // If new influencer
-        if (newInfluencer != biggestGravitationalInfluencer)
+        // Check incase object has been destroyed or force is yet to be calculated
+        PhysicsObject newInfluencer;
+        PhysicsEngine.ForceExerter forceExerter;
+        if (physicsEngine.strongest_force.TryGetValue(ID, out forceExerter) && physicsObjects.ContainsKey(forceExerter.id))
         {
-            if (_drawPastPath)
-                // Clear previous trail if in new orbit
-                relativeTrailPositions.Clear();
-        }
+            newInfluencer = physicsObjects[forceExerter.id];
+            // If new influencer
+            if (newInfluencer != biggestGravitationalInfluencer)
+            {
+                if (_drawPastPath)
+                    // Clear previous trail if in new orbit
+                    relativeTrailPositions.Clear();
+            }
 
-        // Update
-        biggestGravitationalInfluencer = newInfluencer;
+            // Update
+            biggestGravitationalInfluencer = newInfluencer;
+        }
 
         // Future relative predicted path
         if (UiManager.displayFuturePath)
         {
             // First frame setup
-            if (_drawFuturePath != true)
+            if (!_drawFuturePath)
             {
                 // Setup colour keys
                 GradientColorKey[] colorKeys = new GradientColorKey[2];
@@ -364,7 +365,7 @@ public class PhysicsObject : MonoBehaviour
         else if (UiManager.displayPastPath)
         {
             // First frame setup
-            if (_drawPastPath != true)
+            if (!_drawPastPath)
             {
                 // Setup colour keys
                 GradientColorKey[] colorKeys = new GradientColorKey[2];

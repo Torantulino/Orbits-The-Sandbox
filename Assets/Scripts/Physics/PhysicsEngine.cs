@@ -16,7 +16,19 @@ public class PhysicsEngine : MonoBehaviour
     public const float TIMESCALER = 0.01f;
     public HashSet<int> objectIDs = new HashSet<int>();
     public Dictionary<string, GameObject> particleEffects = new Dictionary<string, GameObject>();
+    public Dictionary<int, ForceExerter> strongest_force = new Dictionary<int, ForceExerter>();   //Strongest force acting on the object ID=KEY this physics update
 
+    public struct ForceExerter
+    {
+        public int id;
+        public float magnitude;
+
+        public ForceExerter(int _id, float _mag)
+        {
+            id = _id;
+            magnitude = _mag;
+        }
+    }
     // Initialize
     void Start()
     {
@@ -60,11 +72,12 @@ public class PhysicsEngine : MonoBehaviour
     // Simulate
     void FixedUpdate()
     {
+        // Reset strongest force tracking
+        strongest_force.Clear();
+
         foreach (PhysicsObjectPair objectPair in ObjectPairs.ToList())
         {
-            UnityEngine.Profiling.Profiler.BeginSample("CalculateGravitationalForce()");
             Vector3 force = CalculateGravitationalForce(objectPair);
-            UnityEngine.Profiling.Profiler.EndSample();
             //Excert force on both objects, due to Newton's Third Law of motion
             objectPair.O2.rb.AddForce(force);
             objectPair.O1.rb.AddForce(force * -1.0f); //in opositite direction
@@ -84,6 +97,15 @@ public class PhysicsEngine : MonoBehaviour
         //Calculate Magnitude of force
         float magnitude = G * (pair.O1.rb.mass * pair.O2.rb.mass) / distSqr;
 
+        // Compare to current largest force for both objects
+        ForceExerter current_max;
+        // 1
+        if (!strongest_force.TryGetValue(pair.O1.ID, out current_max) || magnitude > current_max.magnitude)
+            strongest_force[pair.O1.ID] = new ForceExerter(pair.O2.ID, magnitude);
+        // 2
+        if (!strongest_force.TryGetValue(pair.O2.ID, out current_max) || magnitude > current_max.magnitude)
+            strongest_force[pair.O2.ID] = new ForceExerter(pair.O1.ID, magnitude);
+
         //Calculate force
         Vector3 force = dir.normalized * magnitude;
         return force;
@@ -94,14 +116,14 @@ public class PhysicsEngine : MonoBehaviour
         if (ObjectPairs == null)
             ObjectPairs = new List<PhysicsObjectPair>();
 
-        foreach (PhysicsObject obj in PhysicsObject.physicsObjects)
+        foreach (KeyValuePair<int, PhysicsObject> obj in PhysicsObject.physicsObjects)
         {
             //For every other object
-            if (obj != physicsObject)
+            if (obj.Value != physicsObject)
             {
                 PhysicsObjectPair pair = new PhysicsObjectPair();
                 pair.O1 = physicsObject;
-                pair.O2 = obj;
+                pair.O2 = obj.Value;
                 //Check if list already contains pair
                 bool alreadyInList = false;
                 foreach (PhysicsObjectPair objectPair in ObjectPairs.ToList())
