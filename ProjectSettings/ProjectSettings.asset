@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: Significant Gravitas
-  productName: Newtonian Physics Sandbox
+  productName: 'Orbits: The Sandbox'
   defaultCursor: {fileID: 2800000, guid: e50f4644d254cce4591c555dbe60c1ef, type: 3}
   cursorHotspot: {x: 33, y: 15}
   m_SplashScreenBackgroundColor: {r: 0.18039216, g: 0.35686275, b: 0.39215687, a: 1}
@@ -51,7 +51,7 @@ PlayerSettings:
   defaultScreenWidthWeb: 960
   defaultScreenHeightWeb: 600
   m_StereoRenderingPath: 0
-  m_ActiveColorSpace: 0
+  m_ActiveColorSpace: 1
   m_MTRendering: 1
   m_StackTraceTypes: 010000000100000001000000010000000100000001000000
   iosShowActivityIndicatorOnLoading: -1
@@ -70,7 +70,7 @@ PlayerSettings:
   androidStartInFullscreen: 1
   androidRenderOutsideSafeArea: 1
   androidUseSwappy: 0
-  androidBlitType: 0
+  androidBlitType: 1
   defaultIsNativeResolution: 1
   macRetinaSupport: 1
   runInBackground: 0
@@ -284,7 +284,7 @@ PlayerSettings:
       m_Icon: {fileID: 2800000, guid: e2cd212515d971547b15ce444576965a, type: 3}
       m_Width: 128
       m_Height: 128
-      m_Kind: 105
+      m_Kind: 0
   m_BuildTargetPlatformIcons: []
   m_BuildTargetBatching: []
   m_BuildTargetGraphicsAPIs: []

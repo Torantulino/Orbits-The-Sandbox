@@ -26,18 +26,9 @@ public class MusicManagaer : MonoBehaviour
 
     void Start()
     {
-        if (SceneManager.GetActiveScene().name == "Realism")
-        {
-            //Load soundtrack
-            soundtrack = Resources.LoadAll("Music");
+        //Load soundtrack
+        soundtrack = Resources.LoadAll("Music");
 
-        }
-        // else
-        // {
-        //     //Load menu music?
-        //     soundtrack = Resources.LoadAll("Music");
-        // }
-        
         //Obtain reference to audiosource
         source = transform.Find("Source").GetComponent<AudioSource>();
 
@@ -52,7 +43,7 @@ public class MusicManagaer : MonoBehaviour
         for (int i = 0; i < soundtrack.Length; i++)
         {
             //Assign current track to source
-            source.clip = (AudioClip) soundtrack[i];
+            source.clip = (AudioClip)soundtrack[i];
 
             //Start track
             source.Play();

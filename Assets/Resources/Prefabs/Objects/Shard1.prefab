@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 3029956181847005199}
   - component: {fileID: 956353069485447563}
   - component: {fileID: 1813297335725905804}
-  - component: {fileID: 3413979266741332762}
+  - component: {fileID: 5650108960096466226}
   m_Layer: 0
   m_Name: Shard1
   m_TagString: Untagged
@@ -134,6 +134,7 @@ MonoBehaviour:
   isTrailRenderer: 1
   spawnWithOrbit: 0
   temperature: 0
+  isStar: 0
   ID: 0
   _drawFuturePath: 0
   _drawPastPath: 0
@@ -249,8 +250,8 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
---- !u!64 &3413979266741332762
-MeshCollider:
+--- !u!135 &5650108960096466226
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -259,10 +260,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 1
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 4300000, guid: 9e16703fcf68f2f48b1d5eb474c08d19, type: 3}
+  serializedVersion: 2
+  m_Radius: 0.34
+  m_Center: {x: -0.01, y: -0.03, z: 0.29}
 --- !u!1 &7724050223801357478
 GameObject:
   m_ObjectHideFlags: 0

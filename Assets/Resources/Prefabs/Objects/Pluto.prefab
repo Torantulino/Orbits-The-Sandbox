@@ -56,6 +56,7 @@ MonoBehaviour:
   isTrailRenderer: 0
   spawnWithOrbit: 1
   temperature: 0
+  isStar: 0
   ID: 0
   _drawFuturePath: 0
   _drawPastPath: 0

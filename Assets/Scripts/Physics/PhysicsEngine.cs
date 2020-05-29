@@ -18,7 +18,7 @@ public class PhysicsEngine : MonoBehaviour
     public HashSet<int> objectIDs = new HashSet<int>();
     public Dictionary<string, GameObject> particleEffects = new Dictionary<string, GameObject>();
     public Dictionary<int, ForceExerter> strongest_force = new Dictionary<int, ForceExerter>();   //Strongest force acting on the object ID=KEY this physics update
-    public static float PHYSICS_TIMESTEP = 0.04f;
+    public static float PHYSICS_TIMESTEP = 1.0f / 75.0f;
 
     public struct ForceExerter
     {
@@ -69,12 +69,13 @@ public class PhysicsEngine : MonoBehaviour
         foreach (UnityEngine.Object obj in objs)
             particleEffects.Add(obj.name, (GameObject)obj);
 
+        RunBenchmarks();
+    }
 
+    private static void RunBenchmarks()
+    {
         Stopwatch Auto_Method = new Stopwatch();
         Stopwatch Manual_Method = new Stopwatch();
-
-
-        // TESTING
 
         // Inter-Object Vector Obtain
         Vector3 position1 = new Vector3(123.321f, 456.65f, 234.0f);
@@ -143,16 +144,15 @@ public class PhysicsEngine : MonoBehaviour
         Manual_Method.Start();
         for (int i = 0; i < 1000000; i++)
         {
-            float mag =  Mathf.Sqrt(sqrMag1);
-            force2 = new Vector3(dir1.x / mag, dir1.y /mag, dir1.z / mag);
+            float mag = Mathf.Sqrt(sqrMag1);
+            force2 = new Vector3(dir1.x / mag, dir1.y / mag, dir1.z / mag);
         }
         Manual_Method.Stop();
 
-        UnityEngine.Debug.Assert(force1 == force2, "force1:" + force1 + "force2:" + force2);
+        UnityEngine.Debug.Assert(force1 == force2);
         UnityEngine.Debug.Log("<b>Auto <color=purple>Force Calculation</color> Method time: </b>" + Auto_Method.Elapsed.TotalMilliseconds);
-        UnityEngine.Debug.Log("<b>Manual <color=green>Force Calculation</color> Method time: </b>" + Manual_Method.Elapsed.TotalMilliseconds);
+        UnityEngine.Debug.Log("<b>Manual <color=purple>Force Calculation</color> Method time: </b>" + Manual_Method.Elapsed.TotalMilliseconds);
         //-----------------------
-
     }
 
     // Simulate
@@ -174,10 +174,12 @@ public class PhysicsEngine : MonoBehaviour
     public Vector3 CalculateGravitationalForce(PhysicsObjectPair pair)
     {
         //Obtain Direction Vector
-        Vector3 dir = pair.O1.rb.position - pair.O2.rb.position;    //NOTE: This causes 2x Rigidbody AND 2x Collider Syncs 
+        Vector3 pos1 = pair.O1.rb.position; //NOTE: These together cause 2x Rigidbody AND 2x Collider Syncs 
+        Vector3 pos2 = pair.O2.rb.position;
+        Vector3 dir = new Vector3(pos1.x - pos2.x, pos1.y - pos2.y, pos1.z - pos2.z);
 
         //Obtain Distance, return if 0
-        float distSqr = dir.sqrMagnitude;
+        float distSqr = dir.x * dir.x + dir.y * dir.y + dir.z * dir.z;
         if (distSqr == 0.0f)
             return Vector3.zero;
 
@@ -194,7 +196,8 @@ public class PhysicsEngine : MonoBehaviour
             strongest_force[pair.O2.ID] = new ForceExerter(pair.O1.ID, forceMagnitude);
 
         //Calculate force
-        Vector3 force = dir.normalized * forceMagnitude;
+        float dirMag = Mathf.Sqrt(distSqr);
+        Vector3 force = new Vector3(dir.x / dirMag, dir.y / dirMag, dir.z / dirMag) * forceMagnitude;
 
         return force;
     }

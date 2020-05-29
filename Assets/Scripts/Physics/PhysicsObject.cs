@@ -620,6 +620,7 @@ public class PhysicsObject : MonoBehaviour
     }
     void OnCollisionEnter(Collision collision)
     {
+        return;
         PhysicsObject theirPhysObj = collision.transform.GetComponent<PhysicsObject>();
 
         // Check for larger object
@@ -631,22 +632,15 @@ public class PhysicsObject : MonoBehaviour
         // If Equal...
         else if (theirPhysObj.rb.mass == rb.mass)
         {
-            // Higher X value wins
-            if (transform.position.x > collision.transform.position.x)
-            {
-                // Absorb
+            // Shatter both
+            if (!isShard)
+                Shatter(5.0f);
+            if (!theirPhysObj.isShard)
+                theirPhysObj.Shatter(5.0f);
+            
+            // If both shards then just absorb
+            if(theirPhysObj.isShard && isShard && theirPhysObj.ID > ID)
                 Absorb(theirPhysObj);
-            }
-            // Else if equal again...
-            else if (transform.position.x == collision.transform.position.x)
-            {
-                //Higher y value wins
-                if (transform.position.y > collision.transform.position.y)
-                {
-                    // Absorb
-                    Absorb(theirPhysObj);
-                }
-            }
         }
     }
 
@@ -657,7 +651,7 @@ public class PhysicsObject : MonoBehaviour
         temperature = Mathf.Min(temperature + their_mass / rb.mass, PhysicsEngine.MAX_TEMP);
 
         // Only absorb mass if won't fragment
-        if (their_mass <= 0.01f || smallerObject.isShard)
+        if (smallerObject.isShard)
             setMass(rb.mass + their_mass);
 
         smallerObject.BeAbsorbed(this.gameObject);
@@ -675,7 +669,7 @@ public class PhysicsObject : MonoBehaviour
         Destroy(emitter, 0.5f);
 
         // Shatter
-        if (rb.mass > 0.01f && !isShard)
+        if (!isShard)
             Shatter(10.0f);
         else
             Destroy(this.gameObject);
