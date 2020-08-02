@@ -706,7 +706,7 @@ public class UIManager : MonoBehaviour
             inptDivs.text = symDivs.ToString();
         }
     }
-    // Called when Show Trails is toggled
+    // Called from UI when Show Trails is toggled
     public void trailsToggled(bool state)
     {
         if (state)
