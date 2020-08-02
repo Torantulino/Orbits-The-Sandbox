@@ -41,7 +41,6 @@ public class PhysicsObject : MonoBehaviour
     private LineRenderer lineRenderer;
     private PhysicsEngine physicsEngine;
     private bool spawnee = false;
-    private ContextMenu contextMenu;
     private PhysicsObject biggestGravitationalInfluencer;
     private Dictionary<string, UnityEngine.Object> CelestialObjects = new Dictionary<string, UnityEngine.Object>(); //Prefabs
     public float temperature = 0.0f;
@@ -143,10 +142,6 @@ public class PhysicsObject : MonoBehaviour
         trailRenderer = GetComponentInChildren<TrailRenderer>();
         if (trailRenderer == null)
             Debug.Log("Trail renderer not found on object " + this.name + "!");
-
-        contextMenu = Resources.FindObjectsOfTypeAll<ContextMenu>()[0];
-        if (contextMenu == null)
-            Debug.Log("Context Menu not found by " + this.name + "!");
 
         //Load Celestial Objects
         UnityEngine.Object[] CelestialObj = Resources.LoadAll("Prefabs/Objects");
@@ -786,7 +781,7 @@ public class PhysicsObject : MonoBehaviour
         //Right click
         if (Input.GetMouseButtonDown(1))
         {
-            contextMenu.SetTarget(this.gameObject);
+            UiManager.contextMenu.SetTarget(this.gameObject);
         }
     }
     void OnDestroy()

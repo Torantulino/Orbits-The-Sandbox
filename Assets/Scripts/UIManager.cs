@@ -71,6 +71,7 @@ public class UIManager : MonoBehaviour
     float middleMouseHoldTime = 0.0f;
     float mouseScroll;
     private bool showUI = true;
+    public ContextMenu contextMenu;
 
     void Awake()
     {
@@ -127,6 +128,7 @@ public class UIManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+
         mainCamController = Camera.main.GetComponent<OrbitControls>();
         if (mainCamController == null)
             Debug.Log("Main Cam Controller fot found by " + this.name + "!");
@@ -148,6 +150,12 @@ public class UIManager : MonoBehaviour
         canvasGroup = transform.GetComponent<CanvasGroup>();
         placementGrid = FindObjectOfType<InfiniteGrids>();
         canvas = GetComponent<Canvas>();
+
+        // Spawn context menu
+        contextMenu = Instantiate((GameObject)Resources.Load("Prefabs/UI/panContext"), Vector3.zero, Quaternion.identity, canvas.transform).GetComponent<ContextMenu>();
+        contextMenu.name = "panContext";
+        
+
 
         inptDivs.text = symDivs.ToString();
 
@@ -963,6 +971,7 @@ public class UIManager : MonoBehaviour
     // Pauses the game, bringing up the pause menu
     public void PauseGame()
     {
+        
         // Temporarily show UI
         if (!showUI)
         {

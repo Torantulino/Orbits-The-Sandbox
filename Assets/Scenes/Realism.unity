@@ -401,7 +401,7 @@ GameObject:
   - component: {fileID: 155195518}
   - component: {fileID: 155195517}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: TutCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5904,7 +5904,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1356130003985766, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b, type: 3}
       propertyPath: m_Name
-      value: Canvas
+      value: MainCanvas
       objectReference: {fileID: 0}
     - target: {fileID: 224512650739447152, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b,
         type: 3}
@@ -6417,6 +6417,10 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1399231552, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.000061035156
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b, type: 3}
