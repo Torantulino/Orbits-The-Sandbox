@@ -69,7 +69,7 @@ public class PhysicsEngine : MonoBehaviour
         foreach (UnityEngine.Object obj in objs)
             particleEffects.Add(obj.name, (GameObject)obj);
 
-        RunBenchmarks();
+        //RunBenchmarks();
     }
 
     private static void RunBenchmarks()

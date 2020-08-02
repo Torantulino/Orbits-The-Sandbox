@@ -620,7 +620,6 @@ public class PhysicsObject : MonoBehaviour
     }
     void OnCollisionEnter(Collision collision)
     {
-        return;
         PhysicsObject theirPhysObj = collision.transform.GetComponent<PhysicsObject>();
 
         // Check for larger object
