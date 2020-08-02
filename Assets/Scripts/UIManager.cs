@@ -154,8 +154,6 @@ public class UIManager : MonoBehaviour
         // Spawn context menu
         contextMenu = Instantiate((GameObject)Resources.Load("Prefabs/UI/panContext"), Vector3.zero, Quaternion.identity, canvas.transform).GetComponent<ContextMenu>();
         contextMenu.name = "panContext";
-        
-
 
         inptDivs.text = symDivs.ToString();
 
@@ -971,7 +969,9 @@ public class UIManager : MonoBehaviour
     // Pauses the game, bringing up the pause menu
     public void PauseGame()
     {
-        
+        // Close context menu to prevent drawing over pause UI
+        contextMenu.Close();
+
         // Temporarily show UI
         if (!showUI)
         {

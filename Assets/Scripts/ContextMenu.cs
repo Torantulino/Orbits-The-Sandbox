@@ -77,7 +77,7 @@ public class ContextMenu : MonoBehaviour
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (!Physics.Raycast(ray, out hit, 10000))
-                targetObject = null;
+                Close();
         }
 
 
@@ -137,6 +137,11 @@ public class ContextMenu : MonoBehaviour
             gameObject.SetActive(false);
             lineRenderer.enabled = false;
         }
+    }
+
+    public void Close()
+    {
+        targetObject = null;
     }
 
     public void LockToggled(Toggle tgl)
