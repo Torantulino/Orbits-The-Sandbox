@@ -655,10 +655,9 @@ public class UIManager : MonoBehaviour
     // Called from Timescale text input box to scale time
     public void timeScaled(string _scale)
     {
-
         try
         {
-            int scale = int.Parse(_scale);
+            float scale = float.Parse(_scale);
 
             if (Time.timeScale == 0 && scale != 0)
                 playPressed();
