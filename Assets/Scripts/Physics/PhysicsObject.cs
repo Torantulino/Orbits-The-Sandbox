@@ -658,7 +658,7 @@ public class PhysicsObject : MonoBehaviour
             mainCamController.SetFocalObject(_absorber);
 
         // Particle Effect
-        GameObject emitter = Instantiate(physicsEngine.particleEffects["ShatterEffect"], transform.position, transform.rotation);
+        GameObject emitter = Instantiate(physicsEngine.particleEffects["ShatterEffect"], transform.position, transform.rotation, _absorber.transform);
         emitter.transform.localScale = transform.localScale;
         Destroy(emitter, 0.5f);
 
