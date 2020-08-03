@@ -281,7 +281,7 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: e2cd212515d971547b15ce444576965a, type: 3}
+      m_Icon: {fileID: 2800000, guid: 4b590c424a58d1940904e551aaa1639a, type: 3}
       m_Width: 128
       m_Height: 128
       m_Kind: 0
@@ -640,10 +640,10 @@ PlayerSettings:
   facebookXfbml: 0
   facebookFrictionlessRequests: 1
   apiCompatibilityLevel: 6
-  cloudProjectId: 47325b39-a07b-496e-b978-5b0d7643595a
+  cloudProjectId: 
   framebufferDepthMemorylessMode: 0
-  projectName: 'Orbits: The Sandbox'
-  organizationId: torantulino
+  projectName: 
+  organizationId: 
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0
