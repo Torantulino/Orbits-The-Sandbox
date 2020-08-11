@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "co.crittr.sdk": "file:E:/Programs/Crittr/unity-sdk-master",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.2d.tilemap": "1.0.0",
     "com.unity.analytics": "3.3.2",
