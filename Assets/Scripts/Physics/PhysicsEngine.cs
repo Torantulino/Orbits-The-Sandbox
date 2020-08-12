@@ -6,32 +6,42 @@ using UnityEngine;
 
 public class PhysicsEngine : MonoBehaviour
 {
+    // - Time -
+    public const float TIMESCALER = 0.01f;
+    public static float PHYSICS_TIMESTEP = 1.0f / 75.0f;
+    private bool paused;
+    private float timeAtPause;
+    // -    -
+    // - Physical Objects -
+    public static List<PhysicsObjectPair> ObjectPairs;
+    public HashSet<int> objectIDs = new HashSet<int>();
+    // -    -
+    // - Temperature -
     public static float COOLING_SPEED = 0.05f;
     public static Color HEAT_COLOR = new Color(1.498f, 0.1411f, 0.0549f);
     public static float MAX_TEMP = 4.0f;
-    public static List<PhysicsObjectPair> ObjectPairs;
-    private float timeAtPause;
-    private bool paused;
-    public static float G = 667.408f;
     public AnimationCurve coolingCurve;
-    public const float TIMESCALER = 0.01f;
-    public HashSet<int> objectIDs = new HashSet<int>();
+    // -    -
+    // - Effects -
     public Dictionary<string, GameObject> particleEffects = new Dictionary<string, GameObject>();
+    // -    -
+    // Newtonian Physics
+    public static float G = 667.408f;
     public Dictionary<int, ForceExerter> strongest_force = new Dictionary<int, ForceExerter>();   //Strongest force acting on the object ID=KEY this physics update
-    public static float PHYSICS_TIMESTEP = 1.0f / 75.0f;
-
     public struct ForceExerter
     {
         public int id;
         public float magnitude;
-
         public ForceExerter(int _id, float _mag)
         {
             id = _id;
             magnitude = _mag;
         }
     }
-    // Initialize
+    // -    -
+    
+    /// Start is called on the frame when a script is enabled just before
+    /// any of the Update methods is called the first time.
     void Start()
     {
         ScaleTime(1);
@@ -72,6 +82,7 @@ public class PhysicsEngine : MonoBehaviour
         //RunBenchmarks();
     }
 
+    // Various benchmarks for optimisation experiments during development
     private static void RunBenchmarks()
     {
         Stopwatch Auto_Method = new Stopwatch();
@@ -155,26 +166,29 @@ public class PhysicsEngine : MonoBehaviour
         //-----------------------
     }
 
-    // Simulate
+    /// This function is called every fixed framerate frame, if the MonoBehaviour is enabled.
     void FixedUpdate()
     {
         // Reset strongest force tracking
         strongest_force.Clear();
 
+        // N-Body Simulation
+        // For each pair of physics objects
         foreach (PhysicsObjectPair objectPair in ObjectPairs.ToList())
         {
+            // Calculate force
             Vector3 force = CalculateGravitationalForce(objectPair);
             //Excert force on both objects, due to Newton's Third Law of motion
-
             objectPair.O2.rb.AddForce(force);
             objectPair.O1.rb.AddForce(force * -1.0f); //in opositite direction
         }
     }
 
+    // Calculates and returns the gravitational force between two physics objects this tick
     public Vector3 CalculateGravitationalForce(PhysicsObjectPair pair)
     {
         //Obtain Direction Vector
-        Vector3 pos1 = pair.O1.rb.position; //NOTE: These together cause 2x Rigidbody AND 2x Collider Syncs 
+        Vector3 pos1 = pair.O1.rb.position; //OPTIMISATION NOTE: These together cause 2x Rigidbody AND 2x Collider Syncs 
         Vector3 pos2 = pair.O2.rb.position;
         Vector3 dir = new Vector3(pos1.x - pos2.x, pos1.y - pos2.y, pos1.z - pos2.z);
 
@@ -202,8 +216,12 @@ public class PhysicsEngine : MonoBehaviour
         return force;
     }
 
+    // Adds the given physics object to the physics engine
+    // Registers and stores all possible pairs ahead of simulation
+    // This is called whenever a new physics object becomes enabled and active.
     public void AddObject(PhysicsObject physicsObject)
     {
+        // If pairs list does not exist, create it
         if (ObjectPairs == null)
             ObjectPairs = new List<PhysicsObjectPair>();
 
@@ -212,6 +230,7 @@ public class PhysicsEngine : MonoBehaviour
             //For every other object
             if (obj.Value != physicsObject)
             {
+                // Creat new pair
                 PhysicsObjectPair pair = new PhysicsObjectPair();
                 pair.O1 = physicsObject;
                 pair.O2 = obj.Value;
@@ -233,6 +252,9 @@ public class PhysicsEngine : MonoBehaviour
         }
     }
 
+    // Removes the given physics object from the physics engine
+    // Unregisters all pairs in which it is present
+    // This is called whenever a physics object becomes disabled or inactive.
     public void RemoveObject(PhysicsObject physicsObject)
     {
         foreach (PhysicsObjectPair objectPair in ObjectPairs.ToList())
@@ -242,6 +264,7 @@ public class PhysicsEngine : MonoBehaviour
         }
     }
 
+    // Takes note of the current simulation speed before pausing the physics simulation
     public void pauseSimulation()
     {
         timeAtPause = Time.timeScale;
@@ -249,14 +272,17 @@ public class PhysicsEngine : MonoBehaviour
         Time.timeScale = 0;
     }
 
+    // Resumes simulating physics at the previous speed
     public void resumeSimulation()
     {
         paused = false;
         Time.timeScale = timeAtPause;
     }
 
+    // Sets the timescale to the specified value, adjusted bu const
     public void ScaleTime(float scale)
     {
+        // Apply constant Timescaler
         scale *= TIMESCALER;
 
         if (scale >= 0.0f && scale <= 100.0f)
@@ -266,6 +292,7 @@ public class PhysicsEngine : MonoBehaviour
         }
     }
 
+    // Raises or lowers the timescale by the specified ammount
     public void AddjustTimeScale(float ammount)
     {
         ammount *= TIMESCALER;
