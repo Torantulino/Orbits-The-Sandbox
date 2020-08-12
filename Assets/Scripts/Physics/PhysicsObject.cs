@@ -400,7 +400,7 @@ public class PhysicsObject : MonoBehaviour
             }
 
             // Track position
-            if (timeSinceLastPosition > 1.0f)
+            if (timeSinceLastPosition > 1.0f && Time.timeScale != 0.0f)
             {
                 // Add to relative positions queue
                 relativeTrailPositions.Enqueue(transform.position -
