@@ -273,7 +273,7 @@ public class PhysicsObject : MonoBehaviour
         // Process Heat
         if (!isStar && temperature != 0.0f)
         {
-            temperature -= Time.unscaledDeltaTime * physicsEngine.coolingCurve.Evaluate(temperature);
+            temperature -= Time.deltaTime * physicsEngine.coolingCurve.Evaluate(temperature);
 
             // Change colour based on heat
             Material material = GetComponentInChildren<MeshRenderer>().material;
