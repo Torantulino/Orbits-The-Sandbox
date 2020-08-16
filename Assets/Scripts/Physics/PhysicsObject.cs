@@ -109,6 +109,8 @@ public class PhysicsObject : MonoBehaviour
 
     }
 
+
+    /// This function is called when the object becomes enabled and active.
     void OnEnable()
     {
         if (physicsObjects == null)
@@ -248,6 +250,7 @@ public class PhysicsObject : MonoBehaviour
         return _strongestObj;
     }
 
+    /// This function is called when the behaviour becomes disabled or inactive.
     void OnDisable()
     {
         physicsEngine.RemoveObject(this);
