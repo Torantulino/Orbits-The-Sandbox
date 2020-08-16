@@ -1,0 +1,16 @@
+{
+    "name": "Unity.co.crittr.sdk.asmdef",
+    "references": [
+        "GUID:a50d5e8218d445646b17ab8f91870ed4",
+        "GUID:5ea9be068aa8fed46918a0103f75d3e6"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

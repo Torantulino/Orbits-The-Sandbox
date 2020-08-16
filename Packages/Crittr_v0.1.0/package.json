@@ -1,0 +1,20 @@
+{
+  "name": "co.crittr.sdk",
+  "version": "0.1.0",
+  "displayName": "Crittr SDK",
+  "description": "Crittr SDK for Unity",
+  "unity": "2019.1",
+  "unityRelease": "0b5",
+  "keywords": [
+    "bug",
+    "report",
+    "feedback",
+    "errors"
+  ],
+  "author": {
+    "name": "Crittr",
+    "email": "crittr@spirosideris.com",
+    "url": "https://crittr.co"
+  },
+  "type": "tool"
+}
