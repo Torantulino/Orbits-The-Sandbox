@@ -425,6 +425,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 62404558}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &62404560 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8321349631171449322, guid: 26d535b34994f2742a3760f9f1bae543,
+    type: 3}
+  m_PrefabInstance: {fileID: 62404558}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 62404559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d48828db37d2e04cbb8a434c4fbfdfb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &63817793 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1400944073797308, guid: 9b61bf4e9ee242749af789447a7d8c0a,
@@ -6233,6 +6245,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
+      objectReference: {fileID: 62404560}
+    - target: {fileID: 2235229078956978605, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: TriggeredManualReport
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b, type: 3}
