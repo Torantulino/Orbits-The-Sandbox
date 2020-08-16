@@ -43,6 +43,7 @@ public class UIManager : MonoBehaviour
     private Color desiredTrailColor;
     private GameObject panObjects;
     private GameObject panEntities;
+    private GameObject panResetConfirm;
     private Transform contentEntites;
     private Button lastEntityBtnSelected;
     private bool uiLeftAnimating = false;
@@ -84,9 +85,11 @@ public class UIManager : MonoBehaviour
 
         panObjects = transform.Find("panObjects").gameObject;
         panEntities = transform.Find("panEntities").gameObject;
+        panResetConfirm = transform.Find("panResetConfirm").gameObject;
         contentEntites = panEntities.transform.Find("panel/Scroll View/Viewport/Content");
         tutorialCursor = GameObject.Find("tutorialCursor");
         tutorialCursorAnimator = tutorialCursor.GetComponent<Animator>();
+
 
         // Load cursors
         cursor_default = Resources.Load<Texture2D>("Textures/UI/cursors/cursor");
@@ -611,8 +614,25 @@ public class UIManager : MonoBehaviour
     {
         objectToSpawn = (GameObject)CelestialObjects[name];
     }
+
+    public void ResetButtonPressed()
+    {
+        // Display reset confirmation pop-up
+        panResetConfirm.SetActive(true);
+    }
+
+    public void ResetYesPressed()
+    {
+        ReloadScene();
+    }
+    public void ResetNoPressed()
+    {
+        // Close reset confirmation pop-up
+        panResetConfirm.SetActive(false);
+    }
+
     // Reloads the currently loaded scene
-    public void ReloadScene()
+    private void ReloadScene()
     {
         Application.LoadLevel(Application.loadedLevel);
     }
