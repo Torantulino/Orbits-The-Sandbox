@@ -18,7 +18,7 @@ public class PhysicsEngine : MonoBehaviour
     // -    -
     // - Temperature -
     public static float COOLING_SPEED = 0.05f;
-    public static Color HEAT_COLOR = new Color(1.498f, 0.1411f, 0.0549f);
+    public static Color HEAT_COLOR = new Color(1.498f, 0.1411f, 0.0549f) * 0.5f;
     public static float MAX_TEMP = 4.0f;
     public AnimationCurve coolingCurve;
     // -    -
