@@ -276,12 +276,11 @@ public class PhysicsObject : MonoBehaviour
         // Process Heat
         if (!isStar && temperature != 0.0f)
         {
-            temperature -= Time.deltaTime * physicsEngine.coolingCurve.Evaluate(temperature);
+            temperature -= UnityEngine.Random.Range(0.9f, 1.1f) *  (Time.deltaTime * physicsEngine.coolingCurve.Evaluate(temperature));
 
             // Change colour based on heat
             Material material = GetComponentInChildren<MeshRenderer>().material;
             material.EnableKeyword("_EMISSION");
-            //material.SetColor("_EmissionColor", new Color(1.498039f, 0.2009804f, 0.0f) * temperature);
             material.SetColor("_EmissionColor", PhysicsEngine.HEAT_COLOR * temperature);
 
             // Cooled
