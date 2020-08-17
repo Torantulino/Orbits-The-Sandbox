@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -304,7 +304,7 @@ public class PhysicsEngine : MonoBehaviour
     }
 }
 
-public class PhysicsObjectPair
+public struct PhysicsObjectPair
 {
     public PhysicsObject O1, O2;
 }
