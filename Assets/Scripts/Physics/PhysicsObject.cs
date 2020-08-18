@@ -692,7 +692,10 @@ public class PhysicsObject : MonoBehaviour
 
             // Instantiate
             Vector3 pos = transform.position + UnityEngine.Random.insideUnitSphere * GetComponentInChildren<Collider>().bounds.extents.x;
-            PhysicsObject shard = Instantiate((GameObject)CelestialObjects["Shard1"], pos, Quaternion.Euler(offset * 32.0f)).GetComponent<PhysicsObject>();
+            //PhysicsObject shard = Instantiate((GameObject)CelestialObjects["Shard1"], pos, Quaternion.Euler(offset * 32.0f)).GetComponent<PhysicsObject>();
+
+            PhysicsObject shard = PoolManager.PoolDictionary["shards"].SpawnFromPool(pos, Quaternion.Euler(offset * 32.0f)).GetComponent<PhysicsObject>();
+
 
             // Set physical properties
             //shard.transform.localScale = Vector3.one * rb.mass / no_shards;
