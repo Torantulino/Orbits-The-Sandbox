@@ -478,8 +478,8 @@ public class PhysicsObject : MonoBehaviour
             float mass2 = _strongestObject.rb.mass;
 
             // Note, this is flawed as it assumes circular orbit
-            float period = (Mathf.PI * 2.0f) * Vector3.Distance(pair.O1.transform.position, pair.O2.transform.position)
-                            / velocity1.magnitude;
+            float period = (Mathf.PI * 2.0f) * Vector3.Distance(pair.O1.transform.position, pair.O2.transform.position) /
+                velocity1.magnitude;
 
             float timestep = period / steps;
 
