@@ -221,6 +221,12 @@ public class PhysicsObject : MonoBehaviour
                 }
             }
         }
+
+        defaultSettings.mass = rb.mass;
+        defaultSettings.scale = gameObject.transform.localScale;
+        defaultSettings.temperature = temperature;
+        defaultSettings.velocity = rb.velocity;
+
     }
 
     //Finds and returns object with highest gravitational influence or null
