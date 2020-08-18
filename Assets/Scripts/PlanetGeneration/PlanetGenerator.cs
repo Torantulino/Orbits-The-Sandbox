@@ -98,25 +98,31 @@ public class PlanetGenerator : MonoBehaviour
         GenerateIcosphere();
         CalculateNeighbors();
 
-        //AddContinents();
-        //AddOceans();
-        //AddMountains();
         GenerateMesh();
     }
 
-    /// OnMouseUp is called when the user has released the mouse button.
-    void OnMouseUp()
+    /// <summary>
+    /// Called every frame while the mouse is over the GUIElement or Collider.
+    /// </summary>
+    void OnMouseOver()
     {
-        RaycastHit hit;
-
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit))
+        // Left Click
+        if (Input.GetMouseButtonDown(0))
         {
-            //pointX = transform.InverseTransformPoint(hit.point).x;
-            Vector3 pointOnSphere = (transform.InverseTransformPoint(hit.point)).normalized;
-            Debug.Log(pointOnSphere);
+            RaycastHit hit;
 
-            DrawLand(pointOnSphere, 0.1f, 0.05f);
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit))
+            {
+                Vector3 pointOnSphere = (transform.InverseTransformPoint(hit.point)).normalized;
+                DrawLand(pointOnSphere, 0.1f, 0.05f);
+            }
+
+        }
+        // Right Click
+        if (Input.GetMouseButtonDown(1))
+        {
+
         }
     }
 
