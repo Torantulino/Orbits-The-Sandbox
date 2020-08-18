@@ -27,7 +27,7 @@ public class ObjectPool : MonoBehaviour
         for (int i = 0; i < newObjectNumber; i++)
         {
             GameObject newObject = Instantiate<GameObject>(prefab);
-            newObject.gameObject.SetActive(false);
+            newObject.SetActive(false);
             objects.Enqueue(newObject);
         }
     }
