@@ -8,7 +8,13 @@ public class ObjectPool : MonoBehaviour
 
     [SerializeField] private GameObject prefab;
     [SerializeField] private int defaultSize = 100;
-    private Queue<GameObject> objects = new Queue<GameObject>();
+    protected Queue<GameObject> objects = new Queue<GameObject>();
+
+    void Awake()
+    {
+        AddObjects(defaultSize);
+
+    }
 
     //get object from pool, create one if drawing more than the pool contains
     private GameObject PopObject()
@@ -32,7 +38,6 @@ public class ObjectPool : MonoBehaviour
         }
     }
 
-    public void ReturnObjectToPool(GameObject returningObject)
     {
         returningObject.SetActive(false);
         objects.Enqueue(returningObject);
