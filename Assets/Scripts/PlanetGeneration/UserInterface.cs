@@ -6,7 +6,9 @@ using UnityEngine.UI;
 public class UserInterface : MonoBehaviour
 {
     public PlanetGenerator Generator;
-    public Image LandColour;
+    public Image Color2;
+    public Image Color1;
+    public Image Color0;
     public Button GenerateButton;
 
     private void Start()
@@ -21,22 +23,24 @@ public class UserInterface : MonoBehaviour
     public void ApplyUiPickedColours()
     {
 
-        Generator.SetColour("GrassColor", LandColour.color);
-        
+        Generator.SetColour(2, Color2.color);
+        Generator.SetColour(1, Color1.color);
+        Generator.SetColour(0, Color0.color);
+
         Generator.ApplyColours();
         Generator.GenerateMesh();
     }
 
     private void RandomizeColors()
     {
-        Dictionary<string, Color> randomizedColors = new Dictionary<string, Color>();
+        Dictionary<int, Color> randomizedColors = new Dictionary<int, Color>();
 
-        foreach (KeyValuePair<string, Color> kvp in Generator.Colors)
+        foreach (KeyValuePair<int, Color> kvp in Generator.Colors)
             randomizedColors.Add(kvp.Key, new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f)));
 
         Generator.Colors.Clear();
 
-        foreach (KeyValuePair<string, Color> kvp in randomizedColors)
+        foreach (KeyValuePair<int, Color> kvp in randomizedColors)
             Generator.Colors.Add(kvp.Key, kvp.Value);
 
         Generator.ApplyColours();

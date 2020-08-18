@@ -11,13 +11,13 @@ public class PlanetGenerator : MonoBehaviour
     public bool SmoothNormals;
     public bool Rotate;
     public float TurnSpeed;
-    public Dictionary<string, Color> Colors = new Dictionary<string, Color>()
+    public Dictionary<int, Color> Colors = new Dictionary<int, Color>()
     {
-        {"DirtColor", Color.gray},
-        {"GrassColor", Color.magenta},
-        {"OceanColor", Color.blue},
-        {"ShoreColor", Color.cyan},
-        {"HillColor", Color.white},
+        {-2, Color.cyan},         //Shore
+        {-1, Color.gray},         //Cliffs
+        {0, Color.blue},          //Ocean
+        {1, Color.magenta},       //Land1
+        {2, Color.white}, //Land2
     };
 
     [Header("Oceans:")]
@@ -65,12 +65,12 @@ public class PlanetGenerator : MonoBehaviour
         StartGeneration();
     }
 
-    public Color FindColor(string _name)
+    public Color FindColor(int _layer)
     {
         for (int i = 0; i < Colors.Count; i++)
         {
-            if (Colors.ContainsKey(name))
-                return Colors[name];
+            if (Colors.ContainsKey(_layer))
+                return Colors[_layer];
         }
 
         return Color.magenta;
@@ -150,10 +150,10 @@ public class PlanetGenerator : MonoBehaviour
 
         layers[current_layer].UnionWith(addedLandmass);
 
-        layers[current_layer].ApplyColor(FindColor("GrassColor"));
+        layers[current_layer].ApplyColor(Colors[current_layer]);
 
         continentsSides = SetHeight(layers[current_layer], current_layer * 0.05f);  //TODO: don't hardcode
-        continentsSides.ApplyColor(FindColor("DirtColor"));
+        continentsSides.ApplyColor(Colors[-1]);
 
         foreach (MeshTriangle triangle in layers[current_layer])
         {
@@ -174,18 +174,18 @@ public class PlanetGenerator : MonoBehaviour
 
     public void ApplyColours()
     {
-        //layers[0].ApplyColor(FindColor("OceanColor"));
-        layers[1].ApplyColor(FindColor("GrassColor"));
-        //layers[2].ApplyColor(FindColor("HillColor"));
-        continentsSides.ApplyColor(FindColor("DirtColor"));
+        layers[0].ApplyColor(Colors[0]);
+        layers[1].ApplyColor(Colors[1]);
+        layers[2].ApplyColor(Colors[2]);
+        continentsSides.ApplyColor(Colors[-1]);
     }
 
-    public void SetColour(string _name, Color _colour)
+    public void SetColour(int _layer, Color _colour)
     {
-        if (Colors.ContainsKey(_name))
-            Colors[name] = _colour;
+        if (Colors.ContainsKey(_layer))
+            Colors[_layer] = _colour;
         else
-            Debug.LogError("Color " + _name + " not found!");
+            Debug.LogError("Color " + _layer + " not found!");
     }
 
     private void AddContinents()
@@ -199,10 +199,10 @@ public class PlanetGenerator : MonoBehaviour
 
             layers[1].UnionWith(addedLandmass);
         }
-        layers[1].ApplyColor(FindColor("GrassColor"));
+        layers[1].ApplyColor(Colors[1]);
 
         continentsSides = Extrude(layers[1], Random.Range(MinLandExtrusionHeight, MaxLandExtrusionHeight));
-        continentsSides.ApplyColor(FindColor("DirtColor"));
+        continentsSides.ApplyColor(Colors[1]);
 
         foreach (MeshTriangle triangle in layers[1])
         {
@@ -231,18 +231,18 @@ public class PlanetGenerator : MonoBehaviour
         }
 
         TriangleHashSet ocean = new TriangleHashSet(oceans);
-        ocean.ApplyColor(FindColor("OceanColor"));
+        ocean.ApplyColor(Colors[0]);
         if (DrawShore)
         {
             TriangleHashSet shore;
             shore = SetHeight(ocean, Random.Range(MinShoreWidth, MaxShoreWidth));
-            shore.ApplyColor(FindColor("ShoreColor"));
+            shore.ApplyColor(Colors[-2]);
 
             shore = SetHeight(ocean, -0.02f);
-            shore.ApplyColor(FindColor("OceanColor"));
+            shore.ApplyColor(Colors[0]);
 
             shore = SetHeight(ocean, 0.02f);
-            shore.ApplyColor(FindColor("OceanColor"));
+            shore.ApplyColor(Colors[0]);
         }
     }
 
@@ -257,18 +257,18 @@ public class PlanetGenerator : MonoBehaviour
         }
 
         TriangleHashSet ocean = new TriangleHashSet(oceans);
-        ocean.ApplyColor(FindColor("OceanColor"));
+        ocean.ApplyColor(Colors[0]);
         if (DrawShore)
         {
             TriangleHashSet shore;
             shore = Inset(ocean, Random.Range(MinShoreWidth, MaxShoreWidth));
-            shore.ApplyColor(FindColor("ShoreColor"));
+            shore.ApplyColor(Colors[-2]);
 
             shore = Extrude(ocean, -0.02f);
-            shore.ApplyColor(FindColor("OceanColor"));
+            shore.ApplyColor(Colors[0]);
 
             shore = Inset(ocean, 0.02f);
-            shore.ApplyColor(FindColor("OceanColor"));
+            shore.ApplyColor(Colors[0]);
         }
     }
 
@@ -279,21 +279,21 @@ public class PlanetGenerator : MonoBehaviour
         for (int i = 0; i < MaxAmountOfMountains; i++)
         {
             mountains = GetTriangles(Random.onUnitSphere, MountainBaseSize, layers[1]);
-            mountains.ApplyColor(FindColor("DirtColor"));
+            mountains.ApplyColor(Colors[-1]);
             layers[1].UnionWith(mountains);
             sides = Extrude(mountains, Random.Range(MinMountainHeight, MaxMountainHeight));
-            sides.ApplyColor(FindColor("DirtColor"));
+            sides.ApplyColor(Colors[-1]);
 
-            mountains.ApplyColor(FindColor("HillColor"));
+            mountains.ApplyColor(Colors[2]);
             mountains = GetTriangles(Random.onUnitSphere, MountainBaseSize * -.33f, layers[1]);
             layers[1].UnionWith(mountains);
             sides = Extrude(mountains, Random.Range(MinMountainHeight, MaxMountainHeight));
-            mountains.ApplyColor(FindColor("HillColor"));
+            mountains.ApplyColor(Colors[2]);
 
             mountains = GetTriangles(Random.onUnitSphere, MountainBaseSize * -.66f, layers[1]);
             layers[1].UnionWith(mountains);
             sides = Extrude(mountains, Random.Range(MinMountainHeight, MaxMountainHeight));
-            mountains.ApplyColor(FindColor("HillColor"));
+            mountains.ApplyColor(Colors[2]);
         }
     }
 
