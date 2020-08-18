@@ -93,9 +93,9 @@ public class PlanetGenerator : MonoBehaviour
         GenerateIcosphere();
         CalculateNeighbors();
 
-        AddContinents();
-        AddOceans();
-        AddMountains();
+        //AddContinents();
+        //AddOceans();
+        //AddMountains();
         GenerateMesh();
     }
 
@@ -108,7 +108,7 @@ public class PlanetGenerator : MonoBehaviour
         if (Physics.Raycast(ray, out hit))
         {
             //pointX = transform.InverseTransformPoint(hit.point).x;
-            Vector3 pointOnSphere = (hit.point - transform.position).normalized;
+            Vector3 pointOnSphere = (transform.InverseTransformPoint(hit.point)).normalized;
             Debug.Log(pointOnSphere);
 
             DrawLand(pointOnSphere, 0.1f);
@@ -117,13 +117,16 @@ public class PlanetGenerator : MonoBehaviour
 
     private void DrawLand(Vector3 _pointOnSphere, float _brushSize)
     {
+        if (continents == null)
+            continents = new TriangleHashSet();
+
         TriangleHashSet addedLandmass = GetTriangles(_pointOnSphere, _brushSize, MeshTriangles);
 
         continents.UnionWith(addedLandmass);
 
         continents.ApplyColor(FindColor("GrassColor"));
 
-        continentsSides = Extrude(continents, Random.Range(MinLandExtrusionHeight, MaxLandExtrusionHeight));
+        continentsSides = SetHeight(continents, Random.Range(MinLandExtrusionHeight, MaxLandExtrusionHeight));
         continentsSides.ApplyColor(FindColor("DirtColor"));
 
         foreach (MeshTriangle triangle in continents)
@@ -142,6 +145,12 @@ public class PlanetGenerator : MonoBehaviour
 
         GenerateMesh();
     }
+
+    public void Done()
+    {
+        GenerateMesh();
+    }
+
     private void AddContinents()
     {
         continents = new TriangleHashSet();
@@ -170,6 +179,33 @@ public class PlanetGenerator : MonoBehaviour
             {
                 Vertices[triangle.VertexIndices[i]] = currentVerts[i];
             }
+        }
+    }
+
+
+    private void UpdateOceans()
+    {
+        oceans = new TriangleHashSet();
+
+        foreach (MeshTriangle triangle in MeshTriangles)
+        {
+            if (!continents.Contains(triangle))
+                oceans.Add(triangle);
+        }
+
+        TriangleHashSet ocean = new TriangleHashSet(oceans);
+        ocean.ApplyColor(FindColor("OceanColor"));
+        if (DrawShore)
+        {
+            TriangleHashSet shore;
+            shore = SetHeight(ocean, Random.Range(MinShoreWidth, MaxShoreWidth));
+            shore.ApplyColor(FindColor("ShoreColor"));
+
+            shore = SetHeight(ocean, -0.02f);
+            shore.ApplyColor(FindColor("OceanColor"));
+
+            shore = SetHeight(ocean, 0.02f);
+            shore.ApplyColor(FindColor("OceanColor"));
         }
     }
 
@@ -413,6 +449,26 @@ public class PlanetGenerator : MonoBehaviour
         return stichedPolys;
     }
 
+    public TriangleHashSet SetHeight(TriangleHashSet polys, float height)
+    {
+        BoarderHashSet stitchedEdge;
+        TriangleHashSet stitchedPolys = StitchPolys(polys, out stitchedEdge);
+        List<int> verts = polys.RemoveDublicates();
+
+        // Take each vertex in this list of polys, and push it
+        // away from the center of the Planet by the height
+        // parameter.
+
+        foreach (int vert in verts)
+        {
+            Vector3 v = Vertices[vert];
+            v = v.normalized * (1.0f + height);
+            Vertices[vert] = v;
+        }
+
+        return stitchedPolys;
+
+    }
     public TriangleHashSet Extrude(TriangleHashSet polys, float height)
     {
         BoarderHashSet stitchedEdge;
