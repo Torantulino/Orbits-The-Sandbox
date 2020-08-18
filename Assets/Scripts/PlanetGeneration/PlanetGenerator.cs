@@ -39,4 +39,22 @@ public class PlanetGenerator : MonoBehaviour
     private MeshRenderer meshRenderer;
     private MeshFilter meshFilter;
 
+    public void GeneratePlanet()
+    {
+        if(!planetGameObject)
+            planetGameObject = this.gameObject;
+
+        if(!meshRenderer)
+        {
+            meshRenderer = gameObject.AddComponent<MeshRenderer>();
+            meshRenderer.material = PlanetMaterial;
+        }
+
+        if(!meshFilter)
+            meshFilter = gameObject.AddComponent<MeshFilter>();
+
+        planetMesh = new Mesh();
+        GenerateIcosphere();
+        SetMesh();
+    }
 }
