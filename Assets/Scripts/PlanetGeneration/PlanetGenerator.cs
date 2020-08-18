@@ -11,7 +11,14 @@ public class PlanetGenerator : MonoBehaviour
     public bool SmoothNormals;
     public bool Rotate;
     public float TurnSpeed;
-    public List<ColorSetting> Colors = new List<ColorSetting>();
+    public Dictionary<string, Color> Colors = new Dictionary<string, Color>()
+    {
+        {"DirtColor", Color.gray},
+        {"GrassColor", Color.magenta},
+        {"OceanColor", Color.blue},
+        {"ShoreColor", Color.cyan},
+        {"HillColor", Color.white},
+    };
 
     [Header("Oceans:")]
     public bool DrawShore;
@@ -59,10 +66,8 @@ public class PlanetGenerator : MonoBehaviour
     {
         for (int i = 0; i < Colors.Count; i++)
         {
-            if (Colors[i].name == _name)
-            {
-                return Colors[i].color;
-            }
+            if (Colors.ContainsKey(name))
+                return Colors[name];
         }
 
         return Color.magenta;
@@ -150,6 +155,14 @@ public class PlanetGenerator : MonoBehaviour
     {
         continents.ApplyColor(FindColor("GrassColor"));
         continentsSides.ApplyColor(FindColor("DirtColor"));
+    }
+
+    public void SetColour(string _name, Color _colour)
+    {
+        if (Colors.ContainsKey(_name))
+            Colors[name] = _colour;
+        else
+            Debug.LogError("Color " + _name + " not found!");
     }
 
     private void AddContinents()
