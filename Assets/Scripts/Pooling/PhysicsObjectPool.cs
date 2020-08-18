@@ -10,6 +10,7 @@ public class PhysicsObjectPool : ObjectPool
         //set defaults
         returningObject.rb.mass = defaults.mass;
         returningObject.gameObject.transform.localScale = new Vector3(defaults.size, defaults.size, defaults.size);
+        returningObject.rb.velocity = defaults.velocity;
         returningObject.temperature = defaults.temperature;
         returningObject.trailRenderer.Clear();
 
