@@ -11,7 +11,7 @@ public class ObjectPool : MonoBehaviour
     private Queue<GameObject> objects = new Queue<GameObject>();
 
     //get object from pool, create one if drawing more than the pool contains
-    public GameObject Pop()
+    private GameObject PopObject()
     {
         if (objects.Count == 0)
         {
