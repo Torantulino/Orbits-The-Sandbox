@@ -38,4 +38,13 @@ public class ObjectPool : MonoBehaviour
         objects.Enqueue(returningObject);
     }
 
+    // Two overloads so that they can be used the similarly to Instantiate.
+    public GameObject SpawnFromPool(Vector3 location, Quaternion rotation)
+    {
+        GameObject spawnObject = PopObject();
+        spawnObject.transform.position = location;
+        spawnObject.transform.rotation = rotation;
+        spawnObject.SetActive(true);
+        return spawnObject;
+    }
 }
