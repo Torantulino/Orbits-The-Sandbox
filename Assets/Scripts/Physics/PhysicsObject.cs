@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using Cinemachine;
@@ -29,12 +29,14 @@ public class PhysicsObject : MonoBehaviour
 
     public bool spawnWithOrbit;
 
+    public TrailRenderer trailRenderer;
+
     private float forceMultiplier;
     private float dragtime;
     private Vector3 dragStart;
     private Vector3 dragCurrent;
     private Vector3 dragStop;
-    private TrailRenderer trailRenderer;
+
     private UIManager UiManager;
     private OrbitControls mainCamController;
     private CinemachineVirtualCamera previewCamCtrlr;
