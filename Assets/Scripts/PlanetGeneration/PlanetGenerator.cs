@@ -38,6 +38,7 @@ public class PlanetGenerator : MonoBehaviour
     private GameObject planetGameObject;
     private MeshRenderer meshRenderer;
     private MeshFilter meshFilter;
+    private MeshCollider meshCollider;
     private Mesh planetMesh;
 
     private List<MeshTriangle> MeshTriangles = new List<MeshTriangle>();
@@ -50,14 +51,15 @@ public class PlanetGenerator : MonoBehaviour
 
     public void Start()
     {
+        Physics.queriesHitTriggers = true;
         StartGeneration();
     }
 
     public Color FindColor(string _name)
     {
-        for(int i = 0; i < Colors.Count; i++)
+        for (int i = 0; i < Colors.Count; i++)
         {
-            if(Colors[i].name == _name)
+            if (Colors[i].name == _name)
             {
                 return Colors[i].color;
             }
@@ -71,17 +73,22 @@ public class PlanetGenerator : MonoBehaviour
         planetGameObject = this.gameObject;
         planetGameObject.transform.parent = transform;
 
-        if(meshRenderer == null)
+        if (meshRenderer == null)
         {
             meshRenderer = planetGameObject.AddComponent<MeshRenderer>();
             meshRenderer.material = PlanetMaterial;
         }
 
-        if(meshFilter == null)
-        {
+        if (meshFilter == null)
             meshFilter = planetGameObject.AddComponent<MeshFilter>();
-        }
-        
+
+        if (meshCollider == null)
+            meshCollider = planetGameObject.AddComponent<MeshCollider>();
+
+        meshCollider.sharedMesh = meshFilter.mesh;
+        meshCollider.convex = true;
+        meshCollider.isTrigger = true;
+
         planetMesh = new Mesh();
         GenerateIcosphere();
         CalculateNeighbors();
@@ -92,11 +99,54 @@ public class PlanetGenerator : MonoBehaviour
         GenerateMesh();
     }
 
+    /// OnMouseUp is called when the user has released the mouse button.
+    void OnMouseUp()
+    {
+        RaycastHit hit;
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit))
+        {
+            //pointX = transform.InverseTransformPoint(hit.point).x;
+            Vector3 pointOnSphere = (hit.point - transform.position).normalized;
+            Debug.Log(pointOnSphere);
+
+            DrawLand(pointOnSphere, 0.1f);
+        }
+    }
+
+    private void DrawLand(Vector3 _pointOnSphere, float _brushSize)
+    {
+        TriangleHashSet addedLandmass = GetTriangles(_pointOnSphere, _brushSize, MeshTriangles);
+
+        continents.UnionWith(addedLandmass);
+
+        continents.ApplyColor(FindColor("GrassColor"));
+
+        continentsSides = Extrude(continents, Random.Range(MinLandExtrusionHeight, MaxLandExtrusionHeight));
+        continentsSides.ApplyColor(FindColor("DirtColor"));
+
+        foreach (MeshTriangle triangle in continents)
+        {
+            Vector3[] currentVerts = new Vector3[3];
+            for (int i = 0; i < triangle.VertexIndices.Count; i++)
+            {
+                currentVerts[i] = Vertices[triangle.VertexIndices[i]];
+            }
+            AddBumpyness(currentVerts);
+            for (int i = 0; i < triangle.VertexIndices.Count; i++)
+            {
+                Vertices[triangle.VertexIndices[i]] = currentVerts[i];
+            }
+        }
+
+        GenerateMesh();
+    }
     private void AddContinents()
     {
         continents = new TriangleHashSet();
 
-        for(int i = 0; i < MaxAmountOfContinents; i++)
+        for (int i = 0; i < MaxAmountOfContinents; i++)
         {
             float continentSize = Random.Range(ContinentsMinSize, ContinentsMaxSize);
             TriangleHashSet addedLandmass = GetTriangles(Random.onUnitSphere, continentSize, MeshTriangles);
@@ -105,18 +155,18 @@ public class PlanetGenerator : MonoBehaviour
         }
         continents.ApplyColor(FindColor("GrassColor"));
 
-        continentsSides = Extrude(continents, Random.Range(MinLandExtrusionHeight,MaxLandExtrusionHeight));
+        continentsSides = Extrude(continents, Random.Range(MinLandExtrusionHeight, MaxLandExtrusionHeight));
         continentsSides.ApplyColor(FindColor("DirtColor"));
 
-        foreach(MeshTriangle triangle in continents)
+        foreach (MeshTriangle triangle in continents)
         {
             Vector3[] currentVerts = new Vector3[3];
-            for(int i = 0; i < triangle.VertexIndices.Count; i++)
+            for (int i = 0; i < triangle.VertexIndices.Count; i++)
             {
                 currentVerts[i] = Vertices[triangle.VertexIndices[i]];
             }
             AddBumpyness(currentVerts);
-            for(int i = 0; i < triangle.VertexIndices.Count; i++)
+            for (int i = 0; i < triangle.VertexIndices.Count; i++)
             {
                 Vertices[triangle.VertexIndices[i]] = currentVerts[i];
             }
@@ -135,15 +185,15 @@ public class PlanetGenerator : MonoBehaviour
 
         TriangleHashSet ocean = new TriangleHashSet(oceans);
         ocean.ApplyColor(FindColor("OceanColor"));
-        if(DrawShore)
+        if (DrawShore)
         {
             TriangleHashSet shore;
-            shore = Inset(ocean, Random.Range(MinShoreWidth,MaxShoreWidth));
+            shore = Inset(ocean, Random.Range(MinShoreWidth, MaxShoreWidth));
             shore.ApplyColor(FindColor("ShoreColor"));
 
             shore = Extrude(ocean, -0.02f);
             shore.ApplyColor(FindColor("OceanColor"));
-        
+
             shore = Inset(ocean, 0.02f);
             shore.ApplyColor(FindColor("OceanColor"));
         }
@@ -153,30 +203,30 @@ public class PlanetGenerator : MonoBehaviour
     {
         TriangleHashSet sides;
 
-        for(int i = 0; i < MaxAmountOfMountains; i++)
+        for (int i = 0; i < MaxAmountOfMountains; i++)
         {
             mountains = GetTriangles(Random.onUnitSphere, MountainBaseSize, continents);
             mountains.ApplyColor(FindColor("DirtColor"));
             continents.UnionWith(mountains);
-            sides = Extrude(mountains,Random.Range(MinMountainHeight,MaxMountainHeight));
+            sides = Extrude(mountains, Random.Range(MinMountainHeight, MaxMountainHeight));
             sides.ApplyColor(FindColor("DirtColor"));
 
             mountains.ApplyColor(FindColor("HillColor"));
-            mountains = GetTriangles(Random.onUnitSphere, MountainBaseSize * -.33f, continents);  
+            mountains = GetTriangles(Random.onUnitSphere, MountainBaseSize * -.33f, continents);
             continents.UnionWith(mountains);
-            sides = Extrude(mountains,Random.Range(MinMountainHeight,MaxMountainHeight));
+            sides = Extrude(mountains, Random.Range(MinMountainHeight, MaxMountainHeight));
             mountains.ApplyColor(FindColor("HillColor"));
 
-            mountains = GetTriangles(Random.onUnitSphere, MountainBaseSize * -.66f, continents); 
-            continents.UnionWith(mountains); 
-            sides = Extrude(mountains,Random.Range(MinMountainHeight,MaxMountainHeight));
+            mountains = GetTriangles(Random.onUnitSphere, MountainBaseSize * -.66f, continents);
+            continents.UnionWith(mountains);
+            sides = Extrude(mountains, Random.Range(MinMountainHeight, MaxMountainHeight));
             mountains.ApplyColor(FindColor("HillColor"));
         }
     }
 
     private void Update()
     {
-        if(Rotate)
+        if (Rotate)
         {
             transform.Rotate(Vector3.up, TurnSpeed * Time.deltaTime);
         }
@@ -191,39 +241,39 @@ public class PlanetGenerator : MonoBehaviour
 
         float t = (1.0f + Mathf.Sqrt(5.0f)) / 2.0f;
 
-        Vertices.Add(new Vector3(-1,  t,  0).normalized);
-        Vertices.Add(new Vector3( 1,  t,  0).normalized);
-        Vertices.Add(new Vector3(-1, -t,  0).normalized);
-        Vertices.Add(new Vector3( 1, -t,  0).normalized);
-        Vertices.Add(new Vector3( 0, -1,  t).normalized);
-        Vertices.Add(new Vector3( 0,  1,  t).normalized);
-        Vertices.Add(new Vector3( 0, -1, -t).normalized);
-        Vertices.Add(new Vector3( 0,  1, -t).normalized);
-        Vertices.Add(new Vector3( t,  0, -1).normalized);
-        Vertices.Add(new Vector3( t,  0,  1).normalized);
-        Vertices.Add(new Vector3(-t,  0, -1).normalized);
-        Vertices.Add(new Vector3(-t,  0,  1).normalized);
+        Vertices.Add(new Vector3(-1, t, 0).normalized);
+        Vertices.Add(new Vector3(1, t, 0).normalized);
+        Vertices.Add(new Vector3(-1, -t, 0).normalized);
+        Vertices.Add(new Vector3(1, -t, 0).normalized);
+        Vertices.Add(new Vector3(0, -1, t).normalized);
+        Vertices.Add(new Vector3(0, 1, t).normalized);
+        Vertices.Add(new Vector3(0, -1, -t).normalized);
+        Vertices.Add(new Vector3(0, 1, -t).normalized);
+        Vertices.Add(new Vector3(t, 0, -1).normalized);
+        Vertices.Add(new Vector3(t, 0, 1).normalized);
+        Vertices.Add(new Vector3(-t, 0, -1).normalized);
+        Vertices.Add(new Vector3(-t, 0, 1).normalized);
 
-        MeshTriangles.Add(new MeshTriangle( 0, 11,  5));
-        MeshTriangles.Add(new MeshTriangle( 0,  5,  1));
-        MeshTriangles.Add(new MeshTriangle( 0,  1,  7));
-        MeshTriangles.Add(new MeshTriangle( 0,  7, 10));
-        MeshTriangles.Add(new MeshTriangle( 0, 10, 11));
-        MeshTriangles.Add(new MeshTriangle( 1,  5,  9));
-        MeshTriangles.Add(new MeshTriangle( 5, 11,  4));
-        MeshTriangles.Add(new MeshTriangle(11, 10,  2));
-        MeshTriangles.Add(new MeshTriangle(10,  7,  6));
-        MeshTriangles.Add(new MeshTriangle( 7,  1,  8));
-        MeshTriangles.Add(new MeshTriangle( 3,  9,  4));
-        MeshTriangles.Add(new MeshTriangle( 3,  4,  2));
-        MeshTriangles.Add(new MeshTriangle( 3,  2,  6));
-        MeshTriangles.Add(new MeshTriangle( 3,  6,  8));
-        MeshTriangles.Add(new MeshTriangle( 3,  8,  9));
-        MeshTriangles.Add(new MeshTriangle( 4,  9,  5));
-        MeshTriangles.Add(new MeshTriangle( 2,  4, 11));
-        MeshTriangles.Add(new MeshTriangle( 6,  2, 10));
-        MeshTriangles.Add(new MeshTriangle( 8,  6,  7));
-        MeshTriangles.Add(new MeshTriangle( 9,  8,  1));
+        MeshTriangles.Add(new MeshTriangle(0, 11, 5));
+        MeshTriangles.Add(new MeshTriangle(0, 5, 1));
+        MeshTriangles.Add(new MeshTriangle(0, 1, 7));
+        MeshTriangles.Add(new MeshTriangle(0, 7, 10));
+        MeshTriangles.Add(new MeshTriangle(0, 10, 11));
+        MeshTriangles.Add(new MeshTriangle(1, 5, 9));
+        MeshTriangles.Add(new MeshTriangle(5, 11, 4));
+        MeshTriangles.Add(new MeshTriangle(11, 10, 2));
+        MeshTriangles.Add(new MeshTriangle(10, 7, 6));
+        MeshTriangles.Add(new MeshTriangle(7, 1, 8));
+        MeshTriangles.Add(new MeshTriangle(3, 9, 4));
+        MeshTriangles.Add(new MeshTriangle(3, 4, 2));
+        MeshTriangles.Add(new MeshTriangle(3, 2, 6));
+        MeshTriangles.Add(new MeshTriangle(3, 6, 8));
+        MeshTriangles.Add(new MeshTriangle(3, 8, 9));
+        MeshTriangles.Add(new MeshTriangle(4, 9, 5));
+        MeshTriangles.Add(new MeshTriangle(2, 4, 11));
+        MeshTriangles.Add(new MeshTriangle(6, 2, 10));
+        MeshTriangles.Add(new MeshTriangle(8, 6, 7));
+        MeshTriangles.Add(new MeshTriangle(9, 8, 1));
 
         Subdivide();
     }
@@ -250,7 +300,7 @@ public class PlanetGenerator : MonoBehaviour
                 newPolys.Add(new MeshTriangle(c, ca, bc));
                 newPolys.Add(new MeshTriangle(ab, bc, ca));
             }
-            
+
             MeshTriangles = newPolys;
         }
     }
@@ -317,9 +367,9 @@ public class PlanetGenerator : MonoBehaviour
 
         stichedPolys.IterationIndex = Vertices.Count;
 
-        stitchedEdge      = polys.CreateBoarderHashSet();
+        stitchedEdge = polys.CreateBoarderHashSet();
         var originalVerts = stitchedEdge.RemoveDublicates();
-        var newVerts      = CloneVertices(originalVerts);
+        var newVerts = CloneVertices(originalVerts);
 
         stitchedEdge.Seperate(originalVerts, newVerts);
 
@@ -396,14 +446,14 @@ public class PlanetGenerator : MonoBehaviour
 
         foreach (KeyValuePair<int, Vector3> kvp in inwardDirections)
         {
-            int     vertIndex       = kvp.Key;
+            int vertIndex = kvp.Key;
             Vector3 inwardDirection = kvp.Value;
 
             Vector3 vertex = Vertices[vertIndex];
             float originalHeight = vertex.magnitude;
 
             vertex += inwardDirection * insetDistance;
-            vertex  = vertex.normalized * originalHeight;
+            vertex = vertex.normalized * originalHeight;
             Vertices[vertIndex] = vertex;
         }
 
@@ -414,9 +464,9 @@ public class PlanetGenerator : MonoBehaviour
     {
         TriangleHashSet newSet = new TriangleHashSet();
 
-        foreach(MeshTriangle p in source)
+        foreach (MeshTriangle p in source)
         {
-            foreach(int vertexIndex in p.VertexIndices)
+            foreach (int vertexIndex in p.VertexIndices)
             {
                 float distanceToSphere = Vector3.Distance(center, Vertices[vertexIndex]);
 
@@ -438,9 +488,9 @@ public class PlanetGenerator : MonoBehaviour
         int[] indices = new int[vertexCount];
 
         Vector3[] vertices = new Vector3[vertexCount];
-        Vector3[] normals  = new Vector3[vertexCount];
-        Color32[] colors   = new Color32[vertexCount];
-        Vector2[] uvs      = new Vector2[vertexCount];
+        Vector3[] normals = new Vector3[vertexCount];
+        Color32[] colors = new Color32[vertexCount];
+        Vector2[] uvs = new Vector2[vertexCount];
 
         for (int i = 0; i < MeshTriangles.Count; i++)
         {
@@ -462,7 +512,7 @@ public class PlanetGenerator : MonoBehaviour
             colors[i * 3 + 1] = poly.Color;
             colors[i * 3 + 2] = poly.Color;
 
-            if(SmoothNormals)
+            if (SmoothNormals)
             {
                 normals[i * 3 + 0] = Vertices[poly.VertexIndices[0]].normalized;
                 normals[i * 3 + 1] = Vertices[poly.VertexIndices[1]].normalized;
@@ -482,30 +532,35 @@ public class PlanetGenerator : MonoBehaviour
         }
 
         planetMesh.vertices = vertices;
-        planetMesh.normals  = normals;
+        planetMesh.normals = normals;
         planetMesh.colors32 = colors;
-        planetMesh.uv       = uvs;
+        planetMesh.uv = uvs;
 
         planetMesh.SetTriangles(indices, 0);
 
         meshFilter.mesh = planetMesh;
-
+        meshCollider.sharedMesh = planetMesh;
     }
 
-    Vector3[] AddBumpyness(Vector3[] verts) {
-       Dictionary<Vector3, List<int>> dictionary = new Dictionary<Vector3, List<int>>();
-       for (int x = 0; x < verts.Length; x++) {
-          if (!dictionary.ContainsKey(verts[x])) {
-               dictionary.Add(verts[x], new List<int>());
-           }
-           dictionary[verts[x]].Add(x);
-       }
-       foreach (KeyValuePair<Vector3, List<int>> pair in dictionary) {
-         Vector3 newPos = pair.Key * Random.Range(MinBumpFactor, MaxBumpFactor);
-           foreach (int i in pair.Value) {
-               verts[i] = newPos;
-          }
-       }
+    Vector3[] AddBumpyness(Vector3[] verts)
+    {
+        Dictionary<Vector3, List<int>> dictionary = new Dictionary<Vector3, List<int>>();
+        for (int x = 0; x < verts.Length; x++)
+        {
+            if (!dictionary.ContainsKey(verts[x]))
+            {
+                dictionary.Add(verts[x], new List<int>());
+            }
+            dictionary[verts[x]].Add(x);
+        }
+        foreach (KeyValuePair<Vector3, List<int>> pair in dictionary)
+        {
+            Vector3 newPos = pair.Key * Random.Range(MinBumpFactor, MaxBumpFactor);
+            foreach (int i in pair.Value)
+            {
+                verts[i] = newPos;
+            }
+        }
         return verts;
     }
 }
