@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class PhysicsObjectPool : ObjectPool
 {
-    public void ReturnObjectToPool(PhysicsObject returningObject, PhysicsObjectDefaults defaults)
+    public void ReturnObjectToPool(PhysicsObject returningObject)
     {
         //set defaults
-        returningObject.rb.mass = defaults.mass;
-        returningObject.gameObject.transform.localScale = new Vector3(defaults.size, defaults.size, defaults.size);
-        returningObject.rb.velocity = defaults.velocity;
-        returningObject.temperature = defaults.temperature;
+        returningObject.rb.mass = returningObject.defaultSettings.mass;
+        returningObject.gameObject.transform.localScale = returningObject.defaultSettings.scale;
+        returningObject.rb.velocity = returningObject.defaultSettings.velocity;
+        returningObject.temperature = returningObject.defaultSettings.temperature;
         returningObject.trailRenderer.Clear();
 
         returningObject.gameObject.SetActive(false);
