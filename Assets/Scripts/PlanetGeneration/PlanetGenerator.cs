@@ -146,9 +146,10 @@ public class PlanetGenerator : MonoBehaviour
         GenerateMesh();
     }
 
-    public void Done()
+    public void ApplyColours()
     {
-        GenerateMesh();
+        continents.ApplyColor(FindColor("GrassColor"));
+        continentsSides.ApplyColor(FindColor("DirtColor"));
     }
 
     private void AddContinents()

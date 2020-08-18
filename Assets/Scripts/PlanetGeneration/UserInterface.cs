@@ -20,7 +20,6 @@ public class UserInterface : MonoBehaviour
 
     private void RandomizeColors()
     {
-        RandomizeSettings();
         List<ColorSetting> randomizedColors = new List<ColorSetting>();
         for(int i = 0; i < Generator.Colors.Count; i++)
         {
@@ -31,7 +30,8 @@ public class UserInterface : MonoBehaviour
         }
         Generator.Colors.Clear();
         Generator.Colors.AddRange(randomizedColors);
-        Generator.StartGeneration();
+        Generator.ApplyColours();
+        Generator.GenerateMesh();
     }
 
     private void RandomizeSettings()
