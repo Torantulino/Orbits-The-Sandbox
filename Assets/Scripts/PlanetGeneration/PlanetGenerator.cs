@@ -51,8 +51,11 @@ public class PlanetGenerator : MonoBehaviour
     private List<MeshTriangle> MeshTriangles = new List<MeshTriangle>();
     private List<Vector3> Vertices = new List<Vector3>();
 
+    private int current_layer = 1;
+    private Dictionary<int, TriangleHashSet> layers = new Dictionary<int, TriangleHashSet>();
+
     private TriangleHashSet oceans;
-    private TriangleHashSet continents;
+    //private TriangleHashSet continents;
     private TriangleHashSet continentsSides;
     private TriangleHashSet mountains;
 
@@ -115,32 +118,44 @@ public class PlanetGenerator : MonoBehaviour
             if (Physics.Raycast(ray, out hit))
             {
                 Vector3 pointOnSphere = (transform.InverseTransformPoint(hit.point)).normalized;
-                DrawLand(pointOnSphere, 0.1f, 0.05f);
+                DrawLand(pointOnSphere, 0.1f);
             }
-
-        }
-        // Right Click
-        if (Input.GetMouseButtonDown(1))
-        {
 
         }
     }
 
-    private void DrawLand(Vector3 _pointOnSphere, float _brushSize, float _landHeight)
+    /// <summary>
+    /// Update is called every frame, if the MonoBehaviour is enabled.
+    /// </summary>
+    void Update()
     {
-        if (continents == null)
-            continents = new TriangleHashSet();
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+            current_layer = Mathf.Max(0, current_layer - 1);
+
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+            current_layer = Mathf.Min(2, current_layer + 1);
+        
+        if (Rotate)
+        {
+            transform.Rotate(Vector3.up, TurnSpeed * Time.deltaTime);
+        }
+    }
+
+    private void DrawLand(Vector3 _pointOnSphere, float _brushSize)
+    {
+        if (!layers.ContainsKey(current_layer))
+            layers[current_layer] = new TriangleHashSet();
 
         TriangleHashSet addedLandmass = GetTriangles(_pointOnSphere, _brushSize, MeshTriangles);
 
-        continents.UnionWith(addedLandmass);
+        layers[current_layer].UnionWith(addedLandmass);
 
-        continents.ApplyColor(FindColor("GrassColor"));
+        layers[current_layer].ApplyColor(FindColor("GrassColor"));
 
-        continentsSides = SetHeight(continents, _landHeight);
+        continentsSides = SetHeight(layers[current_layer], current_layer * 0.05f);  //TODO: don't hardcode
         continentsSides.ApplyColor(FindColor("DirtColor"));
 
-        foreach (MeshTriangle triangle in continents)
+        foreach (MeshTriangle triangle in layers[current_layer])
         {
             Vector3[] currentVerts = new Vector3[3];
             for (int i = 0; i < triangle.VertexIndices.Count; i++)
@@ -159,7 +174,9 @@ public class PlanetGenerator : MonoBehaviour
 
     public void ApplyColours()
     {
-        continents.ApplyColor(FindColor("GrassColor"));
+        //layers[0].ApplyColor(FindColor("OceanColor"));
+        layers[1].ApplyColor(FindColor("GrassColor"));
+        //layers[2].ApplyColor(FindColor("HillColor"));
         continentsSides.ApplyColor(FindColor("DirtColor"));
     }
 
@@ -173,21 +190,21 @@ public class PlanetGenerator : MonoBehaviour
 
     private void AddContinents()
     {
-        continents = new TriangleHashSet();
+        layers[1] = new TriangleHashSet();
 
         for (int i = 0; i < MaxAmountOfContinents; i++)
         {
             float continentSize = Random.Range(ContinentsMinSize, ContinentsMaxSize);
             TriangleHashSet addedLandmass = GetTriangles(Random.onUnitSphere, continentSize, MeshTriangles);
 
-            continents.UnionWith(addedLandmass);
+            layers[1].UnionWith(addedLandmass);
         }
-        continents.ApplyColor(FindColor("GrassColor"));
+        layers[1].ApplyColor(FindColor("GrassColor"));
 
-        continentsSides = Extrude(continents, Random.Range(MinLandExtrusionHeight, MaxLandExtrusionHeight));
+        continentsSides = Extrude(layers[1], Random.Range(MinLandExtrusionHeight, MaxLandExtrusionHeight));
         continentsSides.ApplyColor(FindColor("DirtColor"));
 
-        foreach (MeshTriangle triangle in continents)
+        foreach (MeshTriangle triangle in layers[1])
         {
             Vector3[] currentVerts = new Vector3[3];
             for (int i = 0; i < triangle.VertexIndices.Count; i++)
@@ -209,7 +226,7 @@ public class PlanetGenerator : MonoBehaviour
 
         foreach (MeshTriangle triangle in MeshTriangles)
         {
-            if (!continents.Contains(triangle))
+            if (!layers[1].Contains(triangle))
                 oceans.Add(triangle);
         }
 
@@ -235,7 +252,7 @@ public class PlanetGenerator : MonoBehaviour
 
         foreach (MeshTriangle triangle in MeshTriangles)
         {
-            if (!continents.Contains(triangle))
+            if (!layers[1].Contains(triangle))
                 oceans.Add(triangle);
         }
 
@@ -261,33 +278,24 @@ public class PlanetGenerator : MonoBehaviour
 
         for (int i = 0; i < MaxAmountOfMountains; i++)
         {
-            mountains = GetTriangles(Random.onUnitSphere, MountainBaseSize, continents);
+            mountains = GetTriangles(Random.onUnitSphere, MountainBaseSize, layers[1]);
             mountains.ApplyColor(FindColor("DirtColor"));
-            continents.UnionWith(mountains);
+            layers[1].UnionWith(mountains);
             sides = Extrude(mountains, Random.Range(MinMountainHeight, MaxMountainHeight));
             sides.ApplyColor(FindColor("DirtColor"));
 
             mountains.ApplyColor(FindColor("HillColor"));
-            mountains = GetTriangles(Random.onUnitSphere, MountainBaseSize * -.33f, continents);
-            continents.UnionWith(mountains);
+            mountains = GetTriangles(Random.onUnitSphere, MountainBaseSize * -.33f, layers[1]);
+            layers[1].UnionWith(mountains);
             sides = Extrude(mountains, Random.Range(MinMountainHeight, MaxMountainHeight));
             mountains.ApplyColor(FindColor("HillColor"));
 
-            mountains = GetTriangles(Random.onUnitSphere, MountainBaseSize * -.66f, continents);
-            continents.UnionWith(mountains);
+            mountains = GetTriangles(Random.onUnitSphere, MountainBaseSize * -.66f, layers[1]);
+            layers[1].UnionWith(mountains);
             sides = Extrude(mountains, Random.Range(MinMountainHeight, MaxMountainHeight));
             mountains.ApplyColor(FindColor("HillColor"));
         }
     }
-
-    private void Update()
-    {
-        if (Rotate)
-        {
-            transform.Rotate(Vector3.up, TurnSpeed * Time.deltaTime);
-        }
-    }
-
 
     public void GenerateIcosphere()
     {
