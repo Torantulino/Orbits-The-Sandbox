@@ -111,11 +111,11 @@ public class PlanetGenerator : MonoBehaviour
             Vector3 pointOnSphere = (transform.InverseTransformPoint(hit.point)).normalized;
             Debug.Log(pointOnSphere);
 
-            DrawLand(pointOnSphere, 0.1f);
+            DrawLand(pointOnSphere, 0.1f, 0.05f);
         }
     }
 
-    private void DrawLand(Vector3 _pointOnSphere, float _brushSize)
+    private void DrawLand(Vector3 _pointOnSphere, float _brushSize, float _landHeight)
     {
         if (continents == null)
             continents = new TriangleHashSet();
@@ -126,7 +126,7 @@ public class PlanetGenerator : MonoBehaviour
 
         continents.ApplyColor(FindColor("GrassColor"));
 
-        continentsSides = SetHeight(continents, Random.Range(MinLandExtrusionHeight, MaxLandExtrusionHeight));
+        continentsSides = SetHeight(continents, _landHeight);
         continentsSides.ApplyColor(FindColor("DirtColor"));
 
         foreach (MeshTriangle triangle in continents)
@@ -454,10 +454,6 @@ public class PlanetGenerator : MonoBehaviour
         BoarderHashSet stitchedEdge;
         TriangleHashSet stitchedPolys = StitchPolys(polys, out stitchedEdge);
         List<int> verts = polys.RemoveDublicates();
-
-        // Take each vertex in this list of polys, and push it
-        // away from the center of the Planet by the height
-        // parameter.
 
         foreach (int vert in verts)
         {
