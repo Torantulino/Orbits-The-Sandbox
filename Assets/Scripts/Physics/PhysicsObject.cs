@@ -20,6 +20,8 @@ public class PhysicsObject : MonoBehaviour
     public Rigidbody rb;
     private bool isShard = false;
 
+    public PhysicsObjectDefaults defaultSettings;
+
     public Vector3 velocity = Vector3.zero;
     private Vector3 a = Vector3.zero;
     private Vector3 F = Vector3.zero;
