@@ -7,7 +7,7 @@ public class ObjectPool : MonoBehaviour
 {
 
     [SerializeField] private GameObject prefab;
-    [SerializeField] private int defaultSize = 50;
+    [SerializeField] private int defaultSize = 100;
     private Queue<GameObject> objects = new Queue<GameObject>();
 
     //get object from pool, create one if drawing more than the pool contains
