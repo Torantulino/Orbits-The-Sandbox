@@ -22,13 +22,15 @@ public class UserInterface : MonoBehaviour
     {
 
         Generator.SetColour("GrassColor", LandColour.color);
+        
         Generator.ApplyColours();
+        Generator.GenerateMesh();
     }
 
     private void RandomizeColors()
     {
         Dictionary<string, Color> randomizedColors = new Dictionary<string, Color>();
-        
+
         foreach (KeyValuePair<string, Color> kvp in Generator.Colors)
             randomizedColors.Add(kvp.Key, new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f)));
 
