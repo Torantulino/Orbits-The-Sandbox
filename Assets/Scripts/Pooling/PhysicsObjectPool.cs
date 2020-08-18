@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class PhysicsObjectPool : ObjectPool
 {
-
-    protected override void ReturnObjectToPool(PhysicsObject returningObject, PhysicsObjectDefaults defaults)
+    public void ReturnObjectToPool(PhysicsObject returningObject, PhysicsObjectDefaults defaults)
     {
         //set defaults
         returningObject.rb.mass = defaults.mass;

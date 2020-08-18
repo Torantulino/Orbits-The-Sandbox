@@ -43,12 +43,6 @@ public class ObjectPool : MonoBehaviour
         returningObject.SetActive(false);
         objects.Enqueue(returningObject);
     }
-    //version to be used for physics objects to reset to default settings
-    protected virtual void ReturnObjectToPool(PhysicsObject returningObject, PhysicsObjectDefaults defaults)
-    {
-        returningObject.gameObject.SetActive(false);
-        objects.Enqueue(returningObject.gameObject);
-    }
 
     // Two overloads so that they can be used the similarly to Instantiate.
     public GameObject SpawnFromPool(Vector3 location, Quaternion rotation)
