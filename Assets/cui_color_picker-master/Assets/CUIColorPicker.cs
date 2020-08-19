@@ -159,7 +159,7 @@ public class CUIColorPicker : MonoBehaviour
 
     public void SetRandomColor()
     {
-        var rng = new System.Random();
+        var rng = new System.Random(UnityEngine.Random.Range(0, 1000));
         var r = ( rng.Next() % 1000 ) / 1000.0f;
         var g = ( rng.Next() % 1000 ) / 1000.0f;
         var b = ( rng.Next() % 1000 ) / 1000.0f;
