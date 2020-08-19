@@ -13,13 +13,26 @@ public class UserInterface : MonoBehaviour
     public Button GenerateButton;
     public TMP_Text _txtBrushSize;
 
+    public List<CUIColorPicker> colourPickers;
+    bool firstFrame = true;
+
     private void Start()
     {
+        foreach (CUIColorPicker picker in colourPickers)
+        {
+            picker.SetRandomColor();
+        }
         // GenerateButton.onClick.RemoveAllListeners();
         // GenerateButton.onClick.AddListener(() => { Generator.StartGeneration(); });
 
         // Randomize.onClick.RemoveAllListeners();
         // Randomize.onClick.AddListener(() => { RandomizeColors(); });
+    }
+    void Update() { if(firstFrame) Initialise(); }
+    private void Initialise()
+    {
+        firstFrame = false;
+        ApplyUiPickedColours();
     }
 
     public void HorizontalRotationUpdated(float _newValue)
