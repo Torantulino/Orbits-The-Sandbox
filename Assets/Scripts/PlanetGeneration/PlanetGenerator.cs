@@ -59,6 +59,8 @@ public class PlanetGenerator : MonoBehaviour
     private TriangleHashSet continentsSides;
     private TriangleHashSet mountains;
 
+    private float brushSize = 0.1f;
+
     public void Start()
     {
         Physics.queriesHitTriggers = true;
@@ -74,6 +76,11 @@ public class PlanetGenerator : MonoBehaviour
         }
 
         return Color.magenta;
+    }
+    
+    public void SetBrushSize(float _value)
+    {
+        brushSize = _value;
     }
 
     public void StartGeneration()
@@ -118,7 +125,7 @@ public class PlanetGenerator : MonoBehaviour
             if (Physics.Raycast(ray, out hit))
             {
                 Vector3 pointOnSphere = (transform.InverseTransformPoint(hit.point)).normalized;
-                DrawLand(pointOnSphere, 0.1f);
+                DrawLand(pointOnSphere);
             }
 
         }
@@ -141,12 +148,12 @@ public class PlanetGenerator : MonoBehaviour
         }
     }
 
-    private void DrawLand(Vector3 _pointOnSphere, float _brushSize)
+    private void DrawLand(Vector3 _pointOnSphere)
     {
         if (!layers.ContainsKey(current_layer))
             layers[current_layer] = new TriangleHashSet();
 
-        TriangleHashSet addedLandmass = GetTriangles(_pointOnSphere, _brushSize, MeshTriangles);
+        TriangleHashSet addedLandmass = GetTriangles(_pointOnSphere, brushSize, MeshTriangles);
 
         layers[current_layer].UnionWith(addedLandmass);
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,7 @@ public class UserInterface : MonoBehaviour
     public Image Color1;
     public Image Color0;
     public Button GenerateButton;
+    public TMP_Text _txtBrushSize;
 
     private void Start()
     {
@@ -18,6 +20,12 @@ public class UserInterface : MonoBehaviour
 
         // Randomize.onClick.RemoveAllListeners();
         // Randomize.onClick.AddListener(() => { RandomizeColors(); });
+    }
+
+    public void BrushSizeSliderUpdate(float _newValue)
+    {
+        _txtBrushSize.text = _newValue .ToString("0.000");
+        Generator.SetBrushSize(_newValue);
     }
 
     public void ApplyUiPickedColours()
