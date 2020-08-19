@@ -10,6 +10,7 @@ public class UserInterface : MonoBehaviour
     public Image Color2;
     public Image Color1;
     public Image Color0;
+    public Image ColorMinus1;
     public Button GenerateButton;
     public TMP_Text _txtBrushSize;
 
@@ -61,6 +62,7 @@ public class UserInterface : MonoBehaviour
         Generator.SetColour(2, Color2.color);
         Generator.SetColour(1, Color1.color);
         Generator.SetColour(0, Color0.color);
+        Generator.SetColour(-1, ColorMinus1.color);
 
         Generator.ApplyColours();
         Generator.GenerateMesh();

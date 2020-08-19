@@ -159,6 +159,7 @@ public class PlanetGenerator : MonoBehaviour
 
         TriangleHashSet addedLandmass = GetTriangles(_pointOnSphere, brushSize, MeshTriangles);
 
+        // If any of these triangles are currently in other layers, remove the former from the latter.
         for (int i = 0; i < layers.Count; i++)
         {
             foreach (MeshTriangle newTriangle in addedLandmass)
@@ -169,11 +170,11 @@ public class PlanetGenerator : MonoBehaviour
         }
 
         layers[current_layer].UnionWith(addedLandmass);
-
         layers[current_layer].ApplyColor(Colors[current_layer]);
 
-        continentsSides = SetHeight(layers[current_layer], current_layer * layerHeight);
+        continentsSides.UnionWith(SetHeight(layers[current_layer], current_layer * layerHeight));
         continentsSides.ApplyColor(Colors[-1]);
+
 
         foreach (MeshTriangle triangle in layers[current_layer])
         {
@@ -497,6 +498,7 @@ public class PlanetGenerator : MonoBehaviour
         return stichedPolys;
     }
 
+    // Returns created 'cliffs'
     public TriangleHashSet SetHeight(TriangleHashSet polys, float height)
     {
         BoarderHashSet stitchedEdge;
