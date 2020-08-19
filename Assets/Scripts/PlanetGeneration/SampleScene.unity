@@ -467,7 +467,7 @@ GameObject:
   - component: {fileID: 582663793}
   - component: {fileID: 582663792}
   m_Layer: 5
-  m_Name: Scrollbar (1)
+  m_Name: HorizontalRotationScroll
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -540,7 +540,18 @@ MonoBehaviour:
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1649121602}
+        m_MethodName: HorizontalRotationUpdated
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Scrollbar+ScrollEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &582663793
@@ -1032,6 +1043,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1649121602 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1181416686913177084, guid: 5dc07eeab14766542a2d55ec0782d37e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1181416686673764624}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 417d553d6ca3ede49a60eae5c65e1539, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1687258581
 GameObject:
   m_ObjectHideFlags: 0
@@ -1824,6 +1847,11 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 420
       objectReference: {fileID: 0}
+    - target: {fileID: 3326624347909792916, guid: 5dc07eeab14766542a2d55ec0782d37e,
+        type: 3}
+      propertyPath: m_Name
+      value: VerticalRotationScroll
+      objectReference: {fileID: 0}
     - target: {fileID: 5657957084596355062, guid: 5dc07eeab14766542a2d55ec0782d37e,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -1846,6 +1874,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 78324246815822751, guid: 5dc07eeab14766542a2d55ec0782d37e,
         type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 78324246815822751, guid: 5dc07eeab14766542a2d55ec0782d37e,
+        type: 3}
       propertyPath: m_Size
       value: 0.01
       objectReference: {fileID: 0}
@@ -1853,6 +1886,31 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Value
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 78324246815822751, guid: 5dc07eeab14766542a2d55ec0782d37e,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 78324246815822751, guid: 5dc07eeab14766542a2d55ec0782d37e,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 78324246815822751, guid: 5dc07eeab14766542a2d55ec0782d37e,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1649121602}
+    - target: {fileID: 78324246815822751, guid: 5dc07eeab14766542a2d55ec0782d37e,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: VerticalRotationUpdated
+      objectReference: {fileID: 0}
+    - target: {fileID: 78324246815822751, guid: 5dc07eeab14766542a2d55ec0782d37e,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 2706334556731499832, guid: 5dc07eeab14766542a2d55ec0782d37e,
         type: 3}

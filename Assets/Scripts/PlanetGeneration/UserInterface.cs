@@ -22,9 +22,23 @@ public class UserInterface : MonoBehaviour
         // Randomize.onClick.AddListener(() => { RandomizeColors(); });
     }
 
+    public void HorizontalRotationUpdated(float _newValue)
+    {
+        Generator.Rotate = false;
+        Vector3 currentAngles = Generator.transform.eulerAngles;
+        Generator.transform.eulerAngles = new Vector3(currentAngles.x, _newValue * 360.0f, currentAngles.z);
+    }
+
+    public void VerticalRotationUpdated(float _newValue)
+    {
+        Generator.Rotate = false;
+        Vector3 currentAngles = Generator.transform.eulerAngles;
+        Generator.transform.eulerAngles = new Vector3(currentAngles.x, currentAngles.y, Mathf.Lerp(90.0f, -90.0f, _newValue));
+    }
+
     public void BrushSizeSliderUpdate(float _newValue)
     {
-        _txtBrushSize.text = _newValue .ToString("0.000");
+        _txtBrushSize.text = _newValue.ToString("0.000");
         Generator.SetBrushSize(_newValue);
     }
 
