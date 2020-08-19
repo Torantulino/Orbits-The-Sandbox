@@ -424,7 +424,7 @@ MonoBehaviour:
   IcosphereSubdivisions: 3
   PlanetMaterial: {fileID: 2100000, guid: b1b0a3dfc33eba046bfe3fbef1843358, type: 2}
   SmoothNormals: 0
-  Rotate: 1
+  Rotate: 0
   TurnSpeed: -5
   DrawShore: 1
   MinShoreWidth: 0.1
