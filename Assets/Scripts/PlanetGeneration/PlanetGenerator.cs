@@ -61,12 +61,13 @@ public class PlanetGenerator : MonoBehaviour
 
     private float brushSize = 0.1f;
     private int noLayers = 3;
+    private float layerHeight = 0.05f;
     public void Start()
     {
         Physics.queriesHitTriggers = true;
         StartGeneration();
 
-        for(int i = 0; i < noLayers; i++)
+        for (int i = 0; i < noLayers; i++)
             layers[i] = new TriangleHashSet();
         continentsSides = new TriangleHashSet();
         layers[0].UnionWith(MeshTriangles);
@@ -116,9 +117,8 @@ public class PlanetGenerator : MonoBehaviour
         GenerateMesh();
     }
 
-    /// <summary>
-    /// Called every frame while the mouse is over the GUIElement or Collider.
-    /// </summary>
+
+    //todo: change to OnMouseDown event
     void OnMouseOver()
     {
         // Left Click
@@ -132,7 +132,6 @@ public class PlanetGenerator : MonoBehaviour
                 Vector3 pointOnSphere = (transform.InverseTransformPoint(hit.point)).normalized;
                 DrawLand(pointOnSphere);
             }
-
         }
     }
 
@@ -164,7 +163,7 @@ public class PlanetGenerator : MonoBehaviour
         {
             foreach (MeshTriangle newTriangle in addedLandmass)
             {
-                if(layers[i].Contains(newTriangle))
+                if (layers[i].Contains(newTriangle))
                     layers[i].Remove(newTriangle);
             }
         }
@@ -173,7 +172,7 @@ public class PlanetGenerator : MonoBehaviour
 
         layers[current_layer].ApplyColor(Colors[current_layer]);
 
-        continentsSides = SetHeight(layers[current_layer], current_layer * 0.05f);  //TODO: don't hardcode land height difference
+        continentsSides = SetHeight(layers[current_layer], current_layer * layerHeight);
         continentsSides.ApplyColor(Colors[-1]);
 
         foreach (MeshTriangle triangle in layers[current_layer])
@@ -569,12 +568,19 @@ public class PlanetGenerator : MonoBehaviour
         {
             foreach (int vertexIndex in p.VertexIndices)
             {
-                float distanceToSphere = Vector3.Distance(center, Vertices[vertexIndex]);
-
-                if (distanceToSphere <= radius)
+                // This loop expands the search 'vertically' to ensure distant layers can be drawn over one another.
+                bool found = false;
+                for (int i = 0; i < noLayers; i++)
                 {
-                    newSet.Add(p);
-                    break;
+                    float distanceToSphere = Vector3.Distance(center * (1.0f + (layerHeight * i)), Vertices[vertexIndex]);
+
+                    if (distanceToSphere <= radius)
+                    {
+                        newSet.Add(p);
+                        found = true;
+                    }
+                    if (found)
+                        break;
                 }
             }
         }
