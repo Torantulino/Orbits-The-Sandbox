@@ -60,11 +60,16 @@ public class PlanetGenerator : MonoBehaviour
     private TriangleHashSet mountains;
 
     private float brushSize = 0.1f;
-
+    private int noLayers = 3;
     public void Start()
     {
         Physics.queriesHitTriggers = true;
         StartGeneration();
+
+        for(int i = 0; i < noLayers; i++)
+            layers[i] = new TriangleHashSet();
+        continentsSides = new TriangleHashSet();
+        layers[0].UnionWith(MeshTriangles);
     }
 
     public Color FindColor(int _layer)
@@ -77,7 +82,7 @@ public class PlanetGenerator : MonoBehaviour
 
         return Color.magenta;
     }
-    
+
     public void SetBrushSize(float _value)
     {
         brushSize = _value;
@@ -141,7 +146,7 @@ public class PlanetGenerator : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
             current_layer = Mathf.Min(2, current_layer + 1);
-        
+
         if (Rotate)
         {
             transform.Rotate(Vector3.up, TurnSpeed * Time.deltaTime);
@@ -155,11 +160,20 @@ public class PlanetGenerator : MonoBehaviour
 
         TriangleHashSet addedLandmass = GetTriangles(_pointOnSphere, brushSize, MeshTriangles);
 
+        for (int i = 0; i < layers.Count; i++)
+        {
+            foreach (MeshTriangle newTriangle in addedLandmass)
+            {
+                if(layers[i].Contains(newTriangle))
+                    layers[i].Remove(newTriangle);
+            }
+        }
+
         layers[current_layer].UnionWith(addedLandmass);
 
         layers[current_layer].ApplyColor(Colors[current_layer]);
 
-        continentsSides = SetHeight(layers[current_layer], current_layer * 0.05f);  //TODO: don't hardcode
+        continentsSides = SetHeight(layers[current_layer], current_layer * 0.05f);  //TODO: don't hardcode land height difference
         continentsSides.ApplyColor(Colors[-1]);
 
         foreach (MeshTriangle triangle in layers[current_layer])
