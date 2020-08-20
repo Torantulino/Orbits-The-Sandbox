@@ -71,8 +71,15 @@ public class UserInterface : MonoBehaviour
 
     public void ExportPlanet()
     {
-        Debug.Assert(_inptFldFilename.text != "");
+        Debug.Assert(_inptFldFilename.text != "", "<b><color=magenta>Please enter a filename before saving!</color></b>");
+        if(_inptFldFilename.text == "") return;
 
+        GameObject check = Resources.Load<GameObject>("Prefabs/Objects/PlanetGenerator/" + _inptFldFilename.text);
+        Debug.Assert(!check, "<b><color=magenta>There is already an object named " + _inptFldFilename.text + " , please enter a unique name!</color></b>");
+        if(check)
+           return;
+        
+        Debug.Log("Exporting planet as " + _inptFldFilename.text);
         Generator.Save(_inptFldFilename.text);
     }
 
