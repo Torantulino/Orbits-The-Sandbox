@@ -163,17 +163,20 @@ public class PlanetGenerator : MonoBehaviour
         MeshCollider pMCollider = prefab.AddComponent<MeshCollider>();
 
 
-        AssetDatabase.CreateAsset(mesh, "Assets/Resources/Prefabs/Objects/PlanetGenerator/" + _filename + ".asset");
+        string guid = AssetDatabase.CreateFolder("Assets/Resources/Prefabs/Objects/PlanetGenerator", _filename);
+        AssetDatabase.SaveAssets();
+        string newFolderPath = AssetDatabase.GUIDToAssetPath(guid);
+        AssetDatabase.CreateAsset(mesh, newFolderPath + "/" +_filename + ".asset");
         AssetDatabase.SaveAssets();
 
-        Mesh pMesh = Resources.Load<Mesh>("Prefabs/Objects/PlanetGenerator/" + _filename);
+        Mesh pMesh = Resources.Load<Mesh>(newFolderPath + "/" + _filename);
         Material pMat = Resources.Load<Material>("Materials/PlanetMaterial");
 
         pMFilter.mesh = pMesh;
         pMCollider.sharedMesh = pMesh;
         pMRenderer.material = pMat;
         
-        PrefabUtility.SaveAsPrefabAsset(prefab, "Assets/Resources/Prefabs/Objects/PlanetGenerator/" + _filename + ".prefab");
+        PrefabUtility.SaveAsPrefabAsset(prefab, newFolderPath + "/" + _filename + ".prefab");
     }
 
     private void DrawLand(Vector3 _pointOnSphere)
