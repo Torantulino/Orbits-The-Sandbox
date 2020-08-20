@@ -96,6 +96,7 @@ public class PhysicsObject : MonoBehaviour
 
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "PlanetGenerator")
         {
+            this.enabled = true;
             // Loop until free name is found
             for (int i = 0; !idFound; i++)
             {
