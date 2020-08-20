@@ -161,14 +161,15 @@ public class PlanetGenerator : MonoBehaviour
         }
     }
 
-    public void Save(string _filename)
+    public void Save(string _filename, float _radius, float _mass)
     {
         // Create prefab
         GameObject prefab = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/Objects/PlanetGenerator/PlanetGenSource"));
         Mesh mesh = meshFilter.mesh;
         MeshFilter pMFilter = prefab.GetComponentInChildren<MeshFilter>();
         MeshRenderer pMRenderer = prefab.GetComponentInChildren<MeshRenderer>();
-        //SphereCollider pMCollider = prefab.GetComponent<SphereCollider>();
+        PhysicsObject physicsObject = prefab.GetComponent<PhysicsObject>();
+        SphereCollider sphereCollider = prefab.GetComponent<SphereCollider>();
 
         // Create folder
         string guid = AssetDatabase.CreateFolder("Assets/Resources/Prefabs/Objects/PlanetGenerator", _filename);
@@ -195,8 +196,14 @@ public class PlanetGenerator : MonoBehaviour
         pMFilter.mesh = pMesh;
         pMRenderer.material = pMat;
 
-        // Apply scale
-        prefab.transform.localScale = transform.localScale;
+        // Assign properties
+        prefab.transform.localScale = Vector3.one * _radius;
+        physicsObject.rb.mass = _mass;
+        // defaults
+        physicsObject.isStar = false;
+        physicsObject.isTrailRenderer = true;
+        physicsObject.spawnWithOrbit = true;
+        sphereCollider.radius = 1.0f;
 
         // Save prefab
         PrefabUtility.SaveAsPrefabAsset(prefab, newFolderPath + "/" + _filename + ".prefab");

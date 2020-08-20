@@ -14,10 +14,13 @@ public class UserInterface : MonoBehaviour
     public Button GenerateButton;
     public TMP_Text _txtBrushSize;
     public TMP_InputField _inptFldFilename;
+    public TMP_InputField _inptFldMass;
+    public TMP_InputField _inptFldRadius;
 
     public List<CUIColorPicker> colourPickers;
     public List<RawImage> selectors;
     bool firstFrame = true;
+
 
     private void Start()
     {
@@ -89,7 +92,7 @@ public class UserInterface : MonoBehaviour
            return;
         
         Debug.Log("Exporting planet as " + _inptFldFilename.text);
-        Generator.Save(_inptFldFilename.text);
+        Generator.Save(_inptFldFilename.text, float.Parse(_inptFldRadius.text), float.Parse(_inptFldMass.text));
     }
 
     private void RandomizeColors()
