@@ -186,6 +186,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &151309412 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2945861521914143834, guid: 5dc07eeab14766542a2d55ec0782d37e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1181416686673764624}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2da0c512f12947e489f739169773d7ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &170171480
 GameObject:
   m_ObjectHideFlags: 0
@@ -288,6 +300,18 @@ ReflectionProbe:
   m_UseOcclusionCulling: 1
   m_Importance: 1
   m_CustomBakedTexture: {fileID: 0}
+--- !u!114 &221814392 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4004082813562272789, guid: 5dc07eeab14766542a2d55ec0782d37e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1181416686673764624}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &280791877
 GameObject:
   m_ObjectHideFlags: 0
@@ -830,6 +854,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1649121602 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1181416686913177084, guid: 5dc07eeab14766542a2d55ec0782d37e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1181416686673764624}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 417d553d6ca3ede49a60eae5c65e1539, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1687258581
 GameObject:
   m_ObjectHideFlags: 0
@@ -1285,6 +1321,16 @@ PrefabInstance:
       propertyPath: Generator
       value: 
       objectReference: {fileID: 514202040}
+    - target: {fileID: 1181416686913177084, guid: 5dc07eeab14766542a2d55ec0782d37e,
+        type: 3}
+      propertyPath: _txtFldFilename
+      value: 
+      objectReference: {fileID: 221814392}
+    - target: {fileID: 1181416686913177084, guid: 5dc07eeab14766542a2d55ec0782d37e,
+        type: 3}
+      propertyPath: _inptFldFilename
+      value: 
+      objectReference: {fileID: 151309412}
     - target: {fileID: 6341267556774507916, guid: 5dc07eeab14766542a2d55ec0782d37e,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -1636,11 +1682,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 514202040}
+      objectReference: {fileID: 1649121602}
     - target: {fileID: 3611682845481840283, guid: 5dc07eeab14766542a2d55ec0782d37e,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: Save
+      value: ExportPlanet
       objectReference: {fileID: 0}
     - target: {fileID: 6744704363010058530, guid: 5dc07eeab14766542a2d55ec0782d37e,
         type: 3}

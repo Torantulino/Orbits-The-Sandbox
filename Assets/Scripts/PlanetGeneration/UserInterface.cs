@@ -13,6 +13,7 @@ public class UserInterface : MonoBehaviour
     public Image ColorMinus1;
     public Button GenerateButton;
     public TMP_Text _txtBrushSize;
+    public TMP_InputField _inptFldFilename;
 
     public List<CUIColorPicker> colourPickers;
     bool firstFrame = true;
@@ -66,6 +67,13 @@ public class UserInterface : MonoBehaviour
 
         Generator.ApplyColours();
         Generator.GenerateMesh();
+    }
+
+    public void ExportPlanet()
+    {
+        Debug.Assert(_inptFldFilename.text != "");
+
+        Generator.Save(_inptFldFilename.text);
     }
 
     private void RandomizeColors()
