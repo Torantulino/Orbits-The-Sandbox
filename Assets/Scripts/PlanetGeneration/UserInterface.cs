@@ -16,6 +16,7 @@ public class UserInterface : MonoBehaviour
     public TMP_InputField _inptFldFilename;
 
     public List<CUIColorPicker> colourPickers;
+    public List<RawImage> selectors;
     bool firstFrame = true;
 
     private void Start()
@@ -35,6 +36,14 @@ public class UserInterface : MonoBehaviour
     {
         firstFrame = false;
         ApplyUiPickedColours();
+    }
+
+    public void SetSelector(int i)
+    {
+        foreach(RawImage s in selectors)
+            s.color = new Color(s.color.r, s.color.g, s.color.b, 0f);
+        
+        selectors[i].color = new Color(selectors[i].color.r, selectors[i].color.g, selectors[i].color.b, 1f);
     }
 
     public void HorizontalRotationUpdated(float _newValue)

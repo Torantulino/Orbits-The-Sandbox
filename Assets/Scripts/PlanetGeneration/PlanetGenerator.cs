@@ -63,8 +63,10 @@ public class PlanetGenerator : MonoBehaviour
     private float brushSize = 0.1f;
     private int noLayers = 3;
     private float layerHeight = 0.05f;
+    private UserInterface userInterface;
     public void Start()
     {
+        userInterface = FindObjectOfType<UserInterface>();
         Physics.queriesHitTriggers = true;
         StartGeneration();
 
@@ -142,10 +144,16 @@ public class PlanetGenerator : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
             current_layer = Mathf.Max(0, current_layer - 1);
+            userInterface.SetSelector(current_layer);
+        }
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
             current_layer = Mathf.Min(2, current_layer + 1);
+            userInterface.SetSelector(current_layer);
+        }
 
         if (Rotate)
         {
