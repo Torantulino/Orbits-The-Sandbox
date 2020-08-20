@@ -155,27 +155,32 @@ public class PlanetGenerator : MonoBehaviour
 
     public void Save(string _filename)
     {
+        // Create prefab
         GameObject prefab = new GameObject();
-
         Mesh mesh = meshFilter.mesh;
         MeshFilter pMFilter = prefab.AddComponent<MeshFilter>();
         MeshRenderer pMRenderer = prefab.AddComponent<MeshRenderer>();
         MeshCollider pMCollider = prefab.AddComponent<MeshCollider>();
 
-
+        // Create folder
         string guid = AssetDatabase.CreateFolder("Assets/Resources/Prefabs/Objects/PlanetGenerator", _filename);
         AssetDatabase.SaveAssets();
         string newFolderPath = AssetDatabase.GUIDToAssetPath(guid);
+
+        // Export Mesh
         AssetDatabase.CreateAsset(mesh, newFolderPath + "/" +_filename + ".asset");
         AssetDatabase.SaveAssets();
 
+        // Load resources for prefab creation
         Mesh pMesh = Resources.Load<Mesh>(newFolderPath + "/" + _filename);
         Material pMat = Resources.Load<Material>("Materials/PlanetMaterial");
 
+        // Assign to prefab
         pMFilter.mesh = pMesh;
         pMCollider.sharedMesh = pMesh;
         pMRenderer.material = pMat;
         
+        // Save prefab
         PrefabUtility.SaveAsPrefabAsset(prefab, newFolderPath + "/" + _filename + ".prefab");
     }
 
