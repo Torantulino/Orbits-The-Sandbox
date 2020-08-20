@@ -70,33 +70,30 @@ public class PhysicsObject : MonoBehaviour
 
     private FixedSizedQueue<Vector3> relativeTrailPositions = new FixedSizedQueue<Vector3>(150);
 
-
-
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
         if (rb == null)
             Debug.Log("Rigidbody not found by " + this.name + "!");
 
-        //Set properties
-        radius = transform.localScale.x;
-        calculateVolume(radius);
-        calculateDensity(rb.mass, volume);
-        forceMultiplier = 10;
-        densityLocked = true;
-        massLocked = false;
-        radiusLocked = false;
-        physicsEngine = FindObjectOfType<PhysicsEngine>();
-
-        // Set uniquie name
-        name = name.Replace("(Clone)", "");
-        if (name.StartsWith("["))
-            name = name.TrimStart('[', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ']', ' ');
-        bool idFound = false;
-
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "PlanetGenerator")
         {
-            this.enabled = true;
+
+            //Set properties
+            radius = transform.localScale.x;
+            calculateVolume(radius);
+            calculateDensity(rb.mass, volume);
+            forceMultiplier = 10;
+            densityLocked = true;
+            massLocked = false;
+            radiusLocked = false;
+            physicsEngine = FindObjectOfType<PhysicsEngine>();
+
+            // Set uniquie name
+            name = name.Replace("(Clone)", "");
+            if (name.StartsWith("["))
+                name = name.TrimStart('[', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ']', ' ');
+            bool idFound = false;
             // Loop until free name is found
             for (int i = 0; !idFound; i++)
             {
@@ -109,6 +106,8 @@ public class PhysicsObject : MonoBehaviour
             // Set name
             name = "[" + ID + "] " + name;
             physicsEngine.objectIDs.Add(ID);
+            
+            this.enabled = true;
         }
     }
 

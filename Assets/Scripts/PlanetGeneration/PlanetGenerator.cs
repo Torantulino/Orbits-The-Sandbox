@@ -179,7 +179,7 @@ public class PlanetGenerator : MonoBehaviour
         // Export Mesh
         try
         {
-            AssetDatabase.CreateAsset(mesh, newFolderPath + "/" + _filename + ".asset");
+            AssetDatabase.CreateAsset(mesh, "Assets/Resources/Models/PlanetGenerator/" + _filename + ".asset");
         }
         catch(UnityEngine.UnityException e)
         {
@@ -189,7 +189,7 @@ public class PlanetGenerator : MonoBehaviour
         AssetDatabase.SaveAssets();
 
         // Load resources for prefab creation
-        Mesh pMesh = Resources.Load<Mesh>(newFolderPath + "/" + _filename);
+        Mesh pMesh = Resources.Load<Mesh>("Models/PlanetGenerator/" + _filename);
         Material pMat = Resources.Load<Material>("Materials/PlanetMaterial");
 
         // Assign to prefab
