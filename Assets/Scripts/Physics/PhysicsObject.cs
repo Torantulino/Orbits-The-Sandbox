@@ -94,19 +94,21 @@ public class PhysicsObject : MonoBehaviour
             name = name.TrimStart('[', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ']', ' ');
         bool idFound = false;
 
-        // Loop until free name is found
-        for (int i = 0; !idFound; i++)
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "PlanetGenerator")
         {
-            if (!physicsEngine.objectIDs.Contains(i))
+            // Loop until free name is found
+            for (int i = 0; !idFound; i++)
             {
-                ID = i;
-                idFound = true;
+                if (!physicsEngine.objectIDs.Contains(i))
+                {
+                    ID = i;
+                    idFound = true;
+                }
             }
+            // Set name
+            name = "[" + ID + "] " + name;
+            physicsEngine.objectIDs.Add(ID);
         }
-        // Set name
-        name = "[" + ID + "] " + name;
-        physicsEngine.objectIDs.Add(ID);
-
     }
 
 
@@ -276,7 +278,7 @@ public class PhysicsObject : MonoBehaviour
         // Process Heat
         if (!isStar && temperature != 0.0f)
         {
-            temperature -= UnityEngine.Random.Range(0.9f, 1.1f) *  (Time.deltaTime * physicsEngine.coolingCurve.Evaluate(temperature));
+            temperature -= UnityEngine.Random.Range(0.9f, 1.1f) * (Time.deltaTime * physicsEngine.coolingCurve.Evaluate(temperature));
 
             // Change colour based on heat
             Material material = GetComponentInChildren<MeshRenderer>().material;
@@ -633,9 +635,9 @@ public class PhysicsObject : MonoBehaviour
                 Shatter(5.0f);
             if (!theirPhysObj.isShard)
                 theirPhysObj.Shatter(5.0f);
-            
+
             // If both shards then just absorb
-            if(theirPhysObj.isShard && isShard && theirPhysObj.ID > ID)
+            if (theirPhysObj.isShard && isShard && theirPhysObj.ID > ID)
                 Absorb(theirPhysObj);
         }
     }

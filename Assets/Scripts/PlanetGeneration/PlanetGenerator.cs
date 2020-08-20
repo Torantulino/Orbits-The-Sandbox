@@ -156,11 +156,11 @@ public class PlanetGenerator : MonoBehaviour
     public void Save(string _filename)
     {
         // Create prefab
-        GameObject prefab = new GameObject();
+        GameObject prefab = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/Objects/PlanetGenerator/PlanetGenSource"));
         Mesh mesh = meshFilter.mesh;
-        MeshFilter pMFilter = prefab.AddComponent<MeshFilter>();
-        MeshRenderer pMRenderer = prefab.AddComponent<MeshRenderer>();
-        MeshCollider pMCollider = prefab.AddComponent<MeshCollider>();
+        MeshFilter pMFilter = prefab.GetComponentInChildren<MeshFilter>();
+        MeshRenderer pMRenderer = prefab.GetComponentInChildren<MeshRenderer>();
+        //SphereCollider pMCollider = prefab.GetComponent<SphereCollider>();
 
         // Create folder
         string guid = AssetDatabase.CreateFolder("Assets/Resources/Prefabs/Objects/PlanetGenerator", _filename);
@@ -185,8 +185,10 @@ public class PlanetGenerator : MonoBehaviour
 
         // Assign to prefab
         pMFilter.mesh = pMesh;
-        pMCollider.sharedMesh = pMesh;
         pMRenderer.material = pMat;
+
+        // Apply scale
+        prefab.transform.localScale = transform.localScale;
 
         // Save prefab
         PrefabUtility.SaveAsPrefabAsset(prefab, newFolderPath + "/" + _filename + ".prefab");
