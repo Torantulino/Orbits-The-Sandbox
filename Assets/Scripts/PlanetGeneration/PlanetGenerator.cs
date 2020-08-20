@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class PlanetGenerator : MonoBehaviour
@@ -150,6 +151,29 @@ public class PlanetGenerator : MonoBehaviour
         {
             transform.Rotate(Vector3.up, TurnSpeed * Time.deltaTime);
         }
+    }
+
+    public void Save()
+    {
+        GameObject prefab = new GameObject();
+
+        Mesh mesh = meshFilter.mesh;
+        MeshFilter pMFilter = prefab.AddComponent<MeshFilter>();
+        MeshRenderer pMRenderer = prefab.AddComponent<MeshRenderer>();
+        MeshCollider pMCollider = prefab.AddComponent<MeshCollider>();
+
+
+        AssetDatabase.CreateAsset(mesh, "Assets/Resources/Prefabs/Objects/PlanetGenerator/test_planet.asset");
+        AssetDatabase.SaveAssets();
+
+        Mesh pMesh = Resources.Load<Mesh>("Prefabs/Objects/PlanetGenerator/test_planet");
+        Material pMat = Resources.Load<Material>("Materials/PlanetMaterial");
+
+        pMFilter.mesh = pMesh;
+        pMCollider.sharedMesh = pMesh;
+        pMRenderer.material = pMat;
+        
+        PrefabUtility.SaveAsPrefabAsset(prefab, "Assets/Resources/Prefabs/Objects/PlanetGenerator/test_planet.prefab");
     }
 
     private void DrawLand(Vector3 _pointOnSphere)
