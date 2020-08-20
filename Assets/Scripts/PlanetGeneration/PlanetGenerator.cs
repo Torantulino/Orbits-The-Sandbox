@@ -168,7 +168,15 @@ public class PlanetGenerator : MonoBehaviour
         string newFolderPath = AssetDatabase.GUIDToAssetPath(guid);
 
         // Export Mesh
-        AssetDatabase.CreateAsset(mesh, newFolderPath + "/" +_filename + ".asset");
+        try
+        {
+            AssetDatabase.CreateAsset(mesh, newFolderPath + "/" + _filename + ".asset");
+        }
+        catch(UnityEngine.UnityException e)
+        {
+            Debug.LogError("<b><color=red>This planet is an exact duplicate of another previously exported disk!</color></b> Please ensure it is unique in either colour or mesh!");
+            return;
+        }
         AssetDatabase.SaveAssets();
 
         // Load resources for prefab creation
@@ -179,7 +187,7 @@ public class PlanetGenerator : MonoBehaviour
         pMFilter.mesh = pMesh;
         pMCollider.sharedMesh = pMesh;
         pMRenderer.material = pMat;
-        
+
         // Save prefab
         PrefabUtility.SaveAsPrefabAsset(prefab, newFolderPath + "/" + _filename + ".prefab");
     }
