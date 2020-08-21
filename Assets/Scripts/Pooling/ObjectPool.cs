@@ -8,12 +8,18 @@ public class ObjectPool : MonoBehaviour
 
     [SerializeField] private GameObject prefab;
     [SerializeField] private int defaultSize = 100;
+    [SerializeField] private int actualSize;
     protected Queue<GameObject> objects = new Queue<GameObject>();
 
     void Awake()
     {
         AddObjects(defaultSize);
 
+    }
+
+    void LateUpdate()
+    {
+        actualSize = objects.Count;
     }
 
     //get object from pool, create one if drawing more than the pool contains
@@ -36,6 +42,8 @@ public class ObjectPool : MonoBehaviour
             newObject.SetActive(false);
             objects.Enqueue(newObject);
         }
+
+        //actualSize = objects.Count;
     }
 
     public virtual void ReturnObjectToPool(GameObject returningObject)
