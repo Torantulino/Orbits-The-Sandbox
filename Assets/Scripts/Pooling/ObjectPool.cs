@@ -9,10 +9,13 @@ public class ObjectPool : MonoBehaviour
     [SerializeField] protected GameObject prefab;
     [SerializeField] private int startSize = 100;
     [SerializeField] private int actualSize;
+    [SerializeField] private GameObject parentObject;
     protected Queue<GameObject> objects = new Queue<GameObject>();
 
     void Awake()
     {
+        if (parentObject == null)
+            parentObject = gameObject;
         AddObjects(startSize);
     }
 
@@ -38,6 +41,7 @@ public class ObjectPool : MonoBehaviour
         for (int i = 0; i < newObjectNumber; i++)
         {
             GameObject newObject = Instantiate<GameObject>(prefab);
+            newObject.transform.parent = parentObject.transform;
             newObject.SetActive(false);
             objects.Enqueue(newObject);
         }

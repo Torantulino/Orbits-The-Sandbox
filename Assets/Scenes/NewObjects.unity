@@ -6591,6 +6591,7 @@ MonoBehaviour:
   prefab: {fileID: 6812950769599248127, guid: 72fbde6745d17d54c85a60cabee13fad, type: 3}
   startSize: 150
   actualSize: 150
+  parentObject: {fileID: 0}
 --- !u!4 &1158849702
 Transform:
   m_ObjectHideFlags: 0
@@ -6678,6 +6679,7 @@ MonoBehaviour:
   prefab: {fileID: 256995342537356618, guid: e06f2623de7b4874dae21f3fb87eccdf, type: 3}
   startSize: 200
   actualSize: 200
+  parentObject: {fileID: 1920109250}
 --- !u!4 &1373131810
 Transform:
   m_ObjectHideFlags: 0
@@ -6896,6 +6898,12 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   priority: 9999
+--- !u!1 &1920109250 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1399231551, guid: f3fbcacc9b6d4ff429e6bc4098e3f70b,
+    type: 3}
+  m_PrefabInstance: {fileID: 930238453}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1974327108
 GameObject:
   m_ObjectHideFlags: 0
