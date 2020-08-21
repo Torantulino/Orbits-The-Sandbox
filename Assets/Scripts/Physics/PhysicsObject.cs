@@ -170,7 +170,7 @@ public class PhysicsObject : MonoBehaviour
         lineRenderer.endWidth = 1.0f;
 
         // Add to entities list
-        UiManager.AddToEntitiesPanel(this.gameObject);
+        //UiManager.AddToEntitiesPanel(this.gameObject);
 
         // Spawn in orbit around strongest influencer
         biggestGravitationalInfluencer = null;
@@ -286,7 +286,7 @@ public class PhysicsObject : MonoBehaviour
         // Process Heat
         if (!isStar && temperature != 0.0f)
         {
-            temperature -= UnityEngine.Random.Range(0.9f, 1.1f) *  (Time.deltaTime * physicsEngine.coolingCurve.Evaluate(temperature));
+            temperature -= UnityEngine.Random.Range(0.9f, 1.1f) * (Time.deltaTime * physicsEngine.coolingCurve.Evaluate(temperature));
 
             // Change colour based on heat
             Material material = GetComponentInChildren<MeshRenderer>().material;
@@ -643,9 +643,9 @@ public class PhysicsObject : MonoBehaviour
                 Shatter(5.0f);
             if (!theirPhysObj.isShard)
                 theirPhysObj.Shatter(5.0f);
-            
+
             // If both shards then just absorb
-            if(theirPhysObj.isShard && isShard && theirPhysObj.ID > ID)
+            if (theirPhysObj.isShard && isShard && theirPhysObj.ID > ID)
                 Absorb(theirPhysObj);
         }
     }
@@ -801,7 +801,7 @@ public class PhysicsObject : MonoBehaviour
     }
     void OnDestroy()
     {
-        UiManager.RemoveFromEntitiesPanel(this.gameObject);
+        //UiManager.RemoveFromEntitiesPanel(this.gameObject);
         physicsEngine.objectIDs.Remove(ID);
 
     }
