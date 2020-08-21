@@ -532,7 +532,8 @@ public class UIManager : MonoBehaviour
     public void AddToEntitiesPanel(GameObject _obj)
     {
         GameObject sampleButton = contentEntites.Find("SampleButton").gameObject;
-        GameObject newButton = Instantiate(sampleButton, contentEntites);
+        //GameObject newButton = Instantiate(sampleButton, contentEntites);
+        GameObject newButton = PoolManager.PoolDictionary["contentPanels"].SpawnFromPool(contentEntites.position, contentEntites.rotation);
 
         newButton.GetComponentInChildren<Text>().text = _obj.name;
         newButton.name = _obj.name;
@@ -541,9 +542,9 @@ public class UIManager : MonoBehaviour
     // Removes specified object to the Entities panel at right-hand side of screen.
     public void RemoveFromEntitiesPanel(GameObject _obj)
     {
-        GameObject toDestroy = contentEntites.Find(_obj.name).gameObject;
-        if (toDestroy != null)
-            Destroy(toDestroy);
+        GameObject toRemove = contentEntites.Find(_obj.name).gameObject;
+        if (toRemove != null)
+            PoolManager.PoolDictionary["contentPanels"].ReturnObjectToPool(toRemove);
     }
     // Selects and Highlights an entity - or group of entities - from the entites panel in response to user action.
     public void SelectEntityFromPanel(Button _btn)
