@@ -6589,8 +6589,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 6812950769599248127, guid: 72fbde6745d17d54c85a60cabee13fad, type: 3}
-  defaultSize: 500
-  actualSize: 0
+  startSize: 150
+  actualSize: 150
 --- !u!4 &1158849702
 Transform:
   m_ObjectHideFlags: 0
@@ -6676,8 +6676,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 256995342537356618, guid: e06f2623de7b4874dae21f3fb87eccdf, type: 3}
-  defaultSize: 500
-  actualSize: 0
+  startSize: 200
+  actualSize: 200
 --- !u!4 &1373131810
 Transform:
   m_ObjectHideFlags: 0
