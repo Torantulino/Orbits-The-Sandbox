@@ -13,6 +13,7 @@ public class PhysicsObjectPool : ObjectPool
         returningObject.rb.velocity = returningObject.defaultSettings.velocity;
         returningObject.temperature = returningObject.defaultSettings.temperature;
         returningObject.trailRenderer.Clear();
+        returningObject.AlreadyCollided = false;
 
         returningObject.gameObject.SetActive(false);
         objects.Enqueue(returningObject.gameObject);

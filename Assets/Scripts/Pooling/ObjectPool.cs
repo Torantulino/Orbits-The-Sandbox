@@ -6,7 +6,7 @@ using UnityEngine;
 public class ObjectPool : MonoBehaviour
 {
 
-    [SerializeField] private GameObject prefab;
+    [SerializeField] protected GameObject prefab;
     [SerializeField] private int defaultSize = 100;
     [SerializeField] private int actualSize;
     protected Queue<GameObject> objects = new Queue<GameObject>();
