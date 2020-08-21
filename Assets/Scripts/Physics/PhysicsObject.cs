@@ -309,6 +309,8 @@ public class PhysicsObject : MonoBehaviour
     /// It is called after all Update functions have been called.
     void LateUpdate()
     {
+        AlreadyCollided = false;
+
         // Check incase object has been destroyed or force is yet to be calculated
         PhysicsObject newInfluencer;
         PhysicsEngine.ForceExerter forceExerter;
@@ -633,7 +635,7 @@ public class PhysicsObject : MonoBehaviour
         if (!AlreadyCollided)
         {
             AlreadyCollided = true;
-            PhysicsObject theirPhysObj = collision.transform.GetComponent<PhysicsObject>();
+            PhysicsObject theirPhysObj = collision.gameObject.GetComponent<PhysicsObject>();
 
             // Check for larger object
             if (theirPhysObj.rb.mass < rb.mass)
