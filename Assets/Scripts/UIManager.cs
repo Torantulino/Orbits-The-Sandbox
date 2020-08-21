@@ -531,9 +531,9 @@ public class UIManager : MonoBehaviour
     // Adds specified object to the Entities panel at right-hand side of screen.
     public void AddToEntitiesPanel(GameObject _obj)
     {
-        GameObject sampleButton = contentEntites.Find("SampleButton").gameObject;
+        //GameObject sampleButton = contentEntites.Find("SampleButton").gameObject;
         //GameObject newButton = Instantiate(sampleButton, contentEntites);
-        GameObject newButton = PoolManager.PoolDictionary["contentPanels"].SpawnFromPool(contentEntites.position, contentEntites.rotation);
+        GameObject newButton = PoolManager.PoolDictionary["entityPanels"].SpawnFromPool(contentEntites.position, contentEntites.rotation);
 
         newButton.GetComponentInChildren<Text>().text = _obj.name;
         newButton.name = _obj.name;

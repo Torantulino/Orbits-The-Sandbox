@@ -173,7 +173,7 @@ public class PhysicsObject : MonoBehaviour
         lineRenderer.endWidth = 1.0f;
 
         // Add to entities list
-        //UiManager.AddToEntitiesPanel(this.gameObject);
+        UiManager.AddToEntitiesPanel(this.gameObject);
 
         // Spawn in orbit around strongest influencer
         biggestGravitationalInfluencer = null;
@@ -810,7 +810,7 @@ public class PhysicsObject : MonoBehaviour
     }
     void OnDestroy()
     {
-        //UiManager.RemoveFromEntitiesPanel(this.gameObject);
+        UiManager.RemoveFromEntitiesPanel(this.gameObject);
         physicsEngine.objectIDs.Remove(ID);
 
     }
