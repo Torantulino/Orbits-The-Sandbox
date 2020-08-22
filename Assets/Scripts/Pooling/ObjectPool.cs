@@ -49,10 +49,30 @@ public class ObjectPool : MonoBehaviour
         actualSize += newObjectNumber;
     }
 
+    //non physics objects are simply returned
     public virtual void ReturnObjectToPool(GameObject returningObject)
     {
         returningObject.SetActive(false);
         objects.Enqueue(returningObject);
+    }
+
+    //physics objects are properly destructed
+    public void ReturnObjectToPool(PhysicsObject returningObject)
+    {
+        //set defaults
+        returningObject.rb.mass = returningObject.defaultSettings.mass;
+        returningObject.gameObject.transform.localScale = returningObject.defaultSettings.scale;
+        returningObject.rb.velocity = returningObject.defaultSettings.velocity;
+        returningObject.temperature = returningObject.defaultSettings.temperature;
+        returningObject.trailRenderer.Clear();
+        returningObject.AlreadyCollided = false;
+
+        //remove UI entity panel
+        ui.RemoveFromEntitiesPanel(returningObject.gameObject);
+
+        returningObject.gameObject.SetActive(false);
+        objects.Enqueue(returningObject.gameObject);
+
     }
 
     // Two overloads so that they can be used the similarly to Instantiate.
