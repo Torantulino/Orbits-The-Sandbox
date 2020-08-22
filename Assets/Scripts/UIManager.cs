@@ -544,7 +544,7 @@ public class UIManager : MonoBehaviour
     {
         GameObject toRemove = contentEntites.Find(_obj.name).gameObject;
         if (toRemove != null)
-            PoolManager.PoolDictionary["contentPanels"].ReturnObjectToPool(toRemove);
+            PoolManager.PoolDictionary["entityPanels"].ReturnObjectToPool(toRemove);
     }
     // Selects and Highlights an entity - or group of entities - from the entites panel in response to user action.
     public void SelectEntityFromPanel(Button _btn)
