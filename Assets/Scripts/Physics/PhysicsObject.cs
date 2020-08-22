@@ -810,8 +810,10 @@ public class PhysicsObject : MonoBehaviour
     }
     void OnDestroy()
     {
-        UiManager.RemoveFromEntitiesPanel(this.gameObject);
-        physicsEngine.objectIDs.Remove(ID);
-
+        if (UiManager != null)
+        {
+            UiManager.RemoveFromEntitiesPanel(this.gameObject);
+            physicsEngine.objectIDs.Remove(ID);
+        }
     }
 }
