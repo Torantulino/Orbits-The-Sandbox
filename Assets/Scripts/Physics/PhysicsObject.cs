@@ -687,7 +687,7 @@ public class PhysicsObject : MonoBehaviour
         if (!isShard)
             Shatter(10.0f);
         else
-            PoolManager.PoolDictionary["shards"].ReturnObjectToPool(this);
+            PoolManager.PoolDictionary["Shard1"].ReturnObjectToPool(this);
     }
 
     // Shatter this object into the specified number of hot shards
@@ -703,7 +703,7 @@ public class PhysicsObject : MonoBehaviour
             Vector3 pos = transform.position + UnityEngine.Random.insideUnitSphere * GetComponentInChildren<Collider>().bounds.extents.x;
             //PhysicsObject shard = Instantiate((GameObject)CelestialObjects["Shard1"], pos, Quaternion.Euler(offset * 32.0f)).GetComponent<PhysicsObject>();
 
-            PhysicsObject shard = PoolManager.PoolDictionary["shards"].SpawnFromPool(pos, Quaternion.Euler(offset * 32.0f)).GetComponent<PhysicsObject>();
+            PhysicsObject shard = PoolManager.PoolDictionary["Shard1"].SpawnFromPool(pos, Quaternion.Euler(offset * 32.0f)).GetComponent<PhysicsObject>();
 
 
             // Set physical properties

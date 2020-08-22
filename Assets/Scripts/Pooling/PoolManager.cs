@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,8 +9,12 @@ public class PoolManager : MonoBehaviour
 
     void Awake()
     {
-        PoolDictionary.Add("shards", GameObject.Find("ShardPool").GetComponent<ObjectPool>());
-        PoolDictionary.Add("entityPanels", GameObject.Find("EntityPanelPool").GetComponent<ObjectPool>());
+        List<ObjectPool> pools = new List<ObjectPool>(GameObject.FindObjectsOfType<ObjectPool>());
+        foreach (ObjectPool pool in pools)
+        {
+            string index = pool.prefab.name;
+            PoolDictionary.Add(index, pool);
+        }
     }
 
 }

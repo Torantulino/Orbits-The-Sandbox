@@ -533,7 +533,7 @@ public class UIManager : MonoBehaviour
     {
         //GameObject sampleButton = contentEntites.Find("SampleButton").gameObject;
         //GameObject newButton = Instantiate(sampleButton, contentEntites);
-        GameObject newButton = PoolManager.PoolDictionary["entityPanels"].SpawnFromPool(contentEntites.position, contentEntites.rotation);
+        GameObject newButton = PoolManager.PoolDictionary["EntityButton"].SpawnFromPool(contentEntites.position, contentEntites.rotation);
 
         newButton.GetComponentInChildren<Text>().text = _obj.name;
         newButton.name = _obj.name;
@@ -544,7 +544,7 @@ public class UIManager : MonoBehaviour
     {
         GameObject toRemove = contentEntites.Find(_obj.name).gameObject;
         if (toRemove != null)
-            PoolManager.PoolDictionary["entityPanels"].ReturnObjectToPool(toRemove);
+            PoolManager.PoolDictionary["EntityButton"].ReturnObjectToPool(toRemove);
     }
     // Selects and Highlights an entity - or group of entities - from the entites panel in response to user action.
     public void SelectEntityFromPanel(Button _btn)
@@ -556,12 +556,12 @@ public class UIManager : MonoBehaviour
         // Remove old highlighting
         foreach (Button button in childButtons)
         {
-            ColorBlock normalColour = contentEntites.Find("SampleButton").GetComponent<Button>().colors;
+            ColorBlock normalColour = contentEntites.Find("EntityButton").GetComponent<Button>().colors;
             button.colors = normalColour;
         }
 
 
-        if (_btn.name != "SampleButton")
+        if (_btn.name != "EntityButton")
         {
             ColorBlock redTint = _btn.colors;
             redTint.normalColor = new Color(0.00392f, 0.10196f, 0.12157f, 0.75f);
