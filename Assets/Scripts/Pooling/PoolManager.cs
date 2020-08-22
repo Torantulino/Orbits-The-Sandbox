@@ -13,6 +13,12 @@ public class PoolManager : MonoBehaviour
         foreach (ObjectPool pool in pools)
         {
             string index = pool.prefab.name;
+
+            if (index == "EntityButton")
+            {
+                pool.ParentObject = GameObject.FindGameObjectWithTag("ContentPanel");
+            }
+
             PoolDictionary.Add(index, pool);
         }
     }

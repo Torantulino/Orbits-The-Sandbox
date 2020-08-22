@@ -7,9 +7,10 @@ public class ObjectPool : MonoBehaviour
 {
 
     [SerializeField] public GameObject prefab;
+    [SerializeField] public GameObject ParentObject;
     [SerializeField] private int startSize = 100;
     [SerializeField] private int actualSize;
-    [SerializeField] private GameObject parentObject;
+
     protected Queue<GameObject> objects = new Queue<GameObject>();
 
     protected UIManager ui;
@@ -20,8 +21,8 @@ public class ObjectPool : MonoBehaviour
         if (ui == null)
             Debug.Log("UiManager not found by " + this.name + "!");
 
-        if (parentObject == null)
-            parentObject = gameObject;
+        if (ParentObject == null)
+            ParentObject = gameObject;
         AddObjects(startSize);
     }
 
@@ -47,7 +48,7 @@ public class ObjectPool : MonoBehaviour
         for (int i = 0; i < newObjectNumber; i++)
         {
             GameObject newObject = Instantiate<GameObject>(prefab);
-            newObject.transform.SetParent(parentObject.transform);
+            newObject.transform.SetParent(ParentObject.transform);
             newObject.SetActive(false);
             objects.Enqueue(newObject);
         }
