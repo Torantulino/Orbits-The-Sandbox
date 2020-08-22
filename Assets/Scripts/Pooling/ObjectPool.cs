@@ -15,7 +15,7 @@ public class ObjectPool : MonoBehaviour
 
     protected UIManager ui;
 
-    void Awake()
+    void Start()
     {
         ui = FindObjectOfType<UIManager>();
         if (ui == null)
