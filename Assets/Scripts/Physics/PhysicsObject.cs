@@ -687,7 +687,7 @@ public class PhysicsObject : MonoBehaviour
         if (!isShard)
             Shatter(10.0f);
         else
-            PoolManager.PoolDictionary["shards"].ReturnObjectToPool(this.gameObject);
+            PoolManager.PoolDictionary["shards"].ReturnObjectToPool(this);
     }
 
     // Shatter this object into the specified number of hot shards
