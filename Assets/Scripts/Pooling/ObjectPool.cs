@@ -12,8 +12,14 @@ public class ObjectPool : MonoBehaviour
     [SerializeField] private GameObject parentObject;
     protected Queue<GameObject> objects = new Queue<GameObject>();
 
+    protected UIManager ui;
+
     void Awake()
     {
+        ui = FindObjectOfType<UIManager>();
+        if (ui == null)
+            Debug.Log("UiManager not found by " + this.name + "!");
+
         if (parentObject == null)
             parentObject = gameObject;
         AddObjects(startSize);
