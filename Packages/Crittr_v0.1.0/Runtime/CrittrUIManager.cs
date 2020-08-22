@@ -27,6 +27,7 @@ public class CrittrUIManager : MonoBehaviour
     private string _reportLocation;
     private RawImage _qrCodeRawImage;
     private Dropdown _categoryDropdown;
+    private float timeAtPause;
 
     void Awake()
     {
@@ -35,9 +36,23 @@ public class CrittrUIManager : MonoBehaviour
         _qrCodeRawImage = successQRCodeGO.GetComponent<RawImage>();
 
         _categoryDropdown = formScreen.GetComponentInChildren<Dropdown>();
-        _categoryDropdown.onValueChanged.AddListener(delegate {
+        _categoryDropdown.onValueChanged.AddListener(delegate
+        {
             _handleDropdownChange(_categoryDropdown);
         });
+    }
+
+    // Takes note of the current simulation speed before pausing the physics simulation
+    public void pauseSimulation()
+    {
+        timeAtPause = Time.timeScale;
+        Time.timeScale = 0;
+    }
+
+    // Resumes simulating physics at the previous speed
+    public void resumeSimulation()
+    {
+        Time.timeScale = timeAtPause;
     }
 
     public void HandleShowForm(Report report)
@@ -45,6 +60,7 @@ public class CrittrUIManager : MonoBehaviour
         _currentReport = report;
         _currentReport.category = _categoryDropdown.options[_categoryDropdown.value].text;
         StartCoroutine(_screenShotAndDisplayScreen(report));
+        pauseSimulation();
     }
 
     public void HandleTitleChange(string value)
@@ -59,7 +75,8 @@ public class CrittrUIManager : MonoBehaviour
         _currentReport.description = value;
     }
 
-    private void _handleDropdownChange(Dropdown change) {
+    private void _handleDropdownChange(Dropdown change)
+    {
         if (_currentReport == null) return;
         _currentReport.category = change.options[change.value].text;
     }
@@ -124,6 +141,7 @@ public class CrittrUIManager : MonoBehaviour
 
     public void ClearScreens()
     {
+        resumeSimulation();
 
         panel.SetActive(false);
         formScreen.SetActive(false);
