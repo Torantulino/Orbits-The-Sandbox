@@ -633,8 +633,7 @@ public class PhysicsObject : MonoBehaviour
 
     private void CollisionResolution(Collision collision)
     {
-        if (!AlreadyCollided)
-        {
+        
             AlreadyCollided = true;
             PhysicsObject theirPhysObj = collision.gameObject.GetComponent<PhysicsObject>();
 
@@ -644,8 +643,11 @@ public class PhysicsObject : MonoBehaviour
                 //If Bigger, Absorb
                 Absorb(theirPhysObj);
             }
+            
+        if (!AlreadyCollided)
+        {
             // If Equal...
-            else if (theirPhysObj.rb.mass == rb.mass)
+            if (theirPhysObj.rb.mass == rb.mass)
             {
                 // Shatter both
                 if (!isShard)
