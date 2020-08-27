@@ -9,8 +9,6 @@ using UnityEngine.EventSystems;
 
 public class PhysicsObject : MonoBehaviour
 {
-    //collider disabler flag - make sure can only collide once per frame
-    public bool AlreadyCollided = false;
 
     //public float mass;
     private float density;
@@ -309,7 +307,6 @@ public class PhysicsObject : MonoBehaviour
     /// It is called after all Update functions have been called.
     void LateUpdate()
     {
-        AlreadyCollided = false;
 
         // Check incase object has been destroyed or force is yet to be calculated
         PhysicsObject newInfluencer;
@@ -633,32 +630,27 @@ public class PhysicsObject : MonoBehaviour
 
     private void CollisionResolution(Collision collision)
     {
-        
-            AlreadyCollided = true;
-            PhysicsObject theirPhysObj = collision.gameObject.GetComponent<PhysicsObject>();
 
-            // Check for larger object
-            if (theirPhysObj.rb.mass < rb.mass)
-            {
-                //If Bigger, Absorb
-                Absorb(theirPhysObj);
-            }
-            
-        if (!AlreadyCollided)
+        PhysicsObject theirPhysObj = collision.gameObject.GetComponent<PhysicsObject>();
+
+        // Check for larger object
+        if (theirPhysObj.rb.mass < rb.mass)
         {
-            // If Equal...
-            if (theirPhysObj.rb.mass == rb.mass)
-            {
-                // Shatter both
-                if (!isShard)
-                    Shatter(5.0f);
-                if (!theirPhysObj.isShard)
-                    theirPhysObj.Shatter(5.0f);
+            //If Bigger, Absorb
+            Absorb(theirPhysObj);
+        }
+        // If Equal...
+        else if (theirPhysObj.rb.mass == rb.mass)
+        {
+            // Shatter both
+            if (!isShard)
+                Shatter(5.0f);
+            if (!theirPhysObj.isShard)
+                theirPhysObj.Shatter(5.0f);
 
-                // If both shards then just absorb
-                if (theirPhysObj.isShard && isShard && theirPhysObj.ID > ID)
-                    Absorb(theirPhysObj);
-            }
+            // If both shards then just absorb
+            if (theirPhysObj.isShard && isShard && theirPhysObj.ID > ID)
+                Absorb(theirPhysObj);
         }
     }
 
