@@ -9,6 +9,7 @@ using UnityEngine.EventSystems;
 
 public class PhysicsObject : MonoBehaviour
 {
+    public bool Shattered = false;
 
     //public float mass;
     private float density;
@@ -694,29 +695,33 @@ public class PhysicsObject : MonoBehaviour
     // This game object is destroyed in the process
     private void Shatter(float _shards, float _intensity = 1.0f)
     {
-        for (int i = 0; i < _shards; i++)
+        if (!Shattered)
         {
-            // Calculate offset
-            Vector3 offset = new Vector3(UnityEngine.Random.Range(-10f, 10f), UnityEngine.Random.Range(-10f, 10f), UnityEngine.Random.Range(-10f, 10f));
+            Shattered = true;
+            for (int i = 0; i < _shards; i++)
+            {
+                // Calculate offset
+                Vector3 offset = new Vector3(UnityEngine.Random.Range(-10f, 10f), UnityEngine.Random.Range(-10f, 10f), UnityEngine.Random.Range(-10f, 10f));
 
-            // Instantiate
-            Vector3 pos = transform.position + UnityEngine.Random.insideUnitSphere * GetComponentInChildren<Collider>().bounds.extents.x;
-            //PhysicsObject shard = Instantiate((GameObject)CelestialObjects["Shard1"], pos, Quaternion.Euler(offset * 32.0f)).GetComponent<PhysicsObject>();
+                // Instantiate
+                Vector3 pos = transform.position + UnityEngine.Random.insideUnitSphere * GetComponentInChildren<Collider>().bounds.extents.x;
+                //PhysicsObject shard = Instantiate((GameObject)CelestialObjects["Shard1"], pos, Quaternion.Euler(offset * 32.0f)).GetComponent<PhysicsObject>();
 
-            PhysicsObject shard = PoolManager.PoolDictionary["Shard1"].SpawnFromPool(pos, Quaternion.Euler(offset * 32.0f)).GetComponent<PhysicsObject>();
+                PhysicsObject shard = PoolManager.PoolDictionary["Shard1"].SpawnFromPool(pos, Quaternion.Euler(offset * 32.0f)).GetComponent<PhysicsObject>();
 
 
-            // Set physical properties
-            //shard.transform.localScale = Vector3.one * rb.mass / no_shards;
-            shard.isShard = true;
-            shard.density = 2.0f;
-            shard.setMass(rb.mass / _shards);
-            shard.rb.velocity = rb.velocity + offset.normalized * 0.8f * Mathf.Sqrt((2.0f * PhysicsEngine.G * rb.mass) / (pos - transform.position).magnitude);
-            shard.rb.angularVelocity = offset * 100.0f;
-            shard.temperature = PhysicsEngine.MAX_TEMP;
+                // Set physical properties
+                //shard.transform.localScale = Vector3.one * rb.mass / no_shards;
+                shard.isShard = true;
+                shard.density = 2.0f;
+                shard.setMass(rb.mass / _shards);
+                shard.rb.velocity = rb.velocity + offset.normalized * 0.8f * Mathf.Sqrt((2.0f * PhysicsEngine.G * rb.mass) / (pos - transform.position).magnitude);
+                shard.rb.angularVelocity = offset * 100.0f;
+                shard.temperature = PhysicsEngine.MAX_TEMP;
+            }
+
+            Destroy(this.gameObject);
         }
-
-        Destroy(this.gameObject);
     }
 
     void OnMouseDown()
