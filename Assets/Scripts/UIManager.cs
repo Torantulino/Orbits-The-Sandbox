@@ -73,6 +73,7 @@ public class UIManager : MonoBehaviour
     float mouseScroll;
     private bool showUI = true;
     public ContextMenu contextMenu;
+    private ColorBlock normalButtonColour;
 
     void Awake()
     {
@@ -131,6 +132,9 @@ public class UIManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+
+        //get default colours
+        normalButtonColour = contentEntites.Find("EntityButton").GetComponent<Button>().colors;
 
         mainCamController = Camera.main.GetComponent<OrbitControls>();
         if (mainCamController == null)
@@ -558,8 +562,7 @@ public class UIManager : MonoBehaviour
         // Remove old highlighting
         foreach (Button button in childButtons)
         {
-            ColorBlock normalColour = button.colors;
-            button.colors = normalColour;
+            button.colors = normalButtonColour;
         }
 
 
