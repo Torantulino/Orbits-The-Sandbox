@@ -665,11 +665,6 @@ public class PhysicsObject : MonoBehaviour
         CollisionResolution(collision);
     }
 
-    void OnCollisionStay(Collision collision)
-    {
-        CollisionResolution(collision);
-    }
-
     private void Absorb(PhysicsObject smallerObject)
     {
         float their_mass = smallerObject.rb.mass;
