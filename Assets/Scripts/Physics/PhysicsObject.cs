@@ -630,7 +630,8 @@ public class PhysicsObject : MonoBehaviour
     {
 
     }
-    void OnCollisionEnter(Collision collision)
+
+    private void CollisionResolution(Collision collision)
     {
         if (!AlreadyCollided)
         {
@@ -657,6 +658,16 @@ public class PhysicsObject : MonoBehaviour
                     Absorb(theirPhysObj);
             }
         }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        CollisionResolution(collision);
+    }
+
+    void OnCollisionStay(Collision collision)
+    {
+        CollisionResolution(collision);
     }
 
     private void Absorb(PhysicsObject smallerObject)
