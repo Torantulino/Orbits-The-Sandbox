@@ -537,6 +537,8 @@ public class UIManager : MonoBehaviour
 
         newButton.GetComponentInChildren<Text>().text = _obj.name;
         newButton.name = _obj.name;
+        Button btn = newButton.GetComponent<Button>();
+        btn.onClick.AddListener(delegate { SelectEntityFromPanel(btn); });
         newButton.SetActive(true);
     }
     // Removes specified object to the Entities panel at right-hand side of screen.
@@ -556,7 +558,7 @@ public class UIManager : MonoBehaviour
         // Remove old highlighting
         foreach (Button button in childButtons)
         {
-            ColorBlock normalColour = contentEntites.Find("EntityButton").GetComponent<Button>().colors;
+            ColorBlock normalColour = button.colors;
             button.colors = normalColour;
         }
 
