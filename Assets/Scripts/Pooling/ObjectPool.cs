@@ -72,7 +72,7 @@ public class ObjectPool : MonoBehaviour
         returningObject.rb.velocity = returningObject.defaultSettings.velocity;
         returningObject.temperature = returningObject.defaultSettings.temperature;
         returningObject.trailRenderer.Clear();
-        returningObject.AlreadyCollided = false;
+        returningObject.Shattered = false;
 
         //remove UI entity panel
         ui.RemoveFromEntitiesPanel(returningObject.gameObject);
