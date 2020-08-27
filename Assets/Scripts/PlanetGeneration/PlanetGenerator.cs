@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlanetGenerator : MonoBehaviour
 {
@@ -181,7 +182,7 @@ public class PlanetGenerator : MonoBehaviour
         {
             AssetDatabase.CreateAsset(mesh, "Assets/Resources/Models/PlanetGenerator/" + _filename + ".asset");
         }
-        catch(UnityEngine.UnityException e)
+        catch (UnityEngine.UnityException e)
         {
             Debug.LogError("<b><color=red>This planet is an exact duplicate of another previously exported disk!</color></b> Please ensure it is unique in either colour or mesh!");
             return;
@@ -208,6 +209,11 @@ public class PlanetGenerator : MonoBehaviour
         // Save prefab
         PrefabUtility.SaveAsPrefabAsset(prefab, newFolderPath + "/" + _filename + ".prefab");
     }
+
+    public void Load(string _filename)
+    {
+    }
+
 
     private void DrawLand(Vector3 _pointOnSphere)
     {
