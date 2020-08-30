@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class UserInterface : MonoBehaviour
@@ -37,7 +38,9 @@ public class UserInterface : MonoBehaviour
         // Randomize.onClick.RemoveAllListeners();
         // Randomize.onClick.AddListener(() => { RandomizeColors(); });
     }
+
     void Update() { if (firstFrame) Initialise(); }
+
     private void Initialise()
     {
         firstFrame = false;
@@ -84,6 +87,7 @@ public class UserInterface : MonoBehaviour
         Generator.GenerateMesh();
     }
 
+    // TODO: Ensure all objects have a unique name when saving
     public void ExportPlanet()
     {
         Debug.Assert(_inptFldFilename.text != "", "<b><color=magenta>Please enter a filename before saving!</color></b>");
@@ -114,10 +118,28 @@ public class UserInterface : MonoBehaviour
             item.transform.SetParent(sampleItem.transform.parent, false);
             item.GetComponentInChildren<TMP_Text>().text = obj.name;
             item.SetActive(true);
+
+            item.GetComponent<Button>().onClick.AddListener(delegate {LoadPlanet(obj.name); });
         }
 
         // Resize Scrollview content to fit
         sampleItem.transform.parent.GetComponent<RectTransform>().sizeDelta = new Vector2(0f, objects.Length * sampleItem.GetComponent<RectTransform>().sizeDelta.y);
+    }
+
+    // TODO: Ensure all objects have a unique name when saving
+    public void LoadPlanet(string _name)
+    {
+        string[] guids = UnityEditor.AssetDatabase.FindAssets(_name, new[]{"Assets/Resources/Prefabs/Objects"});
+        Debug.Assert(guids.Length != 0, "<b>Selected object could not be loaded as it could not be found.</b>");
+        Debug.Assert(guids.Length <= 1, "<b>Multiple objects with the given name were located, please ensure names are unique!</b>");
+
+        string fullPath = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]);
+        
+        string path = fullPath.Replace("Assets/Resources/", "");
+        path = path.Replace(".prefab", "");
+        Debug.Log(path);
+
+        GameObject.FindObjectOfType<PlanetGenerator>().Load(path);
     }
 
     private void RandomizeColors()

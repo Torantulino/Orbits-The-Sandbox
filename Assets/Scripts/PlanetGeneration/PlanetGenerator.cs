@@ -204,8 +204,20 @@ public class PlanetGenerator : MonoBehaviour
         PrefabUtility.SaveAsPrefabAsset(prefab, newFolderPath + "/" + _filename + ".prefab");
     }
 
-    public void Load(string _filename)
+    public void Load(string _filepath)
     {
+        GameObject prefab = GameObject.Instantiate(Resources.Load<GameObject>(_filepath));
+
+        MeshFilter preMFilter = prefab.GetComponentInChildren<MeshFilter>();
+        MeshRenderer preMRenderer = prefab.GetComponentInChildren<MeshRenderer>();
+        PhysicsObject prePhysicsObject = prefab.GetComponent<PhysicsObject>();
+        //SphereCollider preSphereCollider = prefab.GetComponent<SphereCollider>();
+
+        GetComponent<MeshFilter>().mesh = preMFilter.mesh;
+        GetComponent<MeshRenderer>().material = preMRenderer.material;
+        GetComponent<PhysicsObject>().rb.mass = prePhysicsObject.rb.mass;
+        transform.localScale = prefab.transform.localScale;
+
     }
 
 
