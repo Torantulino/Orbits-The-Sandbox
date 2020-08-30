@@ -122,20 +122,14 @@ public class PlanetGenerator : MonoBehaviour
     }
 
 
-    //todo: change to OnMouseDown event
-    void OnMouseOver()
+    void OnMouseDown()
     {
-        // Left Click
-        if (Input.GetMouseButtonDown(0))
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit))
         {
-            RaycastHit hit;
-
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit))
-            {
-                Vector3 pointOnSphere = (transform.InverseTransformPoint(hit.point)).normalized;
-                DrawLand(pointOnSphere);
-            }
+            Vector3 pointOnSphere = (transform.InverseTransformPoint(hit.point)).normalized;
+            DrawLand(pointOnSphere);
         }
     }
 
